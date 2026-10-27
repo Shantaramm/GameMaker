@@ -1,0 +1,353 @@
+[
+  {
+    "id": "straight",
+    "slot": "brows",
+    "description": "прямые брови",
+    "w": 16,
+    "h": 1,
+    "anchor": [8, 6],
+    "pixels": [
+      "HHHHH......HHHHH"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 16,
+        "h": 1,
+        "anchor": [8, 6],
+        "pixels": [
+          "HHHHH......HHHHH"
+        ]
+      },
+      "angry": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 6],
+        "pixels": [
+          "HH............HH",
+          "..H..........H..",
+          "...HH......HH..."
+        ]
+      },
+      "sad": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 8],
+        "pixels": [
+          "...HH......HH...",
+          "..H..........H..",
+          "HH............HH"
+        ]
+      },
+      "happy": {
+        "w": 16,
+        "h": 1,
+        "anchor": [8, 7],
+        "pixels": [
+          "HHHHH......HHHHH"
+        ]
+      },
+      "scared": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 8],
+        "pixels": [
+          "...HH......HH...",
+          "HHH..........HHH"
+        ]
+      },
+      "surprised": {
+        "w": 16,
+        "h": 1,
+        "anchor": [8, 8],
+        "pixels": [
+          "HHHHH......HHHHH"
+        ]
+      }
+    }
+  },
+  {
+    "id": "thick",
+    "slot": "brows",
+    "description": "густые широкие брови",
+    "w": 16,
+    "h": 2,
+    "anchor": [8, 7],
+    "pixels": [
+      "HHHHH......HHHHH",
+      "HHHHH......HHHHH"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 7],
+        "pixels": [
+          "HHHHH......HHHHH",
+          "HHHHH......HHHHH"
+        ]
+      },
+      "angry": {
+        "w": 16,
+        "h": 4,
+        "anchor": [8, 7],
+        "pixels": [
+          "HH............HH",
+          "HHH..........HHH",
+          "..HHH......HHH..",
+          "...HH......HH..."
+        ]
+      },
+      "sad": {
+        "w": 16,
+        "h": 4,
+        "anchor": [8, 9],
+        "pixels": [
+          "...HH......HH...",
+          "..HHH......HHH..",
+          "HHH..........HHH",
+          "HH............HH"
+        ]
+      },
+      "happy": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 8],
+        "pixels": [
+          "HHHHH......HHHHH",
+          "HHHHH......HHHHH"
+        ]
+      },
+      "scared": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 9],
+        "pixels": [
+          "...HH......HH...",
+          "HHHHH......HHHHH",
+          "HHH..........HHH"
+        ]
+      },
+      "surprised": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 9],
+        "pixels": [
+          "HHHHH......HHHHH",
+          "HHHHH......HHHHH"
+        ]
+      }
+    }
+  },
+  {
+    "id": "thin",
+    "slot": "brows",
+    "description": "тонкие аккуратные брови",
+    "w": 14,
+    "h": 1,
+    "anchor": [7, 6],
+    "pixels": [
+      "HHHH......HHHH"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 14,
+        "h": 1,
+        "anchor": [7, 6],
+        "pixels": [
+          "HHHH......HHHH"
+        ]
+      },
+      "angry": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 6],
+        "pixels": [
+          "H............H",
+          ".HH........HH.",
+          "...H......H..."
+        ]
+      },
+      "sad": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 8],
+        "pixels": [
+          "...H......H...",
+          ".HH........HH.",
+          "H............H"
+        ]
+      },
+      "happy": {
+        "w": 14,
+        "h": 1,
+        "anchor": [7, 7],
+        "pixels": [
+          "HHHH......HHHH"
+        ]
+      },
+      "scared": {
+        "w": 14,
+        "h": 2,
+        "anchor": [7, 8],
+        "pixels": [
+          "..HH......HH..",
+          "HH..........HH"
+        ]
+      },
+      "surprised": {
+        "w": 14,
+        "h": 1,
+        "anchor": [7, 8],
+        "pixels": [
+          "HHHH......HHHH"
+        ]
+      }
+    }
+  },
+  {
+    "id": "arched",
+    "slot": "brows",
+    "description": "высокие дугообразные брови",
+    "w": 16,
+    "h": 2,
+    "anchor": [8, 7],
+    "pixels": [
+      ".HHH........HHH.",
+      "H...H......H...H"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 7],
+        "pixels": [
+          ".HHH........HHH.",
+          "H...H......H...H"
+        ]
+      },
+      "angry": {
+        "w": 16,
+        "h": 4,
+        "anchor": [8, 7],
+        "pixels": [
+          ".H............H.",
+          "H.H..........H.H",
+          "...H........H...",
+          "....H......H...."
+        ]
+      },
+      "sad": {
+        "w": 16,
+        "h": 4,
+        "anchor": [8, 9],
+        "pixels": [
+          "...H........H...",
+          "..H.H......H.H..",
+          ".H............H.",
+          "H..............H"
+        ]
+      },
+      "happy": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 8],
+        "pixels": [
+          ".HHH........HHH.",
+          "H...H......H...H"
+        ]
+      },
+      "scared": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 9],
+        "pixels": [
+          "...H........H...",
+          ".HH.H......H.HH.",
+          "H..............H"
+        ]
+      },
+      "surprised": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 9],
+        "pixels": [
+          ".HHH........HHH.",
+          "H...H......H...H"
+        ]
+      }
+    }
+  },
+  {
+    "id": "bushy",
+    "slot": "brows",
+    "description": "косматые нависающие брови",
+    "w": 18,
+    "h": 2,
+    "anchor": [9, 7],
+    "pixels": [
+      "HhHhH........HhHhH",
+      "HHHHHH......HHHHHH"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 18,
+        "h": 2,
+        "anchor": [9, 7],
+        "pixels": [
+          "HhHhH........HhHhH",
+          "HHHHHH......HHHHHH"
+        ]
+      },
+      "angry": {
+        "w": 18,
+        "h": 4,
+        "anchor": [9, 7],
+        "pixels": [
+          "Hh..............hH",
+          "HHHh..........hHHH",
+          "..HHH........HHH..",
+          "....HH......HH...."
+        ]
+      },
+      "sad": {
+        "w": 18,
+        "h": 4,
+        "anchor": [9, 9],
+        "pixels": [
+          "....H........H....",
+          "..HhHH......HHhH..",
+          "HhHH..........HHhH",
+          "HH..............HH"
+        ]
+      },
+      "happy": {
+        "w": 18,
+        "h": 2,
+        "anchor": [9, 8],
+        "pixels": [
+          "HhHhH........HhHhH",
+          "HHHHHH......HHHHHH"
+        ]
+      },
+      "scared": {
+        "w": 18,
+        "h": 3,
+        "anchor": [9, 9],
+        "pixels": [
+          "...hH........Hh...",
+          "HhHHHH......HHHHhH",
+          "HHH............HHH"
+        ]
+      },
+      "surprised": {
+        "w": 18,
+        "h": 2,
+        "anchor": [9, 9],
+        "pixels": [
+          "HhHhH........HhHhH",
+          "HHHHHH......HHHHHH"
+        ]
+      }
+    }
+  }
+]

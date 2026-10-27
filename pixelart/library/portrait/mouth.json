@@ -1,0 +1,433 @@
+[
+  {
+    "id": "thin",
+    "slot": "mouth",
+    "description": "тонкие губы, сдержанный рот",
+    "w": 4,
+    "h": 1,
+    "anchor": [2, -4],
+    "pixels": [
+      "oooo"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 4,
+        "h": 1,
+        "anchor": [2, -4],
+        "pixels": [
+          "oooo"
+        ]
+      },
+      "angry": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          "oooooo",
+          "owWwwo",
+          "oooooo"
+        ]
+      },
+      "sad": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -4],
+        "pixels": [
+          ".oooo.",
+          "o....o"
+        ]
+      },
+      "happy": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -3],
+        "pixels": [
+          "o....o",
+          ".oooo."
+        ]
+      },
+      "scared": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".oooo.",
+          "okkkko",
+          ".ooo.o"
+        ]
+      },
+      "surprised": {
+        "w": 4,
+        "h": 4,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          "okko",
+          ".oo."
+        ]
+      }
+    }
+  },
+  {
+    "id": "full",
+    "slot": "mouth",
+    "description": "полные губы",
+    "w": 4,
+    "h": 2,
+    "anchor": [2, -4],
+    "pixels": [
+      "oooo",
+      "rrrr"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 4,
+        "h": 2,
+        "anchor": [2, -4],
+        "pixels": [
+          "oooo",
+          "rrrr"
+        ]
+      },
+      "angry": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          "oooooo",
+          "owWwwo",
+          "oooooo"
+        ]
+      },
+      "sad": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".rrrr.",
+          ".oooo.",
+          "o....o"
+        ]
+      },
+      "happy": {
+        "w": 6,
+        "h": 4,
+        "anchor": [3, -3],
+        "pixels": [
+          "o....o",
+          ".oooo.",
+          ".owwo.",
+          "..oo.."
+        ]
+      },
+      "scared": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".oooo.",
+          "okkkko",
+          ".ooo.o"
+        ]
+      },
+      "surprised": {
+        "w": 4,
+        "h": 4,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          "okko",
+          ".oo."
+        ]
+      }
+    }
+  },
+  {
+    "id": "small",
+    "slot": "mouth",
+    "description": "маленький аккуратный рот",
+    "w": 2,
+    "h": 1,
+    "anchor": [1, -4],
+    "pixels": [
+      "oo"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 2,
+        "h": 1,
+        "anchor": [1, -4],
+        "pixels": [
+          "oo"
+        ]
+      },
+      "angry": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          "oooooo",
+          "owWwwo",
+          "oooooo"
+        ]
+      },
+      "sad": {
+        "w": 4,
+        "h": 2,
+        "anchor": [2, -4],
+        "pixels": [
+          ".oo.",
+          "o..o"
+        ]
+      },
+      "happy": {
+        "w": 4,
+        "h": 2,
+        "anchor": [2, -3],
+        "pixels": [
+          "o..o",
+          ".oo."
+        ]
+      },
+      "scared": {
+        "w": 4,
+        "h": 3,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          ".o.o"
+        ]
+      },
+      "surprised": {
+        "w": 2,
+        "h": 3,
+        "anchor": [1, -3],
+        "pixels": [
+          "oo",
+          "kk",
+          "oo"
+        ]
+      }
+    }
+  },
+  {
+    "id": "wide",
+    "slot": "mouth",
+    "description": "широкий рот",
+    "w": 6,
+    "h": 1,
+    "anchor": [3, -4],
+    "pixels": [
+      "oooooo"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 6,
+        "h": 1,
+        "anchor": [3, -4],
+        "pixels": [
+          "oooooo"
+        ]
+      },
+      "angry": {
+        "w": 8,
+        "h": 3,
+        "anchor": [4, -3],
+        "pixels": [
+          "oooooooo",
+          "owWwWwwo",
+          "oooooooo"
+        ]
+      },
+      "sad": {
+        "w": 8,
+        "h": 2,
+        "anchor": [4, -4],
+        "pixels": [
+          ".oooooo.",
+          "o......o"
+        ]
+      },
+      "happy": {
+        "w": 8,
+        "h": 4,
+        "anchor": [4, -3],
+        "pixels": [
+          "o......o",
+          ".oooooo.",
+          ".owwwwo.",
+          "..oooo.."
+        ]
+      },
+      "scared": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".oooo.",
+          "okkkko",
+          ".ooo.o"
+        ]
+      },
+      "surprised": {
+        "w": 4,
+        "h": 4,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          "okko",
+          ".oo."
+        ]
+      }
+    }
+  },
+  {
+    "id": "smirk",
+    "slot": "mouth",
+    "description": "кривая ухмылка, ирония или высокомерие",
+    "w": 5,
+    "h": 2,
+    "anchor": [2, -3],
+    "pixels": [
+      "....o",
+      "oooo."
+    ],
+    "variants": {
+      "neutral": {
+        "w": 5,
+        "h": 2,
+        "anchor": [2, -3],
+        "pixels": [
+          "....o",
+          "oooo."
+        ]
+      },
+      "angry": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          "oooooo",
+          "owWwwo",
+          "oooooo"
+        ]
+      },
+      "sad": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -4],
+        "pixels": [
+          ".oooo.",
+          "o....o"
+        ]
+      },
+      "happy": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -2],
+        "pixels": [
+          ".....o",
+          "o....o",
+          ".oooo."
+        ]
+      },
+      "scared": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".oooo.",
+          "okkkko",
+          ".ooo.o"
+        ]
+      },
+      "surprised": {
+        "w": 4,
+        "h": 4,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          "okko",
+          ".oo."
+        ]
+      }
+    }
+  },
+  {
+    "id": "stern",
+    "slot": "mouth",
+    "description": "строгий рот с опущенными уголками",
+    "w": 6,
+    "h": 2,
+    "anchor": [3, -4],
+    "pixels": [
+      ".oooo.",
+      "o....o"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -4],
+        "pixels": [
+          ".oooo.",
+          "o....o"
+        ]
+      },
+      "angry": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          "oooooo",
+          "owWwwo",
+          "oooooo"
+        ]
+      },
+      "sad": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -4],
+        "pixels": [
+          ".oooo.",
+          "o....o"
+        ]
+      },
+      "happy": {
+        "w": 6,
+        "h": 2,
+        "anchor": [3, -3],
+        "pixels": [
+          "o....o",
+          ".oooo."
+        ]
+      },
+      "scared": {
+        "w": 6,
+        "h": 3,
+        "anchor": [3, -3],
+        "pixels": [
+          ".oooo.",
+          "okkkko",
+          ".ooo.o"
+        ]
+      },
+      "surprised": {
+        "w": 4,
+        "h": 4,
+        "anchor": [2, -3],
+        "pixels": [
+          ".oo.",
+          "okko",
+          "okko",
+          ".oo."
+        ]
+      }
+    }
+  }
+]

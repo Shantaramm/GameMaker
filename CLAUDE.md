@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Состояние проекта
 
-`SPEC.md` — источник истины по требованиям. Работа идёт по этапам из `SPEC.md` §12 строго по порядку. Следующий этап не начинается, пока не выполнен критерий приёмки текущего. Этап 1 (схема, валидатор, симулятор, баланс в `backend/app/engine/`) готов. Отклонения от спецификации, правила, которых в ней нет, реальные id моделей GigaChat и типичные ошибки генерации записываются в `NOTES.md` (§15). Прочитай его перед изменением движка или рантайма.
+`SPEC.md` — источник истины по требованиям. Работа идёт по этапам из `SPEC.md` §12 строго по порядку. Следующий этап не начинается, пока не выполнен критерий приёмки текущего. Готовы этап 1 (схема, валидатор, симулятор, баланс в `backend/app/engine/`) и этап 2а (пиксельный движок, библиотека деталей, `/lab`). Отклонения от спецификации, правила, которых в ней нет, реальные id моделей GigaChat и типичные ошибки генерации записываются в `NOTES.md` (§15). Прочитай его перед изменением движка или рантайма.
 
 ## Команды
 
@@ -14,18 +14,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # бэкенд (из /backend; venv: python -m venv .venv && .venv/bin/pip install -e '.[dev]')
 .venv/bin/python -m pytest                                       # все тесты
 .venv/bin/python -m pytest tests/test_broken_games.py -k orphan  # один тест
-.venv/bin/python scripts/export_schema.py   # пересобрать schema/game.schema.json после правки schema.py (тест test_schema_sync это проверяет)
+.venv/bin/python scripts/export_schema.py   # schema.py → schema/game.schema.json (проверяет test_schema_sync)
+.venv/bin/python scripts/build_catalog.py   # pixelart/library → pixelart/catalog.md (проверяет test_catalog_is_in_sync)
+
+# библиотека деталей (из корня; нужен Pillow — он есть в backend/.venv)
+backend/.venv/bin/python pixelart/tools/gen_library.py            # генераторы → pixelart/library/*.json
+backend/.venv/bin/python pixelart/tools/preview.py out.png hair   # быстрый лист превью: random|emotions|hair|head|outfit|accessory|facial_hair|creatures|backgrounds|props
+
+# фронтенд (из /frontend)
+npm run dev          # http://localhost:5173/lab — PixelLab
+npm run typecheck
+npm run gen:types    # schema/game.schema.json → src/types/game.ts (после export_schema)
+npm run screens      # скриншоты в docs/lab/; падает при ошибках/предупреждениях в консоли
 ```
+
+После правки генератора деталей: `gen_library.py` → `build_catalog.py` → `pytest` (тесты `test_art.py` ловят «дырки» и съехавшие слои) → `npm run screens` и посмотреть глазами.
 
 Будущие (из спецификации; проверить, когда появятся файлы):
 
 ```bash
 uvicorn app.main:app --reload            # API
 python -m app.gigachat.client --smoke    # токен → список моделей → короткий чат (этап 3)
-python scripts/build_catalog.py          # /pixelart/library → /pixelart/catalog.md
-
-# фронтенд (из /frontend, Vite + TypeScript)
-npm run dev
 ```
 
 Конфигурация лежит в `.env` (шаблон `.env.example`, §13). Для GigaChat нужен корневой сертификат НУЦ Минцифры (`GIGACHAT_CA_BUNDLE`). Отключать проверку TLS нельзя.
@@ -40,7 +49,7 @@ npm run dev
 
 **Пайплайн генерации** (`backend/app/generation/pipeline.py`) идёт по шагам, а не одним запросом: бриф (свободный markdown) → каркас (персонажи с внешностью, флаги, список сцен) → по одному запросу на сцену → баланс (код) → валидатор и автопочинка (не более 3 итераций, в LLM отправляется только сломанный фрагмент) → headless-плейтест (50 прогонов с фиксированным сидом). Работает как фоновая задача, статусы опрашиваются через `GET /api/games/{id}/status`. Ответ LLM всегда проходит через `json_utils.py`: вырезать сбалансированный JSON → `json.loads` → один запрос на починку → Pydantic.
 
-**Пиксельный движок** (`frontend/src/pixel/`, Canvas 2D). Детали в `/pixelart/library/*.json` — это строки символов, где символ означает **слот палитры**, а не цвет. Конкретные цвета подставляются при рендере по именам из `palettes.json`. Библиотека общая: фронт по ней рисует, бэкенд по ней валидирует, а `catalog.md` (генерируется скриптом) уходит в промпты. Рендер детерминирован: портрет кэшируется по ключу `(character_id, emotion)`, процедурные слои фона используют `seed = hash(game_id + scene_id)`. Если деталь неизвестна и автопочинка не помогла, подставляется дефолт того же слота с предупреждением, игра не падает.
+**Пиксельный движок** (`frontend/src/pixel/`, Canvas 2D). Детали в `/pixelart/library/*.json` — это строки символов, где символ означает **слот палитры**, а не цвет. Конкретные цвета подставляются при рендере по именам из `palettes.json`. JSON не правят руками: его пишут генераторы `pixelart/tools/*.py`. Библиотека общая для трёх потребителей: фронт по ней рисует (бандлится через `import.meta.glob`), бэкенд по ней валидирует (`backend/app/engine/art.py`, вызывается из `validate()` по умолчанию), `catalog.md` уходит в промпты. Каждая деталь ставится своим `anchor` в общую точку привязки слоя из `layout.json`, поэтому слои не съезжают. Расширения формата (`back`, `clip`, `points`, `attach`, `setting`) и дополнительные символы палитры описаны в `NOTES.md`. Рендер детерминирован: портрет кэшируется по ключу `(character_id, emotion)`, процедурные слои фона используют `seed = hash(game_id + scene_id)`. Если деталь неизвестна и автопочинка не помогла, подставляется дефолт того же слота с предупреждением, игра не падает.
 
 **Инварианты валидатора, на которые опирается рантайм:** каждая сцена заканчивается безусловным `goto`; все ссылки и флаги объявлены; из каждого узла диалога достижим `end`; из `start_scene` достижима хотя бы одна концовка; каждый бой выигрывается не менее чем в 70% симуляций. Рантайм не обрабатывает нарушения этих правил, потому что они туда не должны попасть.
 

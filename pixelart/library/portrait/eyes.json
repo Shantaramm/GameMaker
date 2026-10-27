@@ -1,0 +1,443 @@
+[
+  {
+    "id": "round",
+    "slot": "eyes",
+    "description": "круглые открытые глаза",
+    "w": 14,
+    "h": 3,
+    "anchor": [7, 4],
+    "pixels": [
+      "oooo......oooo",
+      "wkkw......wkkw",
+      "weew......weew"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "oooo......oooo",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      },
+      "angry": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          ".ooo......ooo.",
+          "wkko......okkw",
+          "weew......weew"
+        ]
+      },
+      "sad": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "ooo........ooo",
+          "okkw......wkko",
+          "weew......weew"
+        ]
+      },
+      "happy": {
+        "w": 14,
+        "h": 2,
+        "anchor": [7, 3],
+        "pixels": [
+          ".oo........oo.",
+          "o..o......o..o"
+        ]
+      },
+      "scared": {
+        "w": 14,
+        "h": 4,
+        "anchor": [7, 5],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wwkw......wkww",
+          "wwww......wwww"
+        ]
+      },
+      "surprised": {
+        "w": 14,
+        "h": 4,
+        "anchor": [7, 5],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      }
+    }
+  },
+  {
+    "id": "narrow",
+    "slot": "eyes",
+    "description": "узкие спокойные глаза",
+    "w": 16,
+    "h": 2,
+    "anchor": [8, 3],
+    "pixels": [
+      "ooooo......ooooo",
+      "wwkkw......wkkww"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          "ooooo......ooooo",
+          "wwkkw......wkkww"
+        ]
+      },
+      "angry": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          ".oooo......oooo.",
+          "wwkko......okkww"
+        ]
+      },
+      "sad": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          "oooo........oooo",
+          "owkkw......wkkwo"
+        ]
+      },
+      "happy": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          ".ooo........ooo.",
+          "o...o......o...o"
+        ]
+      },
+      "scared": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 4],
+        "pixels": [
+          "ooooo......ooooo",
+          "wwwww......wwwww",
+          "wwwkw......wkwww"
+        ]
+      },
+      "surprised": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 4],
+        "pixels": [
+          "ooooo......ooooo",
+          "wwwww......wwwww",
+          "wwkkw......wkkww"
+        ]
+      }
+    }
+  },
+  {
+    "id": "sharp",
+    "slot": "eyes",
+    "description": "острые миндалевидные глаза, внимательный взгляд",
+    "w": 16,
+    "h": 2,
+    "anchor": [8, 3],
+    "pixels": [
+      "oooo........oooo",
+      "owkkw......wkkwo"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          "oooo........oooo",
+          "owkkw......wkkwo"
+        ]
+      },
+      "angry": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          ".ooo........ooo.",
+          "owkko......okkwo"
+        ]
+      },
+      "sad": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          "oooo........oooo",
+          "owkkw......wkkwo"
+        ]
+      },
+      "happy": {
+        "w": 16,
+        "h": 2,
+        "anchor": [8, 3],
+        "pixels": [
+          ".ooo........ooo.",
+          "o...o......o...o"
+        ]
+      },
+      "scared": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 4],
+        "pixels": [
+          "ooooo......ooooo",
+          "wwwww......wwwww",
+          "owwkw......wkwwo"
+        ]
+      },
+      "surprised": {
+        "w": 16,
+        "h": 3,
+        "anchor": [8, 4],
+        "pixels": [
+          "ooooo......ooooo",
+          "wwwww......wwwww",
+          "owkkw......wkkwo"
+        ]
+      }
+    }
+  },
+  {
+    "id": "big",
+    "slot": "eyes",
+    "description": "большие выразительные глаза",
+    "w": 14,
+    "h": 4,
+    "anchor": [7, 5],
+    "pixels": [
+      "oooo......oooo",
+      "wwkw......wkww",
+      "wkkw......wkkw",
+      "weew......weew"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 14,
+        "h": 4,
+        "anchor": [7, 5],
+        "pixels": [
+          "oooo......oooo",
+          "wwkw......wkww",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      },
+      "angry": {
+        "w": 14,
+        "h": 4,
+        "anchor": [7, 5],
+        "pixels": [
+          ".ooo......ooo.",
+          "wwko......okww",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      },
+      "sad": {
+        "w": 14,
+        "h": 4,
+        "anchor": [7, 5],
+        "pixels": [
+          "ooo........ooo",
+          "owkw......wkwo",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      },
+      "happy": {
+        "w": 14,
+        "h": 2,
+        "anchor": [7, 3],
+        "pixels": [
+          ".oo........oo.",
+          "o..o......o..o"
+        ]
+      },
+      "scared": {
+        "w": 14,
+        "h": 5,
+        "anchor": [7, 6],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wwkw......wkww",
+          "wwww......wwww",
+          "wwww......wwww"
+        ]
+      },
+      "surprised": {
+        "w": 14,
+        "h": 5,
+        "anchor": [7, 6],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wwkw......wkww",
+          "wkkw......wkkw",
+          "weew......weew"
+        ]
+      }
+    }
+  },
+  {
+    "id": "sleepy",
+    "slot": "eyes",
+    "description": "тяжёлые веки, усталый или скучающий взгляд",
+    "w": 14,
+    "h": 3,
+    "anchor": [7, 4],
+    "pixels": [
+      "SSSS......SSSS",
+      "oooo......oooo",
+      "wkkw......wkkw"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "SSSS......SSSS",
+          "oooo......oooo",
+          "wkkw......wkkw"
+        ]
+      },
+      "angry": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "SSSS......SSSS",
+          ".ooo......ooo.",
+          "wkko......okkw"
+        ]
+      },
+      "sad": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "SSSS......SSSS",
+          "ooo........ooo",
+          "okkw......wkko"
+        ]
+      },
+      "happy": {
+        "w": 14,
+        "h": 2,
+        "anchor": [7, 3],
+        "pixels": [
+          ".oo........oo.",
+          "o..o......o..o"
+        ]
+      },
+      "scared": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wwkw......wkww"
+        ]
+      },
+      "surprised": {
+        "w": 14,
+        "h": 3,
+        "anchor": [7, 4],
+        "pixels": [
+          "oooo......oooo",
+          "wwww......wwww",
+          "wkkw......wkkw"
+        ]
+      }
+    }
+  },
+  {
+    "id": "small",
+    "slot": "eyes",
+    "description": "маленькие глаза-точки",
+    "w": 12,
+    "h": 2,
+    "anchor": [6, 3],
+    "pixels": [
+      "oo........oo",
+      "kk........kk"
+    ],
+    "variants": {
+      "neutral": {
+        "w": 12,
+        "h": 2,
+        "anchor": [6, 3],
+        "pixels": [
+          "oo........oo",
+          "kk........kk"
+        ]
+      },
+      "angry": {
+        "w": 12,
+        "h": 2,
+        "anchor": [6, 3],
+        "pixels": [
+          ".o........o.",
+          "kko......okk"
+        ]
+      },
+      "sad": {
+        "w": 12,
+        "h": 2,
+        "anchor": [6, 3],
+        "pixels": [
+          "oo........oo",
+          "ok........ko"
+        ]
+      },
+      "happy": {
+        "w": 12,
+        "h": 1,
+        "anchor": [6, 2],
+        "pixels": [
+          "oo........oo"
+        ]
+      },
+      "scared": {
+        "w": 12,
+        "h": 3,
+        "anchor": [6, 4],
+        "pixels": [
+          "ooo......ooo",
+          "www......www",
+          "wk........kw"
+        ]
+      },
+      "surprised": {
+        "w": 12,
+        "h": 3,
+        "anchor": [6, 4],
+        "pixels": [
+          "ooo......ooo",
+          "www......www",
+          "kk........kk"
+        ]
+      }
+    }
+  }
+]

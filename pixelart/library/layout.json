@@ -1,0 +1,32 @@
+{
+  "portrait": {
+    "w": 48,
+    "h": 48,
+    "ref": [
+      24,
+      24
+    ],
+    "emotions": [
+      "neutral",
+      "angry",
+      "sad",
+      "happy",
+      "scared",
+      "surprised"
+    ]
+  },
+  "creature": {
+    "w": 64,
+    "h": 64,
+    "ref": [
+      32,
+      32
+    ]
+  },
+  "background": {
+    "w": 160,
+    "h": 90,
+    "horizon": 72,
+    "prop_base_y": 82
+  }
+}

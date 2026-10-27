@@ -1,0 +1,81 @@
+:root {
+  --bg: #17141c;
+  --panel: #241f2b;
+  --line: #3a3344;
+  --text: #ece6f2;
+  --muted: #a89fb4;
+  --accent: #e0b030;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 system-ui, sans-serif;
+}
+
+canvas.pixel {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
+button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+button.primary { background: var(--accent); color: #1a1408; border-color: var(--accent); font-weight: 600; }
+button.active { border-color: var(--accent); color: var(--accent); }
+
+.placeholder { max-width: 600px; margin: 15vh auto; padding: 0 16px; text-align: center; }
+
+/* --- PixelLab --- */
+
+.lab-header {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+  padding: 12px 16px; border-bottom: 1px solid var(--line);
+}
+.lab-header h1 { margin: 0; font-size: 18px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.lab-body { padding: 16px; max-width: 1100px; }
+
+.lab-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.preview { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.preview.wide { margin-bottom: 12px; max-width: 100%; overflow: hidden; }
+.dark { background: #2a2532; padding: 8px; border-radius: 4px; }
+
+.form {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px; flex: 1; min-width: 260px;
+}
+.field { display: flex; flex-direction: column; gap: 2px; color: var(--muted); font-size: 12px; }
+.field select, .field input {
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: 4px; padding: 4px; font: inherit; font-size: 13px; width: 100%;
+}
+
+.emotions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.emotions figure, .enemies figure { margin: 0; }
+figcaption { color: var(--muted); font-size: 12px; text-align: center; }
+
+.json-box { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.json {
+  width: 100%; min-height: 160px; background: var(--panel); color: var(--text);
+  border: 1px solid var(--line); border-radius: 4px; font: 12px/1.4 ui-monospace, monospace; padding: 8px;
+}
+
+.character { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border-bottom: 1px solid var(--line); padding: 8px 0; }
+.character p { margin: 4px 0 0; color: var(--muted); max-width: 420px; }
+.enemies { display: flex; flex-wrap: wrap; gap: 12px; }
+.scene { margin: 0 0 16px; max-width: 100%; overflow: hidden; }
+
+.grid-page { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+.grid-page figure { margin: 0; }

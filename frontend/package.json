@@ -1,0 +1,20 @@
+{
+  "name": "rpg-generator-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "gen:types": "json2ts -i ../schema/game.schema.json -o src/types/game.ts --unreachableDefinitions --additionalProperties false --maxItems -1",
+    "screens": "node scripts/lab-screens.mjs"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^15.0.4",
+    "playwright": "^1.63.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
+  }
+}

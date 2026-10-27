@@ -6,13 +6,11 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "x": {
           "maximum": 160,
           "minimum": 0,
-          "title": "X",
           "type": "integer"
         }
       },
@@ -31,7 +29,6 @@
             "indoor",
             "outdoor"
           ],
-          "title": "Setting",
           "type": "string"
         },
         "time": {
@@ -40,7 +37,6 @@
             "dusk",
             "night"
           ],
-          "title": "Time",
           "type": "string"
         },
         "sky": {
@@ -54,13 +50,11 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Sky"
+          "default": null
         },
         "far": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Far",
           "type": "string"
         },
         "props": {
@@ -68,13 +62,11 @@
             "$ref": "#/$defs/BackgroundProp"
           },
           "maxItems": 5,
-          "title": "Props",
           "type": "array"
         },
         "ground": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Ground",
           "type": "string"
         },
         "overlay": {
@@ -86,13 +78,11 @@
             "dust",
             "none"
           ],
-          "title": "Overlay",
           "type": "string"
         },
         "mood_palette": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Mood Palette",
           "type": "string"
         }
       },
@@ -111,13 +101,11 @@
       "properties": {
         "type": {
           "const": "battle",
-          "title": "Type",
           "type": "string"
         },
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "enemies": {
@@ -128,7 +116,6 @@
           },
           "maxItems": 3,
           "minItems": 1,
-          "title": "Enemies",
           "type": "array"
         },
         "on_win": {
@@ -160,7 +147,6 @@
               }
             ]
           },
-          "title": "On Win",
           "type": "array"
         },
         "on_lose": {
@@ -201,12 +187,10 @@
               },
               "type": "array"
             }
-          ],
-          "title": "On Lose"
+          ]
         },
         "can_flee": {
           "default": false,
-          "title": "Can Flee",
           "type": "boolean"
         }
       },
@@ -224,13 +208,11 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "name": {
           "maxLength": 60,
           "minLength": 1,
-          "title": "Name",
           "type": "string"
         },
         "role": {
@@ -240,12 +222,10 @@
             "npc",
             "antagonist"
           ],
-          "title": "Role",
           "type": "string"
         },
         "description": {
           "maxLength": 1000,
-          "title": "Description",
           "type": "string"
         },
         "appearance": {
@@ -267,18 +247,15 @@
       "properties": {
         "type": {
           "const": "choice",
-          "title": "Type",
           "type": "string"
         },
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "prompt": {
           "minLength": 1,
-          "title": "Prompt",
           "type": "string"
         },
         "options": {
@@ -286,7 +263,6 @@
             "$ref": "#/$defs/ChoiceOption"
           },
           "minItems": 1,
-          "title": "Options",
           "type": "array"
         }
       },
@@ -304,7 +280,6 @@
       "properties": {
         "text": {
           "minLength": 1,
-          "title": "Text",
           "type": "string"
         },
         "condition": {
@@ -335,8 +310,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Condition"
+          "default": null
         },
         "effects": {
           "items": {
@@ -367,7 +341,6 @@
               }
             ]
           },
-          "title": "Effects",
           "type": "array"
         }
       },
@@ -404,7 +377,6 @@
             ]
           },
           "minItems": 1,
-          "title": "All",
           "type": "array"
         }
       },
@@ -441,7 +413,6 @@
             ]
           },
           "minItems": 1,
-          "title": "Any",
           "type": "array"
         }
       },
@@ -457,11 +428,9 @@
         "flag": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Flag",
           "type": "string"
         },
         "is": {
-          "title": "Is",
           "type": "boolean"
         }
       },
@@ -478,7 +447,6 @@
         "has_item": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Has Item",
           "type": "string"
         }
       },
@@ -511,8 +479,7 @@
             {
               "$ref": "#/$defs/CondStat"
             }
-          ],
-          "title": "Not"
+          ]
         }
       },
       "required": [
@@ -531,7 +498,6 @@
             "defense",
             "focus"
           ],
-          "title": "Stat",
           "type": "string"
         },
         "op": {
@@ -539,11 +505,9 @@
             ">=",
             "<="
           ],
-          "title": "Op",
           "type": "string"
         },
         "value": {
-          "title": "Value",
           "type": "integer"
         }
       },
@@ -561,19 +525,16 @@
         "body": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Body",
           "type": "string"
         },
         "color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Color",
           "type": "string"
         },
         "accent_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Accent Color",
           "type": "string"
         },
         "features": {
@@ -583,7 +544,6 @@
             "type": "string"
           },
           "maxItems": 3,
-          "title": "Features",
           "type": "array"
         },
         "size": {
@@ -592,7 +552,6 @@
             "medium",
             "large"
           ],
-          "title": "Size",
           "type": "string"
         }
       },
@@ -610,13 +569,11 @@
       "properties": {
         "type": {
           "const": "dialogue",
-          "title": "Type",
           "type": "string"
         },
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "nodes": {
@@ -624,13 +581,11 @@
             "$ref": "#/$defs/DialogueNode"
           },
           "minItems": 1,
-          "title": "Nodes",
           "type": "array"
         },
         "start_node": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Start Node",
           "type": "string"
         }
       },
@@ -648,7 +603,6 @@
       "properties": {
         "text": {
           "minLength": 1,
-          "title": "Text",
           "type": "string"
         },
         "condition": {
@@ -679,8 +633,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Condition"
+          "default": null
         },
         "effects": {
           "items": {
@@ -711,13 +664,11 @@
               }
             ]
           },
-          "title": "Effects",
           "type": "array"
         },
         "next": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Next",
           "type": "string"
         }
       },
@@ -734,18 +685,15 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "speaker": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Speaker",
           "type": "string"
         },
         "text": {
           "minLength": 1,
-          "title": "Text",
           "type": "string"
         },
         "emotion": {
@@ -765,14 +713,12 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Emotion"
+          "default": null
         },
         "choices": {
           "items": {
             "$ref": "#/$defs/DialogueChoice"
           },
-          "title": "Choices",
           "type": "array"
         },
         "next": {
@@ -786,8 +732,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Next"
+          "default": null
         }
       },
       "required": [
@@ -803,7 +748,6 @@
       "properties": {
         "damage": {
           "minimum": 1,
-          "title": "Damage",
           "type": "integer"
         }
       },
@@ -819,7 +763,6 @@
         "give_item": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Give Item",
           "type": "string"
         }
       },
@@ -835,7 +778,6 @@
         "goto": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Goto",
           "type": "string"
         }
       },
@@ -850,7 +792,6 @@
       "properties": {
         "heal": {
           "minimum": 1,
-          "title": "Heal",
           "type": "integer"
         }
       },
@@ -866,7 +807,6 @@
         "learn_skill": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Learn Skill",
           "type": "string"
         }
       },
@@ -886,11 +826,9 @@
             "defense",
             "focus"
           ],
-          "title": "Mod Stat",
           "type": "string"
         },
         "delta": {
-          "title": "Delta",
           "type": "integer"
         }
       },
@@ -907,11 +845,9 @@
         "set_flag": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Set Flag",
           "type": "string"
         },
         "value": {
-          "title": "Value",
           "type": "boolean"
         }
       },
@@ -928,7 +864,6 @@
         "take_item": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Take Item",
           "type": "string"
         }
       },
@@ -944,18 +879,15 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "title": {
           "maxLength": 120,
           "minLength": 1,
-          "title": "Title",
           "type": "string"
         },
         "text": {
           "minLength": 1,
-          "title": "Text",
           "type": "string"
         },
         "kind": {
@@ -964,7 +896,6 @@
             "neutral",
             "bad"
           ],
-          "title": "Kind",
           "type": "string"
         }
       },
@@ -983,24 +914,20 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "name": {
           "maxLength": 60,
           "minLength": 1,
-          "title": "Name",
           "type": "string"
         },
         "description": {
           "maxLength": 500,
-          "title": "Description",
           "type": "string"
         },
         "tier": {
           "maximum": 5,
           "minimum": 1,
-          "title": "Tier",
           "type": "integer"
         },
         "appearance": {
@@ -1011,8 +938,7 @@
             {
               "$ref": "#/$defs/CreatureSpec"
             }
-          ],
-          "title": "Appearance"
+          ]
         },
         "hp": {
           "anyOf": [
@@ -1024,8 +950,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Hp"
+          "default": null
         },
         "attack": {
           "anyOf": [
@@ -1037,8 +962,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Attack"
+          "default": null
         },
         "defense": {
           "anyOf": [
@@ -1050,15 +974,13 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Defense"
+          "default": null
         },
         "abilities": {
           "items": {
             "$ref": "#/$defs/EnemyAbility"
           },
           "maxItems": 2,
-          "title": "Abilities",
           "type": "array"
         }
       },
@@ -1078,7 +1000,6 @@
         "name": {
           "maxLength": 60,
           "minLength": 1,
-          "title": "Name",
           "type": "string"
         },
         "effect": {
@@ -1111,12 +1032,10 @@
             ]
           },
           "minItems": 1,
-          "title": "Effect",
           "type": "array"
         },
         "every_n_turns": {
           "minimum": 1,
-          "title": "Every N Turns",
           "type": "integer"
         }
       },
@@ -1134,13 +1053,11 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "description": {
           "default": "",
           "maxLength": 300,
-          "title": "Description",
           "type": "string"
         }
       },
@@ -1156,22 +1073,18 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "name": {
           "maxLength": 60,
           "minLength": 1,
-          "title": "Name",
           "type": "string"
         },
         "description": {
           "maxLength": 300,
-          "title": "Description",
           "type": "string"
         },
         "consumable": {
-          "title": "Consumable",
           "type": "boolean"
         },
         "effect": {
@@ -1203,7 +1116,6 @@
               }
             ]
           },
-          "title": "Effect",
           "type": "array"
         }
       },
@@ -1222,34 +1134,28 @@
         "title": {
           "maxLength": 120,
           "minLength": 1,
-          "title": "Title",
           "type": "string"
         },
         "logline": {
           "maxLength": 500,
-          "title": "Logline",
           "type": "string"
         },
         "tone": {
           "maxLength": 200,
-          "title": "Tone",
           "type": "string"
         },
         "art_style": {
           "maxLength": 200,
-          "title": "Art Style",
           "type": "string"
         },
         "language": {
           "const": "ru",
           "default": "ru",
-          "title": "Language",
           "type": "string"
         },
         "est_minutes": {
           "maximum": 120,
           "minimum": 1,
-          "title": "Est Minutes",
           "type": "integer"
         }
       },
@@ -1268,18 +1174,15 @@
       "properties": {
         "type": {
           "const": "narration",
-          "title": "Type",
           "type": "string"
         },
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "text": {
           "minLength": 1,
-          "title": "Text",
           "type": "string"
         }
       },
@@ -1297,49 +1200,41 @@
         "head": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Head",
           "type": "string"
         },
         "skin": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Skin",
           "type": "string"
         },
         "hair": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Hair",
           "type": "string"
         },
         "hair_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Hair Color",
           "type": "string"
         },
         "eyes": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Eyes",
           "type": "string"
         },
         "eye_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Eye Color",
           "type": "string"
         },
         "brows": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Brows",
           "type": "string"
         },
         "mouth": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Mouth",
           "type": "string"
         },
         "facial_hair": {
@@ -1353,25 +1248,21 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Facial Hair"
+          "default": null
         },
         "outfit": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Outfit",
           "type": "string"
         },
         "outfit_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Outfit Color",
           "type": "string"
         },
         "accent_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Accent Color",
           "type": "string"
         },
         "accessory": {
@@ -1381,13 +1272,11 @@
             "type": "string"
           },
           "maxItems": 2,
-          "title": "Accessory",
           "type": "array"
         },
         "bg_color": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Bg Color",
           "type": "string"
         }
       },
@@ -1414,13 +1303,11 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "title": {
           "maxLength": 120,
           "minLength": 1,
-          "title": "Title",
           "type": "string"
         },
         "background": {
@@ -1428,7 +1315,6 @@
         },
         "intro": {
           "minLength": 1,
-          "title": "Intro",
           "type": "string"
         },
         "events": {
@@ -1452,7 +1338,6 @@
             ]
           },
           "minItems": 1,
-          "title": "Events",
           "type": "array"
         }
       },
@@ -1472,23 +1357,19 @@
         "id": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "Id",
           "type": "string"
         },
         "name": {
           "maxLength": 60,
           "minLength": 1,
-          "title": "Name",
           "type": "string"
         },
         "description": {
           "maxLength": 300,
-          "title": "Description",
           "type": "string"
         },
         "cost_focus": {
           "minimum": 0,
-          "title": "Cost Focus",
           "type": "integer"
         },
         "effect": {
@@ -1521,7 +1402,6 @@
             ]
           },
           "minItems": 1,
-          "title": "Effect",
           "type": "array"
         },
         "target": {
@@ -1529,7 +1409,6 @@
             "enemy",
             "self"
           ],
-          "title": "Target",
           "type": "string"
         }
       },
@@ -1550,22 +1429,18 @@
       "properties": {
         "hp": {
           "minimum": 1,
-          "title": "Hp",
           "type": "integer"
         },
         "attack": {
           "minimum": 0,
-          "title": "Attack",
           "type": "integer"
         },
         "defense": {
           "minimum": 0,
-          "title": "Defense",
           "type": "integer"
         },
         "focus": {
           "minimum": 0,
-          "title": "Focus",
           "type": "integer"
         }
       },
@@ -1583,13 +1458,11 @@
       "properties": {
         "type": {
           "const": "goto",
-          "title": "Type",
           "type": "string"
         },
         "to": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
-          "title": "To",
           "type": "string"
         },
         "condition": {
@@ -1620,8 +1493,7 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Condition"
+          "default": null
         }
       },
       "required": [
@@ -1637,7 +1509,6 @@
     "schema_version": {
       "const": "1",
       "default": "1",
-      "title": "Schema Version",
       "type": "string"
     },
     "meta": {
@@ -1650,7 +1521,6 @@
       "items": {
         "$ref": "#/$defs/Character"
       },
-      "title": "Characters",
       "type": "array"
     },
     "stats_template": {
@@ -1670,7 +1540,6 @@
         "pattern": "^[a-z][a-z0-9_]*$",
         "type": "string"
       },
-      "title": "Start Skills",
       "type": "array"
     },
     "start_items": {
@@ -1679,35 +1548,30 @@
         "pattern": "^[a-z][a-z0-9_]*$",
         "type": "string"
       },
-      "title": "Start Items",
       "type": "array"
     },
     "skills": {
       "items": {
         "$ref": "#/$defs/Skill"
       },
-      "title": "Skills",
       "type": "array"
     },
     "items": {
       "items": {
         "$ref": "#/$defs/Item"
       },
-      "title": "Items",
       "type": "array"
     },
     "enemies": {
       "items": {
         "$ref": "#/$defs/Enemy"
       },
-      "title": "Enemies",
       "type": "array"
     },
     "flags": {
       "items": {
         "$ref": "#/$defs/FlagDef"
       },
-      "title": "Flags",
       "type": "array"
     },
     "scenes": {
@@ -1715,13 +1579,11 @@
         "$ref": "#/$defs/Scene"
       },
       "minItems": 1,
-      "title": "Scenes",
       "type": "array"
     },
     "start_scene": {
       "maxLength": 64,
       "pattern": "^[a-z][a-z0-9_]*$",
-      "title": "Start Scene",
       "type": "string"
     },
     "endings": {
@@ -1729,7 +1591,6 @@
         "$ref": "#/$defs/Ending"
       },
       "minItems": 1,
-      "title": "Endings",
       "type": "array"
     }
   },

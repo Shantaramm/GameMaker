@@ -13,6 +13,7 @@ from typing import Any, Iterable
 from pydantic import BaseModel, ValidationError
 
 from . import schema as s
+from .art import ArtLibrary, check_art, load_library
 from .issues import Issue, format_path
 
 MIN_SCENES, MAX_SCENES = 5, 8
@@ -56,7 +57,11 @@ class ValidationReport(BaseModel):
         return self.game is not None and not self.errors
 
 
-def validate(data: dict[str, Any] | s.Game) -> ValidationReport:
+_DEFAULT_ART = object()
+
+
+def validate(data: dict[str, Any] | s.Game, art: ArtLibrary | None | object = _DEFAULT_ART) -> ValidationReport:
+    """art — библиотека деталей для проверки внешности; по умолчанию /pixelart/library, None — не проверять."""
     if isinstance(data, s.Game):
         game = data
     else:
@@ -64,7 +69,11 @@ def validate(data: dict[str, Any] | s.Game) -> ValidationReport:
             game = s.Game.model_validate(data)
         except ValidationError as exc:
             return ValidationReport(game=None, issues=_schema_issues(exc))
-    return ValidationReport(game=game, issues=_Checker(game).run())
+    issues = _Checker(game).run()
+    library = load_library() if art is _DEFAULT_ART else art
+    if library is not None:
+        issues += check_art(game, library)
+    return ValidationReport(game=game, issues=issues)
 
 
 def _schema_issues(exc: ValidationError) -> list[Issue]:

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "stubble",
+    "slot": "facial_hair",
+    "description": "щетина",
+    "w": 22,
+    "h": 9,
+    "anchor": [11, -1],
+    "pixels": [
+      "H.H....H.H....H.H....H",
+      "H....H.H....H.H....H.H",
+      "...H.H...........H.H..",
+      ".H.H...........H.H....",
+      "......H........H......",
+      "....H.H....H.H....H...",
+      "....H....H.H....H.....",
+      ".......H.H....H.H.....",
+      "............H........."
+    ],
+    "clip": "head"
+  },
+  {
+    "id": "mustache",
+    "slot": "facial_hair",
+    "description": "густые усы",
+    "w": 12,
+    "h": 5,
+    "anchor": [6, -1],
+    "pixels": [
+      "..oooooooo..",
+      ".ohhHHHHhho.",
+      "ohHHooooHHho",
+      "oHoo....ooHo",
+      ".o........o."
+    ]
+  },
+  {
+    "id": "full_beard",
+    "slot": "facial_hair",
+    "description": "окладистая борода с усами",
+    "w": 26,
+    "h": 18,
+    "anchor": [13, 4],
+    "pixels": [
+      "..oo..................oo..",
+      ".oHHo................oHHo.",
+      ".oHHo................oHHo.",
+      "ohHHo................ohHHo",
+      "ohHHo................ohHHo",
+      "ohHHo................ohHHo",
+      "ohHHoooooo......oooooohHHo",
+      "oHhhhhhhHHo....oHhhhhhhHHo",
+      ".ohhhhhHHo......ohhhhhHHo.",
+      ".ohhhhhhHHoooooohhhhhhHHo.",
+      ".oHhhhhhhhhhhhhhhhhhhhHHo.",
+      "..oHhhhhhhhhhhhhhhhhhHHo..",
+      "...oHhhhhhhhhhhhhhhhHHo...",
+      "....oHhhhhhhhhhhhhhHHo....",
+      ".....oHhhhhhhhhhhhHHo.....",
+      "......oHHHhhhhhhHHHo......",
+      ".......oooHHHHHHooo.......",
+      "..........oooooo.........."
+    ]
+  },
+  {
+    "id": "goatee",
+    "slot": "facial_hair",
+    "description": "эспаньолка: усы и бородка",
+    "w": 10,
+    "h": 11,
+    "anchor": [5, -1],
+    "pixels": [
+      "..oooooo..",
+      ".ohhhhhHo.",
+      "oHooooooHo",
+      "oHo....oHo",
+      "oHooooooHo",
+      ".ohhhhhHo.",
+      "ohhhhhhhHo",
+      "ohhhhhhhHo",
+      ".ohhhhhHo.",
+      "..ohhhHo..",
+      "...oooo..."
+    ]
+  }
+]

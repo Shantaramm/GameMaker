@@ -412,5 +412,19 @@ for _model in (CondAll, CondAny, CondNot):
     _model.model_rebuild()
 
 
+def _drop_field_titles(node: Any) -> None:
+    """Убирает title у полей: иначе генератор TS-типов делает алиас на каждое поле."""
+    if isinstance(node, dict):
+        for prop in node.get("properties", {}).values():
+            prop.pop("title", None)
+        for value in node.values():
+            _drop_field_titles(value)
+    elif isinstance(node, list):
+        for value in node:
+            _drop_field_titles(value)
+
+
 def game_json_schema() -> dict[str, Any]:
-    return Game.model_json_schema(by_alias=True)
+    schema = Game.model_json_schema(by_alias=True)
+    _drop_field_titles(schema)
+    return schema

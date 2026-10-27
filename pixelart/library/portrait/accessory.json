@@ -1,0 +1,241 @@
+[
+  {
+    "id": "glasses",
+    "slot": "accessory",
+    "description": "очки в тонкой оправе",
+    "w": 22,
+    "h": 5,
+    "anchor": [11, 5],
+    "pixels": [
+      "..ooooooo....ooooooo..",
+      "ooow....oooooow....ooo",
+      "..o.....o....o.....o..",
+      "..o.....o....o.....o..",
+      "..ooooooo....ooooooo.."
+    ]
+  },
+  {
+    "id": "monocle",
+    "slot": "accessory",
+    "description": "монокль на цепочке",
+    "w": 7,
+    "h": 21,
+    "anchor": [-1, 6],
+    "pixels": [
+      "..mmm..",
+      ".m...m.",
+      "m.....m",
+      "m.....m",
+      ".m...m.",
+      "..mmm..",
+      "...m...",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m....",
+      "..m...."
+    ]
+  },
+  {
+    "id": "eyepatch",
+    "slot": "accessory",
+    "description": "чёрная повязка на глаз",
+    "w": 24,
+    "h": 11,
+    "anchor": [12, 11],
+    "pixels": [
+      "......................kk",
+      "....................kk..",
+      "..................kk....",
+      "k..............kkk......",
+      ".kk..........kk.........",
+      "...k.kkk...kk...........",
+      "....kkkkkkk.............",
+      "...kkkkkkk..............",
+      "...kkkkkkk..............",
+      "....kkkkk...............",
+      ".....kkk................"
+    ]
+  },
+  {
+    "id": "scar",
+    "slot": "accessory",
+    "description": "шрам через бровь и щёку",
+    "w": 5,
+    "h": 11,
+    "anchor": [-4, 8],
+    "pixels": [
+      ".Rr..",
+      ".Rr..",
+      "oRro.",
+      "..Rr.",
+      "..Rr.",
+      ".oRro",
+      "..Rr.",
+      "..Rr.",
+      ".o.Ro",
+      "...Rr",
+      "...Rr"
+    ],
+    "clip": "head"
+  },
+  {
+    "id": "earring",
+    "slot": "accessory",
+    "description": "серьги-капли в ушах",
+    "w": 22,
+    "h": 3,
+    "anchor": [11, -1],
+    "pixels": [
+      "m....................m",
+      "a....................a",
+      "a....................a"
+    ]
+  },
+  {
+    "id": "headband",
+    "slot": "accessory",
+    "description": "повязка на лбу с завязками",
+    "w": 28,
+    "h": 10,
+    "anchor": [13, 13],
+    "pixels": [
+      ".......oooooooooooo.........",
+      "...ooooaaaaaaaaaaaaooooooo..",
+      ".ooaaaaAAAAAAAAAAAAaaaaaaao.",
+      "oaaAAAAooooooooooooAAAAaaao.",
+      "oAAoooo............ooooaaaao",
+      ".oo...................oaaaao",
+      "......................oAAaao",
+      ".......................ooaao",
+      "........................oAAo",
+      ".........................oo."
+    ]
+  },
+  {
+    "id": "fedora",
+    "slot": "accessory",
+    "description": "фетровая шляпа с полями",
+    "w": 34,
+    "h": 13,
+    "anchor": [17, 22],
+    "pixels": [
+      "........oooooo......oooooo........",
+      ".......oaaaaAAo....oaaaaAAo.......",
+      ".......oaaaaAAooooooaaaaAAo.......",
+      ".......oaaaaaaaaaaaaaaaaAAo.......",
+      ".......oaaaaaaaaaaaaaaaaAAo.......",
+      ".......oaaaaaaaaaaaaaaaaAAo.......",
+      ".......okkkkkkkkkkkkkkkkkko.......",
+      "...oooookkkkkkkkkkkkkkkkkkooooo...",
+      ".ooaaaaaaaaaaaaaaaaaaaaaaaaaaAAoo.",
+      "oaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAo",
+      ".ooaaaaaaaaaaaaaaaaaaaaaaaaaaAAoo.",
+      "...ooooooooaaaaaaaaaaAAoooooooo...",
+      "...........oooooooooooo..........."
+    ]
+  },
+  {
+    "id": "wizard_hat",
+    "slot": "accessory",
+    "description": "остроконечная шляпа волшебника",
+    "w": 34,
+    "h": 15,
+    "anchor": [17, 24],
+    "pixels": [
+      "..................oAAoo...........",
+      ".................oaaaAAo..........",
+      "................oaaaaAAo..........",
+      "................oaaaaAAo..........",
+      "...............oaaaaaAAo..........",
+      "..............oaaaaaaaAAo.........",
+      ".............oaaamaaaaAAo.........",
+      "............oaaammmaaaAAo.........",
+      "........ooooaaaaamaaaaAAoo........",
+      "...oooooaaaaaaaaaaaaaaaaAAooooo...",
+      ".ooaaaaaaaaaaaaaaaaaaaaaaaaaaAAoo.",
+      "oaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAo",
+      ".ooaaaaaaaaaaaaaaaaaaaaaaaaaaAAoo.",
+      "...oooooaaaaaaaaaaaaaaaaAAooooo...",
+      "........oooooooooooooooooo........"
+    ]
+  },
+  {
+    "id": "crown",
+    "slot": "accessory",
+    "description": "корона с камнями",
+    "w": 22,
+    "h": 10,
+    "anchor": [11, 22],
+    "pixels": [
+      "..o....o...o...o...o..",
+      ".oMo..oMo.oMo.oMo.oMo.",
+      ".oMo..oMo.oMo.oMo.oMo.",
+      ".oMo..oMo.oMo.oMo.oMo.",
+      "ommMoommMommMommMommMo",
+      "ommMoommMommMommMommMo",
+      ".ommmmmmmmmmmmmmmmmMo.",
+      ".ommmammmmaammmmammMo.",
+      ".ommmmmmmmmmmmmmmmmMo.",
+      "..oooooooooooooooooo.."
+    ]
+  },
+  {
+    "id": "visor",
+    "slot": "accessory",
+    "description": "футуристический визор на глазах",
+    "w": 23,
+    "h": 6,
+    "anchor": [12, 6],
+    "pixels": [
+      ".ooooooooooooooooooooo.",
+      "oaaaaaaaaaaaaaaaaaaaaao",
+      "oaawwwwaaaaaaaaaaaaaaao",
+      "oAAAaaawaaaaaaaaaaaaAAo",
+      ".oooAAAAAAAAAAAAAAAAoo.",
+      "....oooooooooooooooo..."
+    ]
+  },
+  {
+    "id": "pendant",
+    "slot": "accessory",
+    "description": "кулон на цепочке",
+    "w": 12,
+    "h": 9,
+    "anchor": [6, -12],
+    "pixels": [
+      "m..........m",
+      ".m........m.",
+      "..m......m..",
+      "...m....m...",
+      "....m...m...",
+      ".....m.m....",
+      "......a.....",
+      ".....aAa....",
+      "......a....."
+    ]
+  },
+  {
+    "id": "freckles",
+    "slot": "accessory",
+    "description": "веснушки на щеках",
+    "w": 16,
+    "h": 3,
+    "anchor": [8, 0],
+    "pixels": [
+      "S..S.........S..",
+      "..S.........S..S",
+      ".S............S."
+    ],
+    "clip": "head"
+  }
+]
