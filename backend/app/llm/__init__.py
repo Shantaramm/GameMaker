@@ -1,4 +1,4 @@
-"""Провайдеры LLM: GigaChat, демо (без ключа) и сценарный (для тестов).
+"""Провайдеры LLM: GigaChat, демо (без ключа), ретранслятор (отвечает оператор) и сценарный (для тестов).
 
 Пайплайн знает только интерфейс LLM.complete(); какой провайдер отвечает, задаёт LLM_PROVIDER.
 """
@@ -121,4 +121,8 @@ def make_llm(settings: Settings) -> LLM:
         return GigaChatLLM(settings)
     if settings.llm_provider == "demo":
         return DemoLLM()
+    if settings.llm_provider == "relay":
+        from .relay import RelayLLM
+
+        return RelayLLM(settings.data_dir / "relay")
     raise ValueError(f"неизвестный LLM_PROVIDER: {settings.llm_provider}")

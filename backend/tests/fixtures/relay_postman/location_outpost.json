@@ -1,0 +1,13 @@
+{"intro": "За поворотом — костёр, палатки и бочки под рогожей. Никакого обвала: только люди с дубинками и запах ворованного кедра.",
+"on_enter": [],
+"objects": [
+ {"type": "exit", "id": "outpost_to_trail", "zone": "approach", "kind": "left_edge", "to": "trail"},
+ {"type": "thing", "id": "cedar_barrels", "zone": "approach", "look": "barrel", "name": "Бочки с кедровым орехом", "event": {"type": "narration", "id": "look_barrels", "text": "На бочках клеймо кедровской артели. Той самой, что «закрылась из-за обвала» месяц назад."}},
+ {"type": "enemy", "id": "outpost_guards", "zone": "tents", "enemies": ["smuggler_guard", "smuggler_guard"], "can_flee": true},
+ {"type": "chest", "id": "salt_crate_pile", "zone": "stores", "look": "crates", "contents": [{"give_item": "salt_crate"}, {"give_gold": 12}]},
+ {"type": "chest", "id": "guard_tent_chest", "zone": "tents", "look": "chest", "condition": {"defeated": "outpost_guards"}, "contents": [{"give_item": "smuggler_cudgel"}]},
+ {"type": "exit", "id": "outpost_to_pass", "zone": "stores", "kind": "right_edge", "to": "pass"}
+],
+"enemies": [
+ {"id": "smuggler_guard", "name": "Часовой банды", "description": "Небритый детина в тулупе, с дубинкой и ленивой ухмылкой.", "tier": 2, "appearance": {"head": "square", "skin": "tan", "hair": "crew_cut", "hair_color": "brown", "eyes": "small", "eye_color": "brown", "brows": "thick", "mouth": "stern", "facial_hair": "stubble", "outfit": "peasant_tunic", "outfit_color": "brown", "accent_color": "rust", "accessory": [], "bg_color": "charcoal"}, "abilities": []}
+]}

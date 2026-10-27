@@ -1,0 +1,18 @@
+{"intro": "Перевал. Ветер несёт снежную крупу. Поперёк дороги — не камни, а свежесрубленные брёвна, и над ними чадит факел.",
+"on_enter": [],
+"objects": [
+ {"type": "exit", "id": "pass_to_outpost", "zone": "slope", "kind": "left_edge", "to": "outpost"},
+ {"type": "thing", "id": "fake_rockfall", "zone": "slope", "look": "boulder", "name": "«Обвал»", "event": {"type": "narration", "id": "look_rockfall", "text": "Пара валунов, присыпанных щебнем для вида. За ними — аккуратная баррикада из брёвен с воротами на засове."}},
+ {"type": "enemy", "id": "yakov_band", "zone": "barricade", "enemies": ["yakov_boss", "smuggler_guard"], "can_flee": true},
+ {"type": "npc", "id": "yakov_beaten", "zone": "road_down", "character": "yakov", "condition": {"defeated": "yakov_band"}, "dialogue": {"type": "dialogue", "id": "talk_yakov", "start_node": "y1", "nodes": [
+  {"id": "y1", "speaker": "yakov", "emotion": "angry", "text": "Ну, почтальон… Удивил. Иди, неси свою бумажку. Всё равно в городе тебе никто не поверит: староста скажет, что ты врёшь, — и все кивнут.", "choices": [
+   {"text": "Поверят. У меня долговая книга Гордея.", "condition": {"has_item": "smuggler_ledger"}, "effects": [{"set_flag": "headman_exposed", "value": true}], "next": "y2"},
+   {"text": "Мне хватит того, что письмо дойдёт.", "next": "y3"}]},
+  {"id": "y2", "speaker": "yakov", "emotion": "scared", "text": "Книга?.. Вот же старый дурак, держал её дома! Ладно, ладно. Ворота открыты. Только я в город с тобой не пойду — горы большие.", "next": "end"},
+  {"id": "y3", "speaker": "yakov", "emotion": "happy", "text": "Скромный какой. Ну иди, иди. До весны, почтальон.", "next": "end"}]}},
+ {"type": "exit", "id": "pass_to_city_witness", "zone": "road_down", "kind": "door", "to": "ending_open", "requires": {"flag": "headman_exposed", "is": true}, "locked_text": "Ворота заставы для пристава. Без доказательств тут нечего показать."},
+ {"type": "exit", "id": "pass_to_city", "zone": "road_down", "kind": "right_edge", "to": "ending_letter", "requires": {"defeated": "yakov_band"}, "locked_text": "Дорогу перегораживает баррикада."}
+],
+"enemies": [
+ {"id": "yakov_boss", "name": "Яков Кривой", "description": "Главарь контрабандистов с кистенём и единственным, но очень внимательным глазом.", "tier": 3, "appearance": {"head": "thin", "skin": "olive", "hair": "side_part", "hair_color": "black", "eyes": "sharp", "eye_color": "gray", "brows": "thick", "mouth": "smirk", "facial_hair": "stubble", "outfit": "leather_armor", "outfit_color": "charcoal", "accent_color": "rust", "accessory": ["eyepatch", "scar"], "bg_color": "crimson"}, "abilities": [{"name": "Подлый удар", "effect": [{"damage": 6}], "every_n_turns": 3}]}
+]}

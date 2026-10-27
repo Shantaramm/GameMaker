@@ -98,8 +98,8 @@ export class BattleScreen {
 
     const menu = (sub: "skills" | "items" | null = null) => {
       submenu = sub;
-      if (battle.result) return;
       actions.replaceChildren();
+      if (battle.result) return; // пока доигрывается последний ход, кнопок нет; потом finish() покажет итог
       if (sub === "skills") {
         for (const id of state.skills) {
           const s = world.skills.get(id);

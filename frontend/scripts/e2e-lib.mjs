@@ -76,8 +76,10 @@ export function helpers(page, name, base, shotsDir = null) {
     },
     /** Тап по объекту на карте; если он за краем экрана — сначала идём в его сторону. */
     async tap(objectId) {
+      const from = (await state()).location;
       for (let i = 0; i < 12; i++) {
         if (await g.idle()) return; // по пути открылся бой или диалог
+        if ((await state()).location !== from) return; // шаг к краю экрана сам увёл через выход
         const pos = await page.evaluate((id) => window.__rpg.scene.screenPos(id), objectId);
         check(pos, `объект ${objectId} не найден на уровне`);
         const vw = viewport().width;
@@ -95,7 +97,8 @@ export function helpers(page, name, base, shotsDir = null) {
     async fight() {
       await page.waitForSelector(".battle:not(.hidden)", { timeout: 20000 });
       await g.shot("battle");
-      for (let guard = 0; guard < 80; guard++) {
+      const deadline = Date.now() + 180_000; // анимация хода тоже идёт в зачёт, поэтому лимит по времени, а не по ходам
+      while (Date.now() < deadline) {
         const cont = page.getByRole("button", { name: "Продолжить" });
         if (await cont.isVisible()) {
           const won = await visible(".battle-result.win");
@@ -107,26 +110,33 @@ export function helpers(page, name, base, shotsDir = null) {
           await page.waitForTimeout(120);
           continue;
         }
-        const s = await state();
         const low = await page.evaluate(() => {
           const c = window.__rpg.controller;
           return c.state.hp < 0.3 * (c.state.maxHp + 5);
         });
-        const heals = Object.keys(s.inventory).filter((id) => id === "tonic");
         const btn = (text) => page.locator(".battle-actions .btn", { hasText: text });
+        const firstEnabled = async () => {
+          for (const b of await page.locator(".battle-actions .btn:not(.btn-ghost)").all()) if (await b.isEnabled()) return b;
+          return null;
+        };
         try {
           // бой мог закончиться между проверкой и кликом — тогда подменю не появится, начинаем заново
-          if (low && heals.length) {
-            await btn("Предмет").click({ timeout: 1500 });
-            await btn("Бабушкина настойка").click({ timeout: 1500 });
-          } else {
+          // лечение: первый предмет в сумке (в бою доступны только расходники); иначе первый доступный навык; иначе атака
+          const items = btn("Предмет");
+          if (low && (await items.isEnabled())) {
+            await items.click({ timeout: 1500 });
+            const it = await firstEnabled();
+            if (it) await it.click({ timeout: 1500 });
+          } else if (await btn("Навык").isEnabled()) {
             await btn("Навык").click({ timeout: 1500 });
-            const strike = btn("Точный удар");
-            if (await strike.isEnabled({ timeout: 1500 })) await strike.click({ timeout: 1500 });
+            const sk = await firstEnabled();
+            if (sk) await sk.click({ timeout: 1500 });
             else {
               await btn("Назад").click({ timeout: 1500 });
               await btn("Атака").click({ timeout: 1500 });
             }
+          } else {
+            await btn("Атака").click({ timeout: 1500 });
           }
         } catch {
           // окно боя сменилось — следующая итерация разберётся

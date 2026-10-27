@@ -265,3 +265,11 @@ def test_step_limit_detects_endless_wandering(demo, monkeypatch):
 def test_playtest_requires_balance(demo):
     with pytest.raises(ValueError, match="not balanced"):
         playtest(validate(demo).game)
+
+
+def test_quest_stage_on_item_that_is_taken_away(demo):
+    # этап на has_item, а предмет где-то забирают — квест никогда не завершится
+    demo["quests"][0]["stages"][0]["done"] = {"has_item": "ledger"}
+    obj(demo, "alley", "net_crates")["contents"].append({"take_item": "ledger"})
+    msg = error_paths(demo)["quests[0].stages[0].done"]
+    assert "'ledger'" in msg and "take_item" in msg

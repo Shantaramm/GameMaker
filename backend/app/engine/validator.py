@@ -15,7 +15,7 @@ from . import schema as s
 from .art import ArtLibrary, check_art, load_library
 from .issues import Issue, format_path
 from .levels import build_level
-from .world import condition_items, item_sources, location_edges, reachable_locations
+from .world import condition_items, item_sources, location_edges, location_effect_sites, reachable_locations
 
 MIN_LOCATIONS, MAX_LOCATIONS = 5, 8
 MAX_ENDINGS = 3
@@ -307,6 +307,19 @@ class _Checker:
             for j, stage in enumerate(q.stages):
                 self.check_line(stage.text, format_path(path, "stages", j, "text"))
                 self.check_condition(stage.done, format_path(path, "stages", j, "done"))
+        self.check_taken_quest_items()
+
+    def check_taken_quest_items(self) -> None:
+        """Этапы квеста вычисляются заново каждый раз: если предмет из has_item потом забирают, этап «откатится»."""
+        taken = {e.take_item for i, loc in enumerate(self.game.locations)
+                 for site in location_effect_sites(loc, format_path("locations", i))
+                 for e in site.effects if isinstance(e, s.EffTakeItem)}
+        for i, q in enumerate(self.game.quests):
+            for j, stage in enumerate(q.stages):
+                for item in sorted(condition_items(stage.done) & taken):
+                    self.error(format_path("quests", i, "stages", j, "done"),
+                               f"этап требует предмет '{item}', но его потом забирают (take_item): этап снова станет "
+                               f"невыполненным и квест не завершится. Отметь этап флагом или условием, которое останется истинным")
 
     # --- локации ---
 

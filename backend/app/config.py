@@ -34,7 +34,7 @@ class Settings:
     gigachat_model_text: str = "GigaChat-2-Max"
     gigachat_model_fast: str = "GigaChat-2"
     gigachat_ca_bundle: str = "./certs/russian_trusted_root_ca.cer"
-    llm_provider: str = "demo"  # gigachat | demo
+    llm_provider: str = "demo"  # gigachat | demo | relay
     max_concurrent_generations: int = 3
     games_per_hour_per_ip: int = 5
     data_dir: Path = field(default_factory=lambda: ROOT / "data")

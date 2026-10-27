@@ -1,0 +1,9 @@
+{"intro": "В доме старосты натоплено и пахнет воском. Хозяин на площади — и, кажется, не спешит домой.",
+"on_enter": [],
+"objects": [
+ {"type": "exit", "id": "house_to_village", "zone": "porch", "kind": "door", "to": "village"},
+ {"type": "thing", "id": "fur_pile", "zone": "porch", "look": "crates", "name": "Тюки с мехами", "event": {"type": "narration", "id": "look_furs", "text": "Куньи и соболиные шкурки, перевязанные бечёвкой. Столько не набьёт вся деревня за три зимы. На бечёвке — сургуч с кривой буквой «Я»."}},
+ {"type": "thing", "id": "headman_desk", "zone": "parlor", "look": "table", "name": "Стол старосты", "event": {"type": "narration", "id": "read_note", "text": "Под чернильницей записка: «Гордей, до снега ещё три обоза. Держи людей в деревне. Твоя доля — как условились. Я.»"}},
+ {"type": "chest", "id": "attic_chest", "zone": "attic", "look": "chest", "requires": {"has_item": "gordey_key"}, "locked_text": "Тяжёлый сундук на замке. Ключ староста наверняка держит не дома.", "contents": [{"give_item": "smuggler_ledger"}, {"give_gold": 20}]}
+],
+"enemies": []}

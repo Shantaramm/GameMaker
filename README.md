@@ -29,3 +29,12 @@ cd backend && .venv/bin/python -m pytest          # движок, графика
 cd frontend && npm run typecheck && npm run e2e   # демо-игра проходится кликами до обеих концовок
 cd frontend && npm run e2e:site                   # идея → бриф → генерация → игра → ссылка
 ```
+
+## Генерация без ключа: ответы пишет оператор
+
+`LLM_PROVIDER=relay` превращает бэкенд в «эмулятор GigaChat»: каждый запрос пайплайна сохраняется файлом `data/relay/<game_id>/NNN-<step>.request.md`, а ответ кладётся рядом как `NNN-<step>.response.md` — вручную или другим агентом.
+
+```bash
+cd backend && LLM_PROVIDER=relay .venv/bin/uvicorn app.main:app
+.venv/bin/python -m app.llm.relay      # какие запросы ждут ответа
+```

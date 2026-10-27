@@ -170,3 +170,47 @@ def test_broken_json_fragment_is_repaired():
     result, _ = generate(llm)
     assert "repair_json:items" in [c[0] for c in llm.calls]
     assert result.report.passed
+
+
+# --- запись настоящего прогона через ретранслятор ---
+
+RELAY_DIR = DEMO_PATH.parent / "relay_postman"
+
+
+def test_relay_transcript_replays_with_targeted_fix():
+    """Ответы, написанные оператором вместо GigaChat (LLM_PROVIDER=relay), для идеи про почтальона.
+
+    В каркасе этап квеста завязан на предмет, который потом забирают, — валидатор отправляет
+    в починку только каркас, и записанный исправленный каркас проходит проверку и плейтест.
+    """
+    def responder(step, messages):
+        return (RELAY_DIR / f"{step.replace(':', '_')}.json").read_text(encoding="utf-8")
+
+    llm = ScriptedLLM(responder)
+    result, _ = generate(llm)
+    steps = [step for step, _ in llm.calls]
+    assert steps == ["outline", "location:village", "location:headman_house", "location:trail",
+                     "location:outpost", "location:pass", "items", "fix:outline"]
+    assert "quests[2].stages[0].done" in llm.calls[-1][1][-1]["content"]
+    assert result.report.passed and set(result.report.endings) == {"ending_open", "ending_letter"}
+    assert result.report.quests_completed["vera_salt"] > 0
+    assert split_brief((RELAY_DIR / "brief.md").read_text(encoding="utf-8"))[1]
+
+
+def test_relay_provider_writes_request_and_waits_for_response(tmp_path, monkeypatch):
+    from app.llm import relay
+
+    monkeypatch.setattr(relay, "POLL_SECONDS", 0.01)
+    llm = relay.RelayLLM(tmp_path, timeout=5)
+
+    async def scenario():
+        task = asyncio.create_task(llm.complete([{"role": "user", "content": "привет"}], step="location:pier", game_id="g1"))
+        while not relay.pending(tmp_path):
+            await asyncio.sleep(0.01)
+        (req,) = relay.pending(tmp_path)
+        assert req.name == "001-location_pier.request.md" and "привет" in req.read_text(encoding="utf-8")
+        req.with_name("001-location_pier.response.md").write_text("ответ", encoding="utf-8")
+        return await task
+
+    assert run(scenario()) == "ответ"
+    assert not relay.pending(tmp_path)

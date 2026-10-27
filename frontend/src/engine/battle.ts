@@ -73,7 +73,13 @@ export class Battle {
     }
   }
 
+  /** Бой окончен или бить некого: действия героя игнорируются (защита от лишнего тапа во время анимации). */
+  private get over(): boolean {
+    return this.result !== null || !this.alive.length;
+  }
+
   attack(index: number): BattleEvent[] {
+    if (this.over) return [];
     const t = this.target(index);
     const foe = this.foes[t];
     const dmg = rollDamage(effective(this.state, this.world).attack + this.buff.attack, foe.defense, this.random);
@@ -88,7 +94,7 @@ export class Battle {
 
   skill(skillId: string, index: number): BattleEvent[] {
     const skill = this.world.skills.get(skillId)!;
-    if (!this.canUseSkill(skillId)) return [];
+    if (this.over || !this.canUseSkill(skillId)) return [];
     this.state.focus -= skill.cost_focus;
     const events: BattleEvent[] = [];
     if (skill.target === "enemy") this.hit(this.target(index), skill.effect as Effect[], skill.name, events);
@@ -108,7 +114,7 @@ export class Battle {
 
   item(itemId: string, index: number): BattleEvent[] {
     const item = this.world.items.get(itemId);
-    if (!item || item.kind !== "consumable" || count(this.state, itemId) === 0) return [];
+    if (this.over || !item || item.kind !== "consumable" || count(this.state, itemId) === 0) return [];
     this.state.inventory[itemId] -= 1;
     if (this.state.inventory[itemId] === 0) delete this.state.inventory[itemId];
     const events: BattleEvent[] = [];
@@ -124,6 +130,7 @@ export class Battle {
   }
 
   flee(): BattleEvent[] {
+    if (this.over) return [];
     if (this.foe.can_flee && this.random() < FLEE_CHANCE) {
       this.result = "fled";
       return [{ actor: "hero", target: null, amount: 0, text: "Удалось сбежать!" }];
