@@ -10,7 +10,8 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  font: 16px/1.45 var(--font-text);
+  /* на больших мониторах интерфейс растёт вместе с экраном, чтобы читать без наклона к монитору */
+  font: clamp(16px, 0.5vw + 9px, 22px)/1.45 var(--font-text);
   color: var(--ink);
   background: #0e0c12;
   user-select: none;
@@ -41,7 +42,7 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 .play .btn:disabled { opacity: 0.45; cursor: default; }
 .play .btn-primary { background: var(--gold); color: #1a1408; border-color: #8a6a1a; font-weight: 600; }
 .play .btn-ghost { background: transparent; box-shadow: none; }
-.play .btn-small { padding: 3px 8px; font-size: 14px; }
+.play .btn-small { padding: 0.2em 0.6em; font-size: 0.875em; }
 
 /* полосы */
 .bar { position: relative; height: 12px; min-width: 70px; background: #120e16; border: 2px solid #000; }
@@ -50,48 +51,54 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 .bar-focus .bar-fill { background: var(--focus); }
 .bar-xp .bar-fill { background: var(--xp); }
 .bar-morale .bar-fill { background: #9a6ad8; }
-.hud-stats .bar-morale { width: 56px; }
 .hud-bar { display: inline-flex; }
 .btn.has-points { border-color: var(--gold); color: var(--gold); }
 .bar-text { position: absolute; inset: -2px 0 0; font-family: var(--font-text); font-weight: 600; font-size: 11px; line-height: 14px; text-align: center; text-shadow: 1px 1px 0 #000; }
 
-/* HUD */
+/* HUD: одна плашка у верхнего края сцены — герой слева, место по центру, кнопки справа */
 .hud {
-  position: absolute; top: 0; left: 0; right: 0;
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  padding: 6px 10px;
-  background: linear-gradient(rgba(10, 8, 14, 0.85), rgba(10, 8, 14, 0));
+  position: absolute; top: 0; left: 0; right: 0; z-index: 4;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.6em;
+  padding: 0.45em 0.7em;
+  background: linear-gradient(rgba(10, 8, 14, 0.9), rgba(10, 8, 14, 0.55) 70%, rgba(10, 8, 14, 0));
   pointer-events: none;
 }
 .hud > * { pointer-events: auto; }
-.hud-stats { display: flex; align-items: center; gap: 6px; }
-.hud-stats .bar-hp { width: 90px; }
-.hud-stats .bar-focus { width: 50px; }
+.hud-stats { display: flex; align-items: center; gap: 0.45em; justify-self: start; padding: 0.25em 0.6em; background: rgba(20, 16, 26, 0.85); border: 2px solid var(--edge); box-shadow: 0 2px 0 #000; }
+.hud-stats .bar { height: 0.85em; min-width: 0; }
+.hud-stats .bar-hp { width: 6.5em; }
+.hud-stats .bar-focus { width: 3.5em; }
+.hud-stats .bar-morale { width: 4.5em; }
+.hud-stats .bar-text { font-size: 0.7em; line-height: 1.35em; }
 .hud-level, .hud-gold { font-family: var(--font-pixel); font-weight: 600; text-shadow: 1px 1px 0 #000; }
 .hud-gold { color: var(--gold); }
-.hud-place { flex: 1; color: var(--dim); text-shadow: 1px 1px 0 #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hud-buttons { display: flex; gap: 6px; }
+.hud-place { justify-self: center; font-family: var(--font-pixel); font-size: 1.15em; color: #f3e6c4; letter-spacing: 0.04em; text-shadow: 2px 2px 0 #000;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
+.hud-buttons { display: flex; gap: 0.4em; justify-self: end; }
 
-/* диалог в стиле Disco Elysium */
+/* диалог в стиле Disco Elysium, но по центру под героями: портрет слева, лента и варианты справа.
+   Камера поднимает сцену так, чтобы говорящие стояли над панелью (MapScene.talkTop). */
 .dlg {
   position: absolute; z-index: 5;
-  right: 0; top: 0; bottom: 0; width: min(440px, 42vw);
-  display: flex; flex-direction: column;
+  left: 50%; bottom: 1.2em; transform: translateX(-50%);
+  width: min(62em, calc(100% - 2em)); min-height: min(13em, 40%); max-height: min(54%, 34em);
+  display: flex; gap: 1em;
   background: var(--panel);
-  border-left: 2px solid var(--edge);
-  padding: 12px 14px;
+  border: 2px solid var(--edge); box-shadow: 0 4px 0 #000, 0 0 40px rgba(0, 0, 0, 0.6);
+  padding: 0.9em 1.1em;
 }
-.dlg-portrait { display: flex; align-items: flex-end; gap: 10px; min-height: 152px; padding-bottom: 8px; border-bottom: 1px solid var(--edge); }
-.dlg-portrait.empty { min-height: 0; border-bottom: 0; padding: 0; }
+.dlg-portrait { display: flex; flex-direction: column; align-items: center; gap: 0.4em; }
+.dlg-portrait.empty { display: none; }
 .dlg-portrait canvas { border: 2px solid #000; }
-.dlg-name { font-weight: 600; color: var(--gold); text-transform: uppercase; }
-.dlg-log { flex: 1; overflow-y: auto; padding: 8px 2px; }
+.dlg-name { font-weight: 600; color: var(--gold); text-transform: uppercase; text-align: center; }
+.dlg-main { display: flex; flex-direction: column; min-height: 0; flex: 1; min-width: 0; justify-content: flex-end; }
+.dlg-log { flex: 0 1 auto; min-height: 3.5em; overflow-y: auto; padding: 8px 2px; }
 .dlg-log .line { margin: 0 0 10px; }
 .dlg-log .who { color: #e8a65a; }
 .dlg-log .hero .who { color: #9ac8f0; }
 .dlg-log .narrator { color: #c8bfd4; font-style: italic; }
 .dlg-log .sys { color: var(--xp); font-size: 14px; margin: 0 0 8px; }
-.dlg-actions { padding-top: 6px; }
+.dlg-actions { padding-top: 0.4em; border-top: 1px solid var(--edge); max-height: 70%; overflow-y: auto; flex: none; }
 .dlg-choices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .play .choice { width: 100%; text-align: left; background: transparent; border: 0; box-shadow: none; padding: 4px 2px; color: #f0c070; }
 .play .choice:hover:not(:disabled) { color: #fff; }
@@ -107,15 +114,16 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 
 /* панели */
 .sheet {
-  position: absolute; z-index: 7; right: 0; top: 0; bottom: 0; width: min(420px, 100%);
-  background: var(--panel); border-left: 2px solid var(--edge);
+  position: absolute; z-index: 7; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(46em, calc(100% - 2em)); height: min(86%, 46em);
+  background: var(--panel); border: 2px solid var(--edge); box-shadow: 0 4px 0 #000, 0 0 60px rgba(0, 0, 0, 0.7);
   display: flex; flex-direction: column;
 }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--edge); }
 .sheet-head h2 { margin: 0; }
 .sheet-body { flex: 1; overflow-y: auto; padding: 10px 14px 20px; }
 .inv-stats { display: grid; gap: 6px; }
-.inv-stats > div { display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 8px; }
+.inv-stats > div { display: grid; grid-template-columns: 6.5em 1fr; align-items: center; gap: 8px; }
 .inv-stats .inv-nums { display: block; color: var(--dim); }
 .inv-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
 .inv-slot { border: 2px solid var(--edge); padding: 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 13px; }
@@ -139,7 +147,7 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 .quest.complete b { color: var(--xp); }
 
 /* уведомления */
-.toasts { position: absolute; z-index: 9; left: 50%; top: 52px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 4px; align-items: center; pointer-events: none; }
+.toasts { position: absolute; z-index: 9; left: 50%; top: 3.6em; transform: translateX(-50%); display: flex; flex-direction: column; gap: 4px; align-items: center; pointer-events: none; }
 .toast { background: rgba(10, 8, 14, 0.92); border: 2px solid var(--gold); padding: 4px 12px; transition: opacity 0.5s; white-space: nowrap; }
 .toast.out { opacity: 0; }
 
@@ -157,13 +165,17 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 /* телефон */
 @media (max-width: 640px) {
   .play { font-size: 15px; }
-  .dlg { left: 0; right: 0; top: auto; width: auto; height: 62%; border-left: 0; border-top: 2px solid var(--edge); }
-  .dlg-portrait { min-height: 0; }
-  .dlg-portrait canvas { width: 72px !important; height: 72px !important; }
-  .sheet { top: auto; height: 80%; width: 100%; border-left: 0; border-top: 2px solid var(--edge); }
-  .hud { gap: 6px; padding: 4px 6px; }
+  .dlg { left: 0; right: 0; bottom: 0; transform: none; width: auto; min-height: 0; max-height: 62%; flex-direction: column;
+    gap: 0.4em; border-width: 2px 0 0; padding: 0.6em 0.8em; }
+  .dlg-portrait { flex-direction: row; align-items: center; }
+  .sheet { left: 0; top: auto; bottom: 0; transform: none; height: 80%; width: 100%; border-width: 2px 0 0; }
+  .hud { grid-template-columns: 1fr auto; gap: 6px; padding: 4px 6px; }
   .hud-place { display: none; }
-  .hud-stats .bar-hp { width: 70px; }
+  .hud-stats { padding: 2px 6px; gap: 5px; }
+  .hud-stats .bar-hp { width: 56px; }
+  .hud-stats .bar-focus { width: 26px; }
+  .hud-buttons { gap: 4px; }
+  .hud-buttons .btn-small { padding: 2px 6px; font-size: 13px; }
   .screen-box h1 { font-size: 26px; }
 }
 
@@ -264,10 +276,10 @@ canvas.iso { image-rendering: pixelated; display: block; cursor: pointer; touch-
 .skill-group-name { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; }
 .skill-head { display: flex; align-items: center; gap: 8px; }
 .skill-head b { flex: 1; }
-.skill-value { font-family: var(--font-pixel); font-size: 18px; color: #c9b8f0; }
+.skill-value { font-family: var(--font-pixel); font-size: 1.2em; color: #c9b8f0; }
 .skill small { color: var(--dim); font-size: 12px; line-height: 1.3; display: block; }
 .skill-plus { padding: 0 8px; border-color: var(--gold); color: var(--gold); }
 @media (max-width: 640px) {
   .skill-groups { grid-template-columns: 1fr; }
-  .hud-stats .bar-morale { width: 44px; }
+  .hud-stats .bar-morale { width: 34px; }
 }

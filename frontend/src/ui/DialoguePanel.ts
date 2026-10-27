@@ -15,6 +15,12 @@ function checkLabel(c: ChoiceView): string {
   return `[${k.name} · ${k.difficulty} ${k.target} — ${Math.round(k.chance * 100)}%] `;
 }
 
+/** Портрет крупнее на больших экранах, мельче на телефоне. */
+function portraitScale(): number {
+  const h = window.innerHeight;
+  return window.innerWidth <= 640 ? 2 : h >= 1300 ? 5 : h >= 900 ? 4 : 3;
+}
+
 export class DialoguePanel {
   readonly root = el("div", { className: "dlg hidden" });
   private portrait = el("div", { className: "dlg-portrait" });
@@ -23,7 +29,7 @@ export class DialoguePanel {
   private keyHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(private world: World, private notify: (m: string[]) => void) {
-    this.root.append(this.portrait, this.log, this.actions);
+    this.root.append(this.portrait, el("div", { className: "dlg-main" }, this.log, this.actions));
   }
 
   open(runner: DialogueRunner): Promise<void> {
@@ -132,7 +138,7 @@ export class DialoguePanel {
     const name = c?.name ?? speaker;
     if (c) {
       this.portrait.classList.remove("empty");
-      this.portrait.replaceChildren(pixel(portraitCanvas(c.appearance, emotion as Emotion, c.id), 3), el("div", { className: "dlg-name", textContent: name }));
+      this.portrait.replaceChildren(pixel(portraitCanvas(c.appearance, emotion as Emotion, c.id), portraitScale()), el("div", { className: "dlg-name", textContent: name }));
     }
     const hero = speaker === this.world.game.hero.id;
     this.log.append(el("p", { className: `line${hero ? " hero" : ""}` },

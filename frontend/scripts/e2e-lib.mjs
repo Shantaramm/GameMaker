@@ -88,7 +88,17 @@ export function helpers(page, name, base, shotsDir = null) {
           await page.mouse.click(pos.x, pos.y);
           return;
         }
-        await page.mouse.click(Math.min(vw - 10, Math.max(10, pos.x)), Math.min(vh - 10, Math.max(60, pos.y)));
+        // объект за краем экрана: шагаем в его сторону, но кликаем туда, где нет других объектов
+        const step = await page.evaluate(({ x, y, vw, vh }) => {
+          const scene = window.__rpg.scene;
+          const cx = Math.min(vw - 10, Math.max(10, x));
+          for (let cy = Math.min(vh - 10, Math.max(60, y)); cy < vh; cy += 12) {
+            const [wx, wy] = scene.toWorld(cx, cy);
+            if (!scene.hitObject(wx, wy)) return { x: cx, y: cy };
+          }
+          return { x: cx, y: Math.min(vh - 10, Math.max(60, y)) };
+        }, { x: pos.x, y: pos.y, vw, vh });
+        await page.mouse.click(step.x, step.y);
         await page.waitForTimeout(300);
       }
       throw new Error(`не удалось дотянуться до ${objectId}`);

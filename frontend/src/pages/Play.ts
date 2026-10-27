@@ -69,7 +69,18 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
   };
 
   const ui: GameUI = {
-    dialogue: (runner) => dialogue.open(runner),
+    dialogue: async (runner) => {
+      // камера поднимает героя и собеседника над панелью диалога
+      scene.talkTop = () => {
+        const host = mapHost.getBoundingClientRect();
+        return host.height ? (dialogue.root.getBoundingClientRect().top - host.top) / host.height : 0;
+      };
+      try {
+        await dialogue.open(runner);
+      } finally {
+        scene.talkTop = null;
+      }
+    },
     battle: (b) => battle.open(b, controller.location, controller.state),
     shop: (shop) => new Promise<void>((resolve) => {
       const view = (): Node[] => shopView(shop, controller.state, world, () => { sheet.replace(view()); hud.update(controller.state, world); });

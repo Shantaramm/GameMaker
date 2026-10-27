@@ -30,6 +30,7 @@ npm run gen:types    # schema/game.schema.json → src/types/game.ts (после
 npm run screens      # скриншоты и видео ходьбы в docs/lab/; падает при ошибках/предупреждениях в консоли
 npm run e2e          # сквозной тест: демо-игра проходится кликами до обеих концовок (1280×720 и 375×667); E2E_SHOTS=1 — кадры в docs/play/
 node scripts/battle-shots.mjs   # показательные кадры тактического боя в docs/play/battle-*.png
+node scripts/ui-shots.mjs       # раскладка игры на 2560×1440 … 375×667 в docs/play/ui-*.png (нужен npm run dev)
 ```
 
 После правки генератора деталей: `gen_library.py` → `build_catalog.py` → `build_demo.py` (если менялась демо-игра) → `pytest` (тесты `test_art.py` ловят «дырки» и съехавшие слои) → `npm run screens` и посмотреть глазами.

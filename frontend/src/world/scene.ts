@@ -10,7 +10,10 @@ import { drawArt, drawEdgeMarker, drawTerrain, feetY, isIndoor, objectArt, TILE,
 
 const WALK_SPEED = 4.5;   // тайлов в секунду
 const CLIMB_SPEED = 3.5;
-const TILES_ACROSS = 12;  // сколько тайлов по ширине хочется видеть на телефоне
+const TILES_ACROSS = 14;  // не меньше стольких тайлов по ширине (на телефоне — сколько влезет при масштабе 2)
+const VIEW_TILES = 9;     // этаж уровня (8 тайлов) и немного неба: по ним подбирается масштаб, чтобы сцена заполняла экран
+const MAX_SCALE = 12;
+const TALK_FEET = 0.05;   // в разговоре линия ног — чуть выше верхнего края панели диалога
 
 interface Mover {
   floor: number;
@@ -36,6 +39,8 @@ export class MapScene {
   private last = 0;
   private stopped = false;
   paused = false; // открыта панель (инвентарь, журнал…)
+  /** Идёт разговор: верх панели диалога в долях высоты сцены — камера поднимает героя над панелью. */
+  talkTop: (() => number) | null = null;
 
   constructor(private readonly host: HTMLElement, private readonly game: GameController) {
     this.canvas.className = "map";
@@ -84,10 +89,10 @@ export class MapScene {
     this.canvas.height = Math.round(h * dpr);
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
-    const levelH = this.terrain?.height ?? 128;
+    // масштаб один на все локации — герой одного размера; сцена заполняет экран по высоте
     const byWidth = Math.floor(w / (TILE * TILES_ACROSS));
-    const byHeight = Math.floor(h / levelH);
-    this.scale = Math.max(2, Math.min(Math.max(byWidth, 2), Math.max(byHeight, 2), 4));
+    const byHeight = Math.floor(h / (TILE * VIEW_TILES));
+    this.scale = Math.max(2, Math.min(byWidth, byHeight, MAX_SCALE));
   }
 
   private get view() {
@@ -101,7 +106,10 @@ export class MapScene {
     const W = this.terrain.width;
     const H = this.terrain.height;
     const tx = W <= w ? (W - w) / 2 : Math.min(Math.max(this.hero.x * TILE + TILE / 2 - w / 2, 0), W - w);
-    const ty = H <= h ? H - h : Math.min(Math.max(this.hero.y - TILE * 3 - h / 2, 0), H - h);
+    let ty = H <= h ? H - h : Math.min(Math.max(this.hero.y - TILE * 3 - h / 2, 0), H - h);
+    const talk = this.talkTop?.();
+    // в разговоре камера уходит вниз, ниже уровня — темнота под панелью диалога, герой и собеседник над ней
+    if (talk !== undefined && talk > 0.2) ty = Math.max(ty, this.hero.y - h * (talk - TALK_FEET));
     const k = snap ? 1 : 0.15;
     this.cam.x += (tx - this.cam.x) * k;
     this.cam.y += (ty - this.cam.y) * k;
@@ -381,6 +389,15 @@ export class MapScene {
       for (let x = camX - ((camX - offset) % w) - w; x < camX + view.w + w; x += w) ctx.drawImage(bg, Math.round(x), top, w, bg.height * k);
     }
     ctx.drawImage(this.terrain!, 0, 0);
+    const below = camY + this.view.h - this.terrain!.height;
+    if (below > 0) {
+      // под уровнем (в разговоре камера опускается ниже его края) — земля уходит в темноту
+      const g = ctx.createLinearGradient(0, this.terrain!.height, 0, this.terrain!.height + TILE * 3);
+      g.addColorStop(0, "#1a1520");
+      g.addColorStop(1, "#0e0c12");
+      ctx.fillStyle = g;
+      ctx.fillRect(camX, this.terrain!.height, this.view.w + 1, below + 1);
+    }
 
     const t = this.frame;
     for (const obj of loc.objects ?? []) {
