@@ -79,3 +79,9 @@ figcaption { color: var(--muted); font-size: 12px; text-align: center; }
 
 .grid-page { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
 .grid-page figure { margin: 0; }
+
+.icons { display: flex; flex-wrap: wrap; gap: 6px; }
+.icons figure { margin: 0; width: 64px; }
+.icons figcaption { font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+.walker-row { display: flex; gap: 4px; align-items: flex-end; margin: 0; }
+h3 { margin: 16px 0 4px; font-size: 14px; color: var(--muted); }

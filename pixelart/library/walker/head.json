@@ -1,0 +1,62 @@
+[
+  {
+    "id": "oval",
+    "slot": "walker_head",
+    "description": "oval",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 27], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}]
+    }
+  },
+  {
+    "id": "round",
+    "slot": "walker_head",
+    "description": "round",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 27], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}]
+    }
+  },
+  {
+    "id": "square",
+    "slot": "walker_head",
+    "description": "square",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 27], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", "oSsssssso..", ".ooSssoo...", "..oSsso....", "...ooo....."]}]
+    }
+  },
+  {
+    "id": "thin",
+    "slot": "walker_head",
+    "description": "thin",
+    "frames": {
+      "idle": [{"w": 10, "h": 13, "anchor": [4, 29], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}, {"w": 10, "h": 13, "anchor": [4, 28], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}],
+      "walk": [{"w": 10, "h": 13, "anchor": [4, 29], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}, {"w": 10, "h": 13, "anchor": [4, 30], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}, {"w": 10, "h": 13, "anchor": [4, 29], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}, {"w": 10, "h": 13, "anchor": [4, 30], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}],
+      "climb": [{"w": 10, "h": 13, "anchor": [4, 29], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}, {"w": 10, "h": 13, "anchor": [4, 29], "pixels": ["....o.....", "..ooSoo...", ".oSsssso..", ".oSsssso..", "oSsssssso.", "oSsssssso.", "oSsssskso.", "oSSsssssso", ".oSssssoo.", ".oSsssso..", "..oSsso...", "..oSsso...", "...ooo...."]}]
+    }
+  },
+  {
+    "id": "heart",
+    "slot": "walker_head",
+    "description": "heart",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 27], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSsssssoSo", "oSssssssoo.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}]
+    }
+  },
+  {
+    "id": "old",
+    "slot": "walker_head",
+    "description": "old",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 27], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 29], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}, {"w": 11, "h": 12, "anchor": [4, 28], "pixels": ["..ooooo....", ".oSsssso...", ".oSsssso...", "oSsssssso..", "oSsssssso..", "oSssssskoo.", "oSSssssSoSo", ".oSsssso.o.", ".oSsssso...", "..oSsso....", "..oSsso....", "...ooo....."]}]
+    }
+  }
+]

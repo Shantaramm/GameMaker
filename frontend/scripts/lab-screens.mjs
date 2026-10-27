@@ -2,7 +2,7 @@
 //   npm run screens            → docs/lab/*.png
 //   SEED=7 npm run screens     → другой набор случайных портретов и фонов
 
-import { mkdir } from "node:fs/promises";
+import { mkdir, rename, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { createServer } from "vite";
@@ -34,8 +34,25 @@ async function shot(url, file, selector, width = 1100) {
 await shot(`/lab?grid=portraits&seed=${seed}&count=20`, "portraits.png", ".grid-page[data-ready]", 1000);
 await shot(`/lab?grid=backgrounds&seed=${seed}&count=10`, "backgrounds.png", ".grid-page[data-ready]", 1000);
 await shot(`/lab?grid=creatures&seed=${seed}&count=12`, "creatures.png", ".grid-page[data-ready]", 1000);
+await shot(`/lab?grid=walkers&seed=${seed}&count=20`, "walkers.png", ".grid-page[data-ready]", 1000);
+await shot("/lab?grid=levels&count=5", "levels.png", ".grid-page[data-ready]", 1300);
+await shot("/lab?tab=4", "lab-tilesets.png", "main");
+await shot("/lab?tab=6", "lab-icons.png", "main");
 await shot("/lab?tab=0", "lab-portrait.png", "main");
 await shot("/lab?tab=3", "lab-demo-game.png", "main");
+
+// Видео ходьбы: 20 случайных персонажей, ~3 секунды.
+const videoDir = out + "video-tmp/";
+const recorder = await browser.newContext({ viewport: { width: 760, height: 560 }, recordVideo: { dir: videoDir, size: { width: 760, height: 560 } } });
+const vpage = await recorder.newPage();
+await vpage.goto(`${base}/lab?grid=walking&seed=${seed}&count=20`);
+await vpage.waitForSelector(".grid-page[data-ready]");
+await vpage.waitForTimeout(3000);
+const video = vpage.video();
+await recorder.close();
+await rename(await video.path(), out + "walking.webm");
+await rm(videoDir, { recursive: true, force: true });
+console.log("docs/lab/walking.webm");
 
 await browser.close();
 await server.close();

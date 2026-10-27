@@ -98,6 +98,14 @@ export function creatureColors(spec: CreatureSpec): ColorMap {
   return colors;
 }
 
+export function iconColors(tier: number): ColorMap {
+  const p = library.palettes;
+  const colors = fixed();
+  for (const [k, v] of Object.entries(p.icon_fixed)) colors.set(k, hexToRgb(v));
+  colors.set("c", hexToRgb(p.icon_tiers[String(tier)] ?? p.icon_tiers["1"]));
+  return colors;
+}
+
 export function clothColor(name: string): RGB {
   return named(library.palettes.cloth_colors, name, "cloth");
 }

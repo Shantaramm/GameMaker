@@ -189,6 +189,28 @@ def render_background(spec: dict, pal: dict, parts: dict, seed: int = 1) -> Imag
     return img
 
 
+WALKER_REF = (12, 39)
+
+
+def render_walker(spec: dict, anim: str, i: int, pal: dict, parts: dict, bg=(50, 46, 60)) -> Image.Image:
+    colors = portrait_colors(spec, pal)
+    img = Image.new("RGB", (24, 40), bg)
+    frame = lambda p: p["frames"][anim][i]
+    hair = parts["walker_hair"].get(spec["hair"]) if spec["hair"] != "none" else None
+    if hair and "back_frames" in hair:
+        blit(img, hair["back_frames"][anim][i], WALKER_REF, colors)
+    blit(img, frame(parts["walker_outfit"][spec["outfit"]]), WALKER_REF, colors)
+    blit(img, frame(parts["walker_head"][spec["head"]]), WALKER_REF, colors)
+    if spec.get("facial_hair"):
+        blit(img, frame(parts["walker_facial_hair"][spec["facial_hair"]]), WALKER_REF, colors)
+    if hair:
+        blit(img, frame(hair), WALKER_REF, colors)
+    for acc in spec.get("accessory", []):
+        if acc in parts["walker_accessory"]:
+            blit(img, frame(parts["walker_accessory"][acc]), WALKER_REF, colors)
+    return img
+
+
 def random_spec(rng: random.Random, pal: dict, parts: dict) -> dict:
     pick = lambda xs: rng.choice(sorted(xs))
     spec = {
@@ -231,7 +253,52 @@ if __name__ == "__main__":
     pal, parts = load()
     mode = sys.argv[2] if len(sys.argv) > 2 else "random"
     rng = random.Random(int(sys.argv[3]) if len(sys.argv) > 3 else 1)
-    if mode == "backgrounds":
+    if mode == "tilesets":
+        imgs = []
+        for ts in sorted(parts["tileset"].values(), key=lambda x: x["id"]):
+            mood = {"town_street": "cold_sea", "forest": "verdant", "cave": "violet_dread", "ship": "neon"}.get(ts["id"], "warm_candle")
+            base = {k: hex_rgb(v) for k, v in pal["fixed"].items()}
+            base.update({k: hex_rgb(v) for k, v in pal["mood_palettes"][mood]["colors"].items()})
+            sky = [hex_rgb(c) for c in pal["mood_palettes"][mood]["sky"]["day"]]
+            base["n"] = mix(sky[1], (255, 255, 255), 0.45)
+            tl, img = ts["tiles"], Image.new("RGB", (160, 80), sky[0])
+            for x in range(10):
+                for y in range(4):
+                    if "wall" in tl:
+                        blit(img, tl["wall"], (x * 16, (y + 1) * 16), base)
+                blit(img, tl["floor"], (x * 16, 80), base)
+                if x < 6:
+                    blit(img, tl["slab"], (x * 16, 32), base)
+            for y in (48, 64):
+                blit(img, tl["edge"], (0, y), base)
+                blit(img, tl["ladder"], (96, y), base)
+            for k, name in enumerate(("door", "door_open", "door_locked")):
+                blit(img, tl[name], (16 + 16 * k, 64), base)
+            for k, d in enumerate(ts["decor"].values()):
+                blit(img, d, (64 + k * 16 if k < 2 else 112 + (k - 2) * 16, 40 if d["wall"] else 64), base)
+            imgs.append(img)
+        cols = 2
+    elif mode == "icons":
+        tiers = pal["icon_tiers"]
+        imgs = []
+        for t_ in ("1", "3", "5"):
+            colors = {k: hex_rgb(v) for k, v in pal["fixed"].items()}
+            colors.update({k: hex_rgb(v) for k, v in pal["icon_fixed"].items()})
+            colors["c"] = hex_rgb(tiers[t_])
+            for ic in sorted(parts["icon"].values(), key=lambda x: x["id"]):
+                img = Image.new("RGB", (16, 16), (60, 54, 70))
+                blit(img, ic, (0, 0), colors)
+                imgs.append(img)
+        cols = 13
+    elif mode == "walkers":
+        imgs = []
+        for k in range(10):
+            spec = random_spec(rng, pal, parts)
+            imgs.append(render_portrait(spec, "neutral", pal, parts).crop((4, 4, 44, 44)).resize((24, 24)).resize((24, 40)))
+            for anim, n in (("idle", 2), ("walk", 4), ("climb", 2)):
+                imgs += [render_walker(spec, anim, i, pal, parts) for i in range(n)]
+        cols = 9
+    elif mode == "backgrounds":
         moods = sorted(pal["mood_palettes"])
         props = sorted(parts["prop"])
         imgs = []

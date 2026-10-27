@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Состояние проекта
 
-`SPEC.md` — источник истины по требованиям. Работа идёт по этапам из `SPEC.md` §12 строго по порядку. Следующий этап не начинается, пока не выполнен критерий приёмки текущего. Спецификация переписана в версию 2: игра — RPG с видом сбоку (ходьба без прыжков, тап-навигация, локации с этажами, торговцы, экипировка, опыт, квесты, пошаговые бои при касании врага). Порядок этапов: 1 → 2а → 1б → 2в → 2б → 3…6. Готовы 1, 2а и 1б (схема v2, `levels.py`, бот-исследователь, демо-игра v2 на 5 локаций). Следующий — 2в: графика карты (спрайты в полный рост, тайлсеты, иконки). Отклонения от спецификации, правила, которых в ней нет, реальные id моделей GigaChat и типичные ошибки генерации записываются в `NOTES.md` (§15). Прочитай его перед изменением движка или рантайма.
+`SPEC.md` — источник истины по требованиям. Работа идёт по этапам из `SPEC.md` §12 строго по порядку. Следующий этап не начинается, пока не выполнен критерий приёмки текущего. Спецификация переписана в версию 2: игра — RPG с видом сбоку (ходьба без прыжков, тап-навигация, локации с этажами, торговцы, экипировка, опыт, квесты, пошаговые бои при касании врага). Порядок этапов: 1 → 2а → 1б → 2в → 2б → 3…6. Готовы 1, 2а, 1б (схема v2, `levels.py`, бот-исследователь, демо-игра v2) и 2в (спрайты в полный рост, тайлсеты, иконки, рендер уровня в `frontend/src/world/level.ts`). Следующий — 2б: играбельный рантайм. Отклонения от спецификации, правила, которых в ней нет, реальные id моделей GigaChat и типичные ошибки генерации записываются в `NOTES.md` (§15). Прочитай его перед изменением движка или рантайма.
 
 ## Команды
 
@@ -16,19 +16,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 .venv/bin/python -m pytest tests/test_broken_games.py -k orphan  # один тест
 .venv/bin/python scripts/export_schema.py   # schema.py → schema/game.schema.json (проверяет test_schema_sync)
 .venv/bin/python scripts/build_catalog.py   # pixelart/library → pixelart/catalog.md (проверяет test_catalog_is_in_sync)
+.venv/bin/python scripts/build_demo.py      # фикстура → баланс → уровни → frontend/src/data/demo_game.json (проверяет test_schema_sync)
 
 # библиотека деталей (из корня; нужен Pillow — он есть в backend/.venv)
 backend/.venv/bin/python pixelart/tools/gen_library.py            # генераторы → pixelart/library/*.json
-backend/.venv/bin/python pixelart/tools/preview.py out.png hair   # быстрый лист превью: random|emotions|hair|head|outfit|accessory|facial_hair|creatures|backgrounds|props
+backend/.venv/bin/python pixelart/tools/preview.py out.png hair   # быстрый лист превью: random|emotions|hair|head|outfit|accessory|facial_hair|creatures|backgrounds|props|walkers|tilesets|icons
 
 # фронтенд (из /frontend)
 npm run dev          # http://localhost:5173/lab — PixelLab
 npm run typecheck
 npm run gen:types    # schema/game.schema.json → src/types/game.ts (после export_schema)
-npm run screens      # скриншоты в docs/lab/; падает при ошибках/предупреждениях в консоли
+npm run screens      # скриншоты и видео ходьбы в docs/lab/; падает при ошибках/предупреждениях в консоли
 ```
 
-После правки генератора деталей: `gen_library.py` → `build_catalog.py` → `pytest` (тесты `test_art.py` ловят «дырки» и съехавшие слои) → `npm run screens` и посмотреть глазами.
+После правки генератора деталей: `gen_library.py` → `build_catalog.py` → `build_demo.py` (если менялась демо-игра) → `pytest` (тесты `test_art.py` ловят «дырки» и съехавшие слои) → `npm run screens` и посмотреть глазами.
 
 Будущие (из спецификации; проверить, когда появятся файлы):
 

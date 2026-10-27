@@ -60,6 +60,13 @@ def render(lib: ArtLibrary) -> str:
                 where = f" ({part.setting})" if part.setting and part.setting != "any" and slot in ("far", "prop") else ""
                 lines.append(f"- `{part.id}` — {part.description}{where}")
             lines.append("")
+    lines += ["## Локации (Location)", "", "### `theme` — тайлсет локации; в скобках — для какого `background.setting`"]
+    for part in lib.parts["tileset"].values():
+        lines.append(f"- `{part.id}` — {part.description} ({part.setting})")
+    lines += ["", "### `look` у сундуков и предметов для осмотра — любой id из `props[].id` выше", "",
+              "## Предметы (Item)", "", "### `icon` — иконка; цвет иконки задаёт `value_tier`"]
+    lines.append(", ".join(f"`{p.id}` ({p.description})" for p in lib.parts["icon"].values()))
+    lines.append("")
     lines += [
         "`time`: `day` | `dusk` | `night`. `overlay`: `none` | `rain` | `fog` | `snow` | `dust`. "
         "`size` существа: `small` | `medium` | `large`.",

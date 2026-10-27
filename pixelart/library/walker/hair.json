@@ -1,0 +1,167 @@
+[
+  {
+    "id": "short_messy",
+    "slot": "walker_hair",
+    "description": "short_messy",
+    "frames": {
+      "idle": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 30], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 32], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 32], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["....o...o.", "..ooHoooHo", ".oHoooHoo.", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    }
+  },
+  {
+    "id": "short_neat",
+    "slot": "walker_hair",
+    "description": "short_neat",
+    "frames": {
+      "idle": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    }
+  },
+  {
+    "id": "crew_cut",
+    "slot": "walker_hair",
+    "description": "crew_cut",
+    "frames": {
+      "idle": [{"w": 9, "h": 8, "anchor": [4, 29], "pixels": ["...ooo...", "..oHHho..", ".oHHhHho.", "oHHhHhHho", "oHhHhHho.", "oHHhHoo..", "oHhoo....", ".oo......"]}, {"w": 9, "h": 8, "anchor": [4, 28], "pixels": ["...ooo...", "..oHhHo..", ".oHhHhHo.", "oHhHhHhHo", "oHHhHhHo.", "oHhHhoo..", "oHHoo....", ".oo......"]}],
+      "walk": [{"w": 9, "h": 8, "anchor": [4, 29], "pixels": ["...ooo...", "..oHHho..", ".oHHhHho.", "oHHhHhHho", "oHhHhHho.", "oHHhHoo..", "oHhoo....", ".oo......"]}, {"w": 9, "h": 8, "anchor": [4, 30], "pixels": ["...ooo...", "..oHhHo..", ".oHhHhHo.", "oHhHhHhHo", "oHHhHhHo.", "oHhHhoo..", "oHHoo....", ".oo......"]}, {"w": 9, "h": 8, "anchor": [4, 29], "pixels": ["...ooo...", "..oHHho..", ".oHHhHho.", "oHHhHhHho", "oHhHhHho.", "oHHhHoo..", "oHhoo....", ".oo......"]}, {"w": 9, "h": 8, "anchor": [4, 30], "pixels": ["...ooo...", "..oHhHo..", ".oHhHhHo.", "oHhHhHhHo", "oHHhHhHo.", "oHhHhoo..", "oHHoo....", ".oo......"]}],
+      "climb": [{"w": 9, "h": 8, "anchor": [4, 29], "pixels": ["...ooo...", "..oHHho..", ".oHHhHho.", "oHHhHhHho", "oHhHhHho.", "oHHhHoo..", "oHhoo....", ".oo......"]}, {"w": 9, "h": 8, "anchor": [4, 29], "pixels": ["...ooo...", "..oHHho..", ".oHHhHho.", "oHHhHhHho", "oHhHhHho.", "oHHhHoo..", "oHhoo....", ".oo......"]}]
+    }
+  },
+  {
+    "id": "side_part",
+    "slot": "walker_hair",
+    "description": "side_part",
+    "frames": {
+      "idle": [{"w": 11, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}, {"w": 11, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}],
+      "walk": [{"w": 11, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}, {"w": 11, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}, {"w": 11, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}, {"w": 11, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}],
+      "climb": [{"w": 11, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}, {"w": 11, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhho..", ".oHhhhhhho.", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhooo.", "oHhhhho....", "oHhhoo.....", ".ooo......."]}]
+    }
+  },
+  {
+    "id": "long_straight",
+    "slot": "walker_hair",
+    "description": "long_straight",
+    "frames": {
+      "idle": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    },
+    "back_frames": {
+      "idle": [{"w": 6, "h": 14, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 14, "anchor": [5, 23], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}],
+      "walk": [{"w": 6, "h": 14, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 14, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 14, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 14, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}],
+      "climb": [{"w": 6, "h": 14, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 14, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}]
+    }
+  },
+  {
+    "id": "long_braid",
+    "slot": "walker_hair",
+    "description": "long_braid",
+    "frames": {
+      "idle": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    },
+    "back_frames": {
+      "idle": [{"w": 5, "h": 14, "anchor": [5, 21], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}, {"w": 5, "h": 14, "anchor": [5, 20], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}],
+      "walk": [{"w": 5, "h": 14, "anchor": [5, 21], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}, {"w": 5, "h": 14, "anchor": [5, 22], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}, {"w": 5, "h": 14, "anchor": [5, 21], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}, {"w": 5, "h": 14, "anchor": [5, 22], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}],
+      "climb": [{"w": 5, "h": 14, "anchor": [5, 21], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}, {"w": 5, "h": 14, "anchor": [5, 21], "pixels": [".ooo.", "oHhho", "oHhho", "oHhho", "oHhho", "oHho.", "oHhho", "oHho.", "oHho.", "oHho.", "oHho.", "oHho.", "oaao.", ".oo.."]}]
+    }
+  },
+  {
+    "id": "ponytail",
+    "slot": "walker_hair",
+    "description": "ponytail",
+    "frames": {
+      "idle": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHahhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    },
+    "back_frames": {
+      "idle": [{"w": 7, "h": 10, "anchor": [7, 26], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}, {"w": 7, "h": 10, "anchor": [7, 25], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}],
+      "walk": [{"w": 7, "h": 10, "anchor": [7, 26], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}, {"w": 7, "h": 10, "anchor": [7, 27], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}, {"w": 7, "h": 10, "anchor": [7, 26], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}, {"w": 7, "h": 10, "anchor": [7, 27], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}],
+      "climb": [{"w": 7, "h": 10, "anchor": [7, 26], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}, {"w": 7, "h": 10, "anchor": [7, 26], "pixels": ["...ooo.", "..oHhho", "..oHho.", "..oHho.", ".oHho..", ".oHho..", ".oHho..", "oHho...", "oHho...", ".oo...."]}]
+    }
+  },
+  {
+    "id": "bun",
+    "slot": "walker_hair",
+    "description": "bun",
+    "frames": {
+      "idle": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 30], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "walk": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 32], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 32], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}],
+      "climb": [{"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}, {"w": 10, "h": 11, "anchor": [5, 31], "pixels": ["..oo......", ".oHho.....", "oHhhhooo..", "oHhhhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhho...", "oHhhoo....", ".ooo......"]}]
+    }
+  },
+  {
+    "id": "curly",
+    "slot": "walker_hair",
+    "description": "curly",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}, {"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}, {"w": 11, "h": 12, "anchor": [6, 31], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}, {"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}, {"w": 11, "h": 12, "anchor": [6, 31], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}, {"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["....oooo...", "...oHhhhoo.", "..oHhhhhhho", ".oHhhhhhhho", "oHhhhhhhhho", "oHhhhhhhho.", "oHhhhhhho..", "oHhhhhho...", "oHhhhho....", "oHhhho.....", ".oHho......", "..oo......."]}]
+    }
+  },
+  {
+    "id": "afro",
+    "slot": "walker_hair",
+    "description": "afro",
+    "frames": {
+      "idle": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}, {"w": 10, "h": 9, "anchor": [5, 28], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}],
+      "walk": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}, {"w": 10, "h": 9, "anchor": [5, 30], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}],
+      "climb": [{"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}, {"w": 10, "h": 9, "anchor": [5, 29], "pixels": ["...ooooo..", "..oHhhhho.", ".oHhhhhhho", ".oHhhhhhho", "oHhhhhhhho", "oHhhhhhoo.", "oHhhhoo...", "oHhoo.....", ".oo......."]}]
+    },
+    "back_frames": {
+      "idle": [{"w": 14, "h": 13, "anchor": [7, 31], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}, {"w": 14, "h": 13, "anchor": [7, 30], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}],
+      "walk": [{"w": 14, "h": 13, "anchor": [7, 31], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}, {"w": 14, "h": 13, "anchor": [7, 32], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}, {"w": 14, "h": 13, "anchor": [7, 31], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}, {"w": 14, "h": 13, "anchor": [7, 32], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}],
+      "climb": [{"w": 14, "h": 13, "anchor": [7, 31], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}, {"w": 14, "h": 13, "anchor": [7, 31], "pixels": ["....oooooo....", "...oHhhhhho...", "..oHhhhhhhho..", ".oHhhhhhhhhho.", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", "oHhhhhhhhhhhho", ".oHhhhhhhhhho.", "..oHhhhhhhho..", "...oHhhhhho...", "....oooooo...."]}]
+    }
+  },
+  {
+    "id": "mohawk",
+    "slot": "walker_hair",
+    "description": "mohawk",
+    "frames": {
+      "idle": [{"w": 8, "h": 7, "anchor": [4, 32], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}, {"w": 8, "h": 7, "anchor": [4, 31], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}],
+      "walk": [{"w": 8, "h": 7, "anchor": [4, 32], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}, {"w": 8, "h": 7, "anchor": [4, 33], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}, {"w": 8, "h": 7, "anchor": [4, 32], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}, {"w": 8, "h": 7, "anchor": [4, 33], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}],
+      "climb": [{"w": 8, "h": 7, "anchor": [4, 32], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}, {"w": 8, "h": 7, "anchor": [4, 32], "pixels": ["...ooo..", "..oHhho.", ".oHhhhho", "oHhhhhho", "oHhhhhho", "oHhhhhho", ".oooooo."]}]
+    }
+  },
+  {
+    "id": "bob",
+    "slot": "walker_hair",
+    "description": "bob",
+    "frames": {
+      "idle": [{"w": 11, "h": 11, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}, {"w": 11, "h": 11, "anchor": [5, 28], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}],
+      "walk": [{"w": 11, "h": 11, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}, {"w": 11, "h": 11, "anchor": [5, 30], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}, {"w": 11, "h": 11, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}, {"w": 11, "h": 11, "anchor": [5, 30], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}],
+      "climb": [{"w": 11, "h": 11, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}, {"w": 11, "h": 11, "anchor": [5, 29], "pixels": ["...ooooo...", "..oHhhhhoo.", ".oHhhhhhhho", ".oHhhhhhhho", "oHhhhhhhho.", "oHhhhhhoo..", "oHhhhho....", "oHhhhho....", "oHhhhho....", "oHhhhho....", ".ooooo....."]}]
+    }
+  },
+  {
+    "id": "balding",
+    "slot": "walker_hair",
+    "description": "balding",
+    "frames": {
+      "idle": [{"w": 6, "h": 5, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 5, "anchor": [5, 24], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}],
+      "walk": [{"w": 6, "h": 5, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 5, "anchor": [5, 26], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 5, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 5, "anchor": [5, 26], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}],
+      "climb": [{"w": 6, "h": 5, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}, {"w": 6, "h": 5, "anchor": [5, 25], "pixels": [".oooo.", "oHhhho", "oHhhho", "oHhhho", ".oooo."]}]
+    }
+  },
+  {
+    "id": "hood",
+    "slot": "walker_hair",
+    "description": "hood",
+    "frames": {
+      "idle": [{"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}, {"w": 11, "h": 12, "anchor": [6, 28], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}],
+      "walk": [{"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}, {"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}, {"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}, {"w": 11, "h": 12, "anchor": [6, 30], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}],
+      "climb": [{"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}, {"w": 11, "h": 12, "anchor": [6, 29], "pixels": ["...oooooo..", "..oCccccco.", ".oCccccccco", ".oCccccccco", "oCcccccooo.", "oCccccco...", "oCccccco...", "oCccccco...", ".oCccccooo.", ".oCccccccco", "..oCccccco.", "...oooooo.."]}]
+    },
+    "back_frames": {
+      "idle": [{"w": 9, "h": 8, "anchor": [6, 22], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}, {"w": 9, "h": 8, "anchor": [6, 21], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}],
+      "walk": [{"w": 9, "h": 8, "anchor": [6, 22], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}, {"w": 9, "h": 8, "anchor": [6, 23], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}, {"w": 9, "h": 8, "anchor": [6, 22], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}, {"w": 9, "h": 8, "anchor": [6, 23], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}],
+      "climb": [{"w": 9, "h": 8, "anchor": [6, 22], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}, {"w": 9, "h": 8, "anchor": [6, 22], "pixels": [".ooooooo.", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", "oCcccccco", ".ooooooo."]}]
+    }
+  }
+]

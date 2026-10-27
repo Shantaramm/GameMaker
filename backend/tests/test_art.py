@@ -16,7 +16,10 @@ EMOTIONS = ["neutral", "angry", "sad", "happy", "scared", "surprised"]
 PORTRAIT_CHARS = set(".oswkmhcaerSHCAEWMR")
 CREATURE_CHARS = set(".ocaewkmCAWM")
 BACKGROUND_CHARS = set(".ofFgGpPqQvVaAlnNwkmM")
-CHARS_BY_DIR = {"portrait": PORTRAIT_CHARS, "creature": CREATURE_CHARS, "background": BACKGROUND_CHARS}
+ICON_CHARS = set(".ocCaApPvVrRmMwWk")
+WALKER_CHARS = PORTRAIT_CHARS | {"K"}  # K — тень чёрного: ботинок дальней ноги
+CHARS_BY_DIR = {"portrait": PORTRAIT_CHARS, "creature": CREATURE_CHARS, "background": BACKGROUND_CHARS,
+                "walker": WALKER_CHARS, "tiles": BACKGROUND_CHARS, "icons": ICON_CHARS}
 
 
 def raw_parts() -> dict[str, dict[str, dict]]:
@@ -38,17 +41,26 @@ LAYOUT = json.loads((LIBRARY_DIR / "layout.json").read_text(encoding="utf-8"))
 
 
 def sprites_of(part: dict):
-    yield "", part
+    if "pixels" in part:
+        yield "", part
     for name, v in part.get("variants", {}).items():
         yield f".variants.{name}", v
     if "back" in part:
         yield ".back", part["back"]
+    for key in ("frames", "back_frames"):
+        for anim, frames in part.get(key, {}).items():
+            for i, sp in enumerate(frames):
+                yield f".{key}.{anim}[{i}]", sp
+    for key in ("tiles", "decor"):
+        for name, sp in part.get(key, {}).items():
+            yield f".{key}.{name}", sp
 
 
 def test_minimum_library_size():
     """Минимальная библиотека из SPEC §5.7.2–5.7.4."""
     minimum = {"head": 6, "hair": 14, "eyes": 6, "brows": 5, "mouth": 6, "facial_hair": 4, "outfit": 12,
-               "accessory": 12, "creature_body": 10, "creature_feature": 10, "sky": 6, "far": 10, "prop": 25, "ground": 6}
+               "accessory": 12, "creature_body": 10, "creature_feature": 10, "sky": 6, "far": 10, "prop": 25, "ground": 6,
+               "tileset": 8, "icon": 40}
     assert {slot: len(PARTS[slot]) >= n for slot, n in minimum.items()} == {slot: True for slot in minimum}
     palettes = load_library().palettes
     assert len(palettes["skin_tones"]) >= 8 and len(palettes["hair_colors"]) >= 12
@@ -83,6 +95,31 @@ def test_emotions_actually_differ():
             for slot in ("eyes", "brows", "mouth") for part in PARTS[slot].values()
         )
         assert changed, emotion
+
+
+def test_every_portrait_part_has_a_walker_pair():
+    """Спрайт в полный рост выводится из PortraitSpec по совпадающим id (SPEC §5.8.3)."""
+    for slot in ("head", "hair", "outfit", "facial_hair"):
+        assert set(PARTS[slot]) <= set(PARTS[f"walker_{slot}"]), slot
+    assert set(PARTS["walker_accessory"]) <= set(PARTS["accessory"])
+
+
+def test_walker_frames_are_complete():
+    expected = LAYOUT["walker"]["frames"]
+    for slot in ("walker_head", "walker_hair", "walker_outfit", "walker_facial_hair", "walker_accessory"):
+        for pid, part in PARTS[slot].items():
+            assert {a: len(f) for a, f in part["frames"].items()} == expected, f"{slot}:{pid}"
+
+
+def test_tilesets_are_complete():
+    required = {"floor", "fill", "slab", "edge", "ladder", "door", "door_open", "door_locked"}
+    for tid, ts in PARTS["tileset"].items():
+        assert required <= set(ts["tiles"]), tid
+        assert ("wall" in ts["tiles"]) == (ts["setting"] == "indoor"), tid
+        assert len(ts["decor"]) >= 4, tid
+        for name, sp in ts["tiles"].items():
+            size = 32 if name.startswith("door") else 16
+            assert (sp["w"], sp["h"]) == (16, size), f"{tid}.{name}"
 
 
 def test_creature_points_and_attachments():
@@ -216,11 +253,19 @@ def test_unknown_creature_feature_background_and_look(demo):
     assert obj_path(demo, "alley", "net_crates") + ".look" in errors
 
 
-def test_tilesets_and_icons_are_not_checked_until_library_has_them(demo):
-    """До этапа 2в в библиотеке нет тайлсетов и иконок: их id пока не проверяются."""
-    demo["locations"][0]["theme"] = "anything"
-    demo["items"][0]["icon"] = "anything"
-    assert validate(demo).ok
+def test_unknown_tileset_and_icon(demo):
+    demo["locations"][0]["theme"] = "space_station"
+    demo["items"][0]["icon"] = "lightsaber"
+    errors = error_paths(demo)
+    assert errors["locations[0].theme"].startswith("неизвестная деталь слота tileset: 'space_station'")
+    assert "items[0].icon" in errors
+
+
+def test_tileset_setting_mismatch_is_warning(demo):
+    demo["locations"][0]["theme"] = "cave"
+    report = validate(demo)
+    assert report.ok
+    assert "locations[0].theme" in {w.path for w in report.warnings}
 
 
 def test_setting_mismatch_is_warning(demo):

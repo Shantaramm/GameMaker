@@ -19,6 +19,11 @@ export interface Part extends Sprite {
   layer?: "back" | "front";
   setting?: "indoor" | "outdoor" | "any";
   stars?: number; // процедурные звёзды неба
+  frames?: Record<string, Sprite[]>; // спрайт в полный рост: кадры по анимациям
+  back_frames?: Record<string, Sprite[]>; // задний слой причёски спрайта
+  tiles?: Record<string, Sprite>; // тайлсет
+  decor?: Record<string, Sprite & { wall: boolean }>;
+  faces?: "left" | "front"; // тело существа: нарисовано мордой влево или анфас
 }
 
 export interface MoodPalette {
@@ -34,12 +39,16 @@ export interface Palettes {
   eye_colors: Record<string, string>;
   cloth_colors: Record<string, string>;
   mood_palettes: Record<string, MoodPalette>;
+  icon_tiers: Record<string, string>;
+  icon_fixed: Record<string, string>;
 }
 
 export interface Layout {
   portrait: { w: number; h: number; ref: [number, number]; emotions: string[] };
   creature: { w: number; h: number; ref: [number, number] };
   background: { w: number; h: number; horizon: number; prop_base_y: number };
+  tile: number;
+  walker: { w: number; h: number; ref: [number, number]; size: [number, number]; frames: Record<string, number> };
 }
 
 export interface Library {
@@ -50,7 +59,9 @@ export interface Library {
 
 export type Slot =
   | "head" | "hair" | "eyes" | "brows" | "mouth" | "facial_hair" | "outfit" | "accessory"
-  | "creature_body" | "creature_feature" | "sky" | "far" | "ground" | "prop";
+  | "creature_body" | "creature_feature" | "sky" | "far" | "ground" | "prop"
+  | "walker_head" | "walker_hair" | "walker_outfit" | "walker_facial_hair" | "walker_accessory"
+  | "tileset" | "icon";
 
 const files = import.meta.glob("../../../pixelart/library/**/*.json", { eager: true, import: "default" });
 
@@ -77,6 +88,10 @@ export function ids(slot: Slot): string[] {
 }
 
 const warned = new Set<string>();
+
+export function has(slot: Slot, id: string): boolean {
+  return library.slots[slot]?.has(id) ?? false;
+}
 
 /** Деталь по id; неизвестный id заменяется первой деталью слота (SPEC §6.7), без падения. */
 export function part(slot: Slot, id: string): Part {

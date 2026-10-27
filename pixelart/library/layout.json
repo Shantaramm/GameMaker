@@ -28,5 +28,23 @@
     "h": 90,
     "horizon": 72,
     "prop_base_y": 82
+  },
+  "tile": 16,
+  "walker": {
+    "w": 24,
+    "h": 40,
+    "ref": [
+      12,
+      39
+    ],
+    "size": [
+      16,
+      32
+    ],
+    "frames": {
+      "idle": 2,
+      "walk": 4,
+      "climb": 2
+    }
   }
 }

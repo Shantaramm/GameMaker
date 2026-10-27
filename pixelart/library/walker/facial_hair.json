@@ -1,0 +1,42 @@
+[
+  {
+    "id": "full_beard",
+    "slot": "walker_facial_hair",
+    "description": "full_beard",
+    "frames": {
+      "idle": [{"w": 8, "h": 6, "anchor": [2, 23], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}, {"w": 8, "h": 6, "anchor": [2, 22], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}],
+      "walk": [{"w": 8, "h": 6, "anchor": [2, 23], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}, {"w": 8, "h": 6, "anchor": [2, 24], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}, {"w": 8, "h": 6, "anchor": [2, 23], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}, {"w": 8, "h": 6, "anchor": [2, 24], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}],
+      "climb": [{"w": 8, "h": 6, "anchor": [2, 23], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}, {"w": 8, "h": 6, "anchor": [2, 23], "pixels": [".oooooo.", "ohhhhhho", "ohhhhhho", "ohhhhho.", "ohhhho..", ".oooo..."]}]
+    }
+  },
+  {
+    "id": "goatee",
+    "slot": "walker_facial_hair",
+    "description": "goatee",
+    "frames": {
+      "idle": [{"w": 4, "h": 5, "anchor": [-1, 21], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}, {"w": 4, "h": 5, "anchor": [-1, 20], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}],
+      "walk": [{"w": 4, "h": 5, "anchor": [-1, 21], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}, {"w": 4, "h": 5, "anchor": [-1, 22], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}, {"w": 4, "h": 5, "anchor": [-1, 21], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}, {"w": 4, "h": 5, "anchor": [-1, 22], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}],
+      "climb": [{"w": 4, "h": 5, "anchor": [-1, 21], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}, {"w": 4, "h": 5, "anchor": [-1, 21], "pixels": [".oo.", "ohho", "ohho", "ohho", ".oo."]}]
+    }
+  },
+  {
+    "id": "mustache",
+    "slot": "walker_facial_hair",
+    "description": "mustache",
+    "frames": {
+      "idle": [{"w": 5, "h": 3, "anchor": [-1, 22], "pixels": [".ooo.", "ohhho", ".ooo."]}, {"w": 5, "h": 3, "anchor": [-1, 21], "pixels": [".ooo.", "ohhho", ".ooo."]}],
+      "walk": [{"w": 5, "h": 3, "anchor": [-1, 22], "pixels": [".ooo.", "ohhho", ".ooo."]}, {"w": 5, "h": 3, "anchor": [-1, 23], "pixels": [".ooo.", "ohhho", ".ooo."]}, {"w": 5, "h": 3, "anchor": [-1, 22], "pixels": [".ooo.", "ohhho", ".ooo."]}, {"w": 5, "h": 3, "anchor": [-1, 23], "pixels": [".ooo.", "ohhho", ".ooo."]}],
+      "climb": [{"w": 5, "h": 3, "anchor": [-1, 22], "pixels": [".ooo.", "ohhho", ".ooo."]}, {"w": 5, "h": 3, "anchor": [-1, 22], "pixels": [".ooo.", "ohhho", ".ooo."]}]
+    }
+  },
+  {
+    "id": "stubble",
+    "slot": "walker_facial_hair",
+    "description": "stubble",
+    "frames": {
+      "idle": [{"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}, {"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}],
+      "walk": [{"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}, {"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}, {"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}, {"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}],
+      "climb": [{"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}, {"w": 0, "h": 0, "anchor": [0, 0], "pixels": []}]
+    }
+  }
+]

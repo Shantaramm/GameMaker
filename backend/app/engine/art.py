@@ -171,6 +171,9 @@ def check_art(game: s.Game, lib: ArtLibrary) -> list[Issue]:
         path = format_path("locations", i, "background")
         if bg.setting == "indoor" and bg.sky is not None:
             issues.append(Issue(path=format_path(path, "sky"), message="небо не рисуется в помещении (setting: indoor)", severity="warning"))
+        tileset = lib.parts.get("tileset", {}).get(loc.theme)
+        if tileset and tileset.setting and tileset.setting != bg.setting:
+            issues.append(Issue(path=format_path("locations", i, "theme"), message=f"тайлсет '{loc.theme}' рассчитан на {tileset.setting}, а фон локации — {bg.setting}", severity="warning"))
         far = lib.parts.get("far", {}).get(bg.far)
         if far and far.setting and far.setting != bg.setting:
             issues.append(Issue(path=format_path(path, "far"), message=f"дальний план '{bg.far}' рассчитан на {far.setting}, а локация — {bg.setting}", severity="warning"))

@@ -17,7 +17,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import background  # noqa: E402
 import creature  # noqa: E402
+import icons  # noqa: E402
 import portrait  # noqa: E402
+import tiles  # noqa: E402
+import walker  # noqa: E402
 
 LIB = Path(__file__).resolve().parents[1] / "library"
 
@@ -57,6 +60,9 @@ def write_layout() -> None:
         "creature": {"w": creature.W, "h": creature.H, "ref": list(creature.REF)},
         "background": {"w": background.W, "h": background.H, "horizon": background.HORIZON,
                        "prop_base_y": background.PROP_BASE_Y},
+        "tile": tiles.S,
+        "walker": {"w": walker.W, "h": walker.H, "ref": list(walker.REF), "size": list(walker.SIZE),
+                   "frames": {anim: len(poses) for anim, poses in walker.POSES.items()}},
     }
     (LIB / "layout.json").write_text(json.dumps(layout, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -66,3 +72,6 @@ if __name__ == "__main__":
     write("portrait", portrait.build())
     write("creature", creature.build())
     write("background", background.build())
+    write("walker", walker.build())
+    write("tiles", tiles.build())
+    write("icons", icons.build())

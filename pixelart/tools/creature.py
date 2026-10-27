@@ -23,11 +23,15 @@ def grid() -> Grid:
     return Grid(W, H)
 
 
+FACING_LEFT = {"wolf", "dragonling", "rat"}  # нарисованы в профиль мордой влево
+
+
 def body_part(id: str, description: str, g: Grid, points: dict[str, tuple[int, int]]) -> dict:
     sprite = g.sprite(REF)
     ox, oy = REF[0] - sprite["anchor"][0], REF[1] - sprite["anchor"][1]
     local = {k: [x - ox, y - oy] for k, (x, y) in points.items()}
-    return {"id": id, "slot": "creature_body", "description": description, **sprite, "points": local}
+    faces = "left" if id in FACING_LEFT else "front"
+    return {"id": id, "slot": "creature_body", "description": description, **sprite, "points": local, "faces": faces}
 
 
 def finish(g: Grid, shade_width: int = 2) -> Grid:

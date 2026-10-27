@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fedora",
+    "slot": "walker_accessory",
+    "description": "шляпа",
+    "frames": {
+      "idle": [{"w": 13, "h": 7, "anchor": [6, 32], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}, {"w": 13, "h": 7, "anchor": [6, 31], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}],
+      "walk": [{"w": 13, "h": 7, "anchor": [6, 32], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}, {"w": 13, "h": 7, "anchor": [6, 33], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}, {"w": 13, "h": 7, "anchor": [6, 32], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}, {"w": 13, "h": 7, "anchor": [6, 33], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}],
+      "climb": [{"w": 13, "h": 7, "anchor": [6, 32], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}, {"w": 13, "h": 7, "anchor": [6, 32], "pixels": ["...ooooooo...", "..oaaaaaaao..", "..oaaaaaaao..", "..oaaaaaaao..", ".ookkkkkkkoo.", "oaaaaaaaaaaao", ".ooooooooooo."]}]
+    }
+  },
+  {
+    "id": "wizard_hat",
+    "slot": "walker_accessory",
+    "description": "колпак",
+    "frames": {
+      "idle": [{"w": 12, "h": 11, "anchor": [5, 36], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}, {"w": 12, "h": 11, "anchor": [5, 35], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}],
+      "walk": [{"w": 12, "h": 11, "anchor": [5, 36], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}, {"w": 12, "h": 11, "anchor": [5, 37], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}, {"w": 12, "h": 11, "anchor": [5, 36], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}, {"w": 12, "h": 11, "anchor": [5, 37], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}],
+      "climb": [{"w": 12, "h": 11, "anchor": [5, 36], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}, {"w": 12, "h": 11, "anchor": [5, 36], "pixels": ["...oo.......", "..oaaoo.....", "..oaaaao....", "..oaaaao....", ".oaaaaaao...", ".oaaaaaao...", ".oaaaaaaao..", "oaaaaaaaaao.", "oaaaaaaaaao.", "oaaaaaaaaaao", ".oooooooooo."]}]
+    }
+  },
+  {
+    "id": "crown",
+    "slot": "walker_accessory",
+    "description": "корона",
+    "frames": {
+      "idle": [{"w": 9, "h": 5, "anchor": [4, 31], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}, {"w": 9, "h": 5, "anchor": [4, 30], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}],
+      "walk": [{"w": 9, "h": 5, "anchor": [4, 31], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}, {"w": 9, "h": 5, "anchor": [4, 32], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}, {"w": 9, "h": 5, "anchor": [4, 31], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}, {"w": 9, "h": 5, "anchor": [4, 32], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}],
+      "climb": [{"w": 9, "h": 5, "anchor": [4, 31], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}, {"w": 9, "h": 5, "anchor": [4, 31], "pixels": [".o.o.o.o.", "omomomomo", "ommmmmmmo", "ommmammmo", ".ooooooo."]}]
+    }
+  },
+  {
+    "id": "headband",
+    "slot": "walker_accessory",
+    "description": "повязка",
+    "frames": {
+      "idle": [{"w": 11, "h": 3, "anchor": [6, 26], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}, {"w": 11, "h": 3, "anchor": [6, 25], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}],
+      "walk": [{"w": 11, "h": 3, "anchor": [6, 26], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}, {"w": 11, "h": 3, "anchor": [6, 27], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}, {"w": 11, "h": 3, "anchor": [6, 26], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}, {"w": 11, "h": 3, "anchor": [6, 27], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}],
+      "climb": [{"w": 11, "h": 3, "anchor": [6, 26], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}, {"w": 11, "h": 3, "anchor": [6, 26], "pixels": ["..aaaaaaaaa", ".a.........", "a.........."]}]
+    }
+  },
+  {
+    "id": "visor",
+    "slot": "walker_accessory",
+    "description": "визор",
+    "frames": {
+      "idle": [{"w": 7, "h": 4, "anchor": [0, 25], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}, {"w": 7, "h": 4, "anchor": [0, 24], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}],
+      "walk": [{"w": 7, "h": 4, "anchor": [0, 25], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}, {"w": 7, "h": 4, "anchor": [0, 26], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}, {"w": 7, "h": 4, "anchor": [0, 25], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}, {"w": 7, "h": 4, "anchor": [0, 26], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}],
+      "climb": [{"w": 7, "h": 4, "anchor": [0, 25], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}, {"w": 7, "h": 4, "anchor": [0, 25], "pixels": [".ooooo.", "oaaaaao", "oaaaaao", ".ooooo."]}]
+    }
+  },
+  {
+    "id": "glasses",
+    "slot": "walker_accessory",
+    "description": "очки",
+    "frames": {
+      "idle": [{"w": 3, "h": 2, "anchor": [-3, 24], "pixels": [".o.", "o.o"]}, {"w": 3, "h": 2, "anchor": [-3, 23], "pixels": [".o.", "o.o"]}],
+      "walk": [{"w": 3, "h": 2, "anchor": [-3, 24], "pixels": [".o.", "o.o"]}, {"w": 3, "h": 2, "anchor": [-3, 25], "pixels": [".o.", "o.o"]}, {"w": 3, "h": 2, "anchor": [-3, 24], "pixels": [".o.", "o.o"]}, {"w": 3, "h": 2, "anchor": [-3, 25], "pixels": [".o.", "o.o"]}],
+      "climb": [{"w": 3, "h": 2, "anchor": [-3, 24], "pixels": [".o.", "o.o"]}, {"w": 3, "h": 2, "anchor": [-3, 24], "pixels": [".o.", "o.o"]}]
+    }
+  },
+  {
+    "id": "eyepatch",
+    "slot": "walker_accessory",
+    "description": "повязка на глаз",
+    "frames": {
+      "idle": [{"w": 7, "h": 4, "anchor": [3, 26], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}, {"w": 7, "h": 4, "anchor": [3, 25], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}],
+      "walk": [{"w": 7, "h": 4, "anchor": [3, 26], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}, {"w": 7, "h": 4, "anchor": [3, 27], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}, {"w": 7, "h": 4, "anchor": [3, 26], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}, {"w": 7, "h": 4, "anchor": [3, 27], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}],
+      "climb": [{"w": 7, "h": 4, "anchor": [3, 26], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}, {"w": 7, "h": 4, "anchor": [3, 26], "pixels": ["kk.....", "..kk...", "....kk.", "......k"]}]
+    }
+  }
+]

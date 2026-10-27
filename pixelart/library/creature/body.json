@@ -40,7 +40,8 @@
       "back": [29, 11],
       "face": [17, 14],
       "mouth": [17, 20]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "wolf",
@@ -93,7 +94,8 @@
       "back": [33, 14],
       "face": [13, 11],
       "mouth": [5, 19]
-    }
+    },
+    "faces": "left"
   },
   {
     "id": "skeleton",
@@ -160,7 +162,8 @@
       "back": [16, 21],
       "face": [16, 8],
       "mouth": [16, 15]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "ghost",
@@ -221,7 +224,8 @@
       "back": [19, 23],
       "face": [19, 12],
       "mouth": [19, 20]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "golem",
@@ -287,7 +291,8 @@
       "back": [25, 13],
       "face": [25, 5],
       "mouth": [25, 8]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "beetle",
@@ -340,7 +345,8 @@
       "back": [23, 18],
       "face": [23, 6],
       "mouth": [23, 12]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "robot",
@@ -409,7 +415,8 @@
       "back": [20, 20],
       "face": [20, 6],
       "mouth": [20, 11]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "dragonling",
@@ -462,7 +469,8 @@
       "back": [33, 13],
       "face": [13, 5],
       "mouth": [4, 13]
-    }
+    },
+    "faces": "left"
   },
   {
     "id": "shadow_cultist",
@@ -529,7 +537,8 @@
       "back": [21, 20],
       "face": [21, 11],
       "mouth": [21, 15]
-    }
+    },
+    "faces": "front"
   },
   {
     "id": "rat",
@@ -571,6 +580,7 @@
       "back": [29, 8],
       "face": [12, 10],
       "mouth": [3, 15]
-    }
+    },
+    "faces": "left"
   }
 ]

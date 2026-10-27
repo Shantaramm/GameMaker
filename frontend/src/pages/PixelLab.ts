@@ -1,11 +1,14 @@
 // /lab — ручная проверка библиотеки деталей и внешности из игры (SPEC §5.7.6). В навигации не показывается.
 
-import demo from "../../../backend/tests/fixtures/demo_game.json";
+import demo from "../data/demo_game.json";
 import { BackgroundView, backgroundSeed } from "../pixel/background";
 import { ids, library } from "../pixel/library";
 import { randomBackground, randomCreature, randomPortrait } from "../pixel/random";
 import { CREATURE_SCALE, creatureCanvas, fitScale, portraitCanvas, scaled, type Emotion } from "../pixel/sprite";
+import { iconCanvas, tileCanvas } from "../pixel/tiles";
+import { ANIMS, FPS, walkerFrames, type Anim } from "../pixel/walker";
 import type { BackgroundSpec, CreatureSpec, Game, PortraitSpec } from "../types/game";
+import { renderLevel } from "../world/level";
 
 const EMOTIONS = library.layout.portrait.emotions as Emotion[];
 const EMOTION_LABELS: Record<Emotion, string> = {
@@ -25,7 +28,7 @@ function select(label: string, options: string[], value: string | undefined, onC
   return el("label", { className: "field" }, el("span", { textContent: label }), s);
 }
 
-const palette = (group: keyof Omit<typeof library.palettes, "fixed" | "mood_palettes">) => Object.keys(library.palettes[group]);
+const palette = (group: "skin_tones" | "hair_colors" | "eye_colors" | "cloth_colors") => Object.keys(library.palettes[group]);
 let seedCounter = Date.now() % 100000;
 const nextSeed = () => ++seedCounter;
 
@@ -42,6 +45,30 @@ function backgroundNode(spec: BackgroundSpec, seed: number, width: number, anima
   view.canvas.style.width = `${160 * scale}px`;
   view.canvas.style.height = `${90 * scale}px`;
   return view.canvas;
+}
+
+/** Холст, перебирающий кадры с заданной частотой. */
+function animated(frames: HTMLCanvasElement[], fps: number, scale: number, flip = false): HTMLCanvasElement {
+  const out = scaled(frames[0], scale);
+  if (flip) out.style.transform = "scaleX(-1)";
+  const ctx = out.getContext("2d")!;
+  let i = 0;
+  const timer = setInterval(() => {
+    i = (i + 1) % frames.length;
+    ctx.clearRect(0, 0, out.width, out.height);
+    ctx.drawImage(frames[i], 0, 0);
+  }, 1000 / fps);
+  stopBackgrounds.push(() => clearInterval(timer));
+  return out;
+}
+
+const ANIM_LABELS: Record<Anim, string> = { idle: "стоит", walk: "идёт", climb: "лезет" };
+
+function walkerStrip(spec: PortraitSpec, key?: string): HTMLElement {
+  const frames = walkerFrames(spec, key);
+  return el("div", { className: "emotions" }, ...ANIMS.flatMap((a) => [
+    el("figure", { className: "dark" }, animated(frames[a], FPS[a], 4), el("figcaption", { textContent: ANIM_LABELS[a] })),
+  ]), el("figure", { className: "dark" }, animated(frames.walk, FPS.walk, 4, true), el("figcaption", { textContent: "идёт влево" })));
 }
 
 function jsonBox(value: unknown, onApply: (v: any) => void): HTMLElement {
@@ -99,9 +126,12 @@ function portraitTab(root: HTMLElement, initial: PortraitSpec): void {
     const big = scaled(portraitCanvas(spec), fitScale(48, Math.min(root.clientWidth || 360, 400), 3, 8));
     const strip = el("div", { className: "emotions" },
       ...EMOTIONS.map((e) => el("figure", {}, scaled(portraitCanvas(spec, e), 3), el("figcaption", { textContent: EMOTION_LABELS[e] }))));
+    stopAll();
     root.append(
       el("div", { className: "lab-row" }, el("div", { className: "preview" }, big, random), form),
       strip,
+      el("h3", { textContent: "На карте" }),
+      walkerStrip(spec),
       jsonBox(spec, (v) => { spec = v; render(); }),
     );
   };
@@ -214,6 +244,57 @@ function gameTab(root: HTMLElement, game: Game, gameId: string): void {
   }
 }
 
+// --- тайлсеты ---
+
+function tilesetTab(root: HTMLElement): void {
+  let theme = ids("tileset")[0];
+  let mood = "warm_candle";
+  let time: BackgroundSpec["time"] = "day";
+  const render = () => {
+    root.replaceChildren();
+    const ts = library.slots.tileset.get(theme)!;
+    const form = el("div", { className: "form" },
+      select("тайлсет", ids("tileset"), theme, (v) => { theme = v; render(); }),
+      select("настроение", Object.keys(library.palettes.mood_palettes), mood, (v) => { mood = v; render(); }),
+      select("время", ["day", "dusk", "night"], time, (v) => { time = v as typeof time; render(); }),
+    );
+    const cell = (name: string, decor = false) => {
+      const c = tileCanvas(theme, name, mood, time, decor);
+      return c ? el("figure", { className: "dark" }, scaled(c, 3), el("figcaption", { textContent: name })) : el("span");
+    };
+    root.append(form, el("p", { textContent: `${ts.description} · ${ts.setting}` }),
+      el("div", { className: "emotions" }, ...Object.keys(ts.tiles ?? {}).map((n) => cell(n))),
+      el("h3", { textContent: "Декорации" }),
+      el("div", { className: "emotions" }, ...Object.keys(ts.decor ?? {}).map((n) => cell(n, true))));
+  };
+  render();
+}
+
+// --- уровни демо-игры ---
+
+function levelTab(root: HTMLElement, game: Game, gameId: string): void {
+  stopAll();
+  root.replaceChildren();
+  for (const loc of game.locations) {
+    const frames = [0, 1].map((f) => renderLevel(game, gameId, loc.id, f));
+    const width = Math.min(root.clientWidth || 360, 1060);
+    const scale = Math.max(1, Math.floor(width / frames[0].width));
+    root.append(el("figure", { className: "scene" }, animated(frames, 2, scale),
+      el("figcaption", { textContent: `${loc.id} — ${loc.title} · ${loc.theme} · ${game.levels![loc.id].width}×${game.levels![loc.id].height} тайлов` })));
+  }
+}
+
+// --- иконки ---
+
+function iconsTab(root: HTMLElement): void {
+  root.replaceChildren();
+  for (const tier of [1, 2, 3, 4, 5]) {
+    root.append(el("h3", { textContent: `Ценность ${tier}` }), el("div", { className: "icons" },
+      ...ids("icon").map((id) => el("figure", { title: library.slots.icon.get(id)!.description }, scaled(iconCanvas(id, tier), 3),
+        el("figcaption", { textContent: id })))));
+  }
+}
+
 // --- сетки для скриншотов: /lab?grid=portraits|backgrounds&seed=N&count=M ---
 
 function gridPage(root: HTMLElement, kind: string, seed: number, count: number): void {
@@ -221,8 +302,20 @@ function gridPage(root: HTMLElement, kind: string, seed: number, count: number):
   for (let i = 0; i < count; i++) {
     const s = seed * 1000 + i;
     if (kind === "portraits") root.append(el("figure", {}, scaled(portraitCanvas(randomPortrait(s)), 4)));
+    else if (kind === "walkers") {
+      const spec = randomPortrait(s);
+      const frames = walkerFrames(spec);
+      root.append(el("figure", { className: "walker-row dark" }, scaled(portraitCanvas(spec), 2),
+        ...ANIMS.flatMap((a) => frames[a].map((f) => scaled(f, 2)))));
+    } else if (kind === "walking") {
+      const frames = walkerFrames(randomPortrait(s));
+      root.append(el("figure", { className: "dark" }, animated(frames.walk, FPS.walk, 4)));
+    }
     else if (kind === "creatures") root.append(el("figure", { className: "dark" }, scaled(creatureCanvas(randomCreature(s)), 3)));
-    else root.append(el("figure", {}, backgroundNode(randomBackground(s), s, 480, false)));
+    else if (kind === "levels") {
+      const game = demo as unknown as Game;
+      if (i < game.locations.length) root.append(el("figure", {}, scaled(renderLevel(game, "demo", game.locations[i].id), 2)));
+    } else root.append(el("figure", {}, backgroundNode(randomBackground(s), s, 480, false)));
   }
   root.dataset.ready = "1";
 }
@@ -240,6 +333,9 @@ export function mountPixelLab(root: HTMLElement): void {
     ["Существо", (b) => creatureTab(b, randomCreature(nextSeed()))],
     ["Фон", (b) => backgroundTab(b, game.locations[0].background)],
     ["Демо-игра", (b) => gameTab(b, game, "demo")],
+    ["Тайлсеты", (b) => tilesetTab(b)],
+    ["Уровни", (b) => levelTab(b, game, "demo")],
+    ["Иконки", (b) => iconsTab(b)],
   ];
   const body = el("main", { className: "lab-body" });
   const nav = el("nav", { className: "tabs" });

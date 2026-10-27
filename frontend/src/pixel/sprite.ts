@@ -124,6 +124,64 @@ export function renderCreature(spec: CreatureSpec): Raster {
   return raster;
 }
 
+/** Уменьшение вдвое: в каждом блоке 2×2 побеждает самый частый цвет (при равенстве — более тёмный, это контур). */
+export function downscale(src: Raster): Raster {
+  const out = new Raster(src.w >> 1, src.h >> 1);
+  for (let y = 0; y < out.h; y++)
+    for (let x = 0; x < out.w; x++) {
+      const counts = new Map<number, number>();
+      for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+        const o = ((y * 2 + dy) * src.w + x * 2 + dx) * 4;
+        if (src.data[o + 3] === 0) continue;
+        const key = (src.data[o] << 16) | (src.data[o + 1] << 8) | src.data[o + 2];
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+      const total = [...counts.values()].reduce((a, b) => a + b, 0);
+      if (total < 2) continue;
+      const luma = (k: number) => ((k >> 16) & 255) * 0.3 + ((k >> 8) & 255) * 0.59 + (k & 255) * 0.11;
+      const best = [...counts.entries()].sort((a, b) => b[1] - a[1] || luma(a[0]) - luma(b[0]))[0][0];
+      out.set(x, y, [(best >> 16) & 255, (best >> 8) & 255, best & 255]);
+    }
+  return out;
+}
+
+function mirrored(src: Raster): Raster {
+  const out = new Raster(src.w, src.h);
+  for (let y = 0; y < src.h; y++)
+    for (let x = 0; x < src.w; x++) {
+      const i = (y * src.w + x) * 4;
+      const j = (y * src.w + (src.w - 1 - x)) * 4;
+      out.data.set(src.data.subarray(i, i + 4), j);
+    }
+  return out;
+}
+
+/** «Вдох»: всё, кроме нижней строки, опускается на пиксель. */
+function breathe(src: Raster): Raster {
+  const out = new Raster(src.w, src.h);
+  const row = src.w * 4;
+  out.data.set(src.data.subarray(0, (src.h - 2) * row), row);
+  out.data.set(src.data.subarray((src.h - 1) * row), (src.h - 1) * row);
+  return out;
+}
+
+/**
+ * Существо на карте (SPEC §5.8.4): боевой спрайт с особенностями, уменьшенный вдвое, мордой вправо.
+ * Два кадра стойки. Отдельных деталей для карты нет — так существо на карте всегда совпадает с собой в бою.
+ */
+export function creatureMapFrames(spec: CreatureSpec, key = JSON.stringify(spec)): HTMLCanvasElement[] {
+  const k = `m:${key}`;
+  const hit = mapCache.get(k);
+  if (hit) return hit;
+  let small = downscale(renderCreature(spec));
+  if (part("creature_body", spec.body).faces === "left") small = mirrored(small);
+  const frames = [small.toCanvas(), breathe(small).toCanvas()];
+  mapCache.set(k, frames);
+  return frames;
+}
+
+const mapCache = new Map<string, HTMLCanvasElement[]>();
+
 export const CREATURE_SCALE: Record<CreatureSpec["size"], number> = { small: 1, medium: 1.5, large: 2 };
 
 // Кэш готовых картинок: портрет одинаков во всей игре (SPEC §5.2), считать его дважды незачем.
