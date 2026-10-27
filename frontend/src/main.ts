@@ -1,16 +1,25 @@
 import "./styles.css";
 import { mountPixelLab } from "./pages/PixelLab";
 import { mountPlay } from "./pages/Play";
+import { mountBrief, mountHome, mountProgress } from "./pages/Site";
 
 const root = document.getElementById("app")!;
-const path = location.pathname;
 
-if (path.startsWith("/lab")) {
-  document.title = "PixelLab";
-  mountPixelLab(root);
-} else if (path.startsWith("/play/")) {
-  void mountPlay(root, decodeURIComponent(path.slice("/play/".length).replace(/\/$/, "")));
-} else {
-  // Главная и бриф — этап 6.
-  root.innerHTML = `<main class="placeholder"><h1>Генератор RPG</h1><p>Скоро здесь можно будет описать историю и сыграть в неё.</p><p><a href="/play/demo" style="color:#e0b030">Сыграть в демо-игру «Погасший маяк»</a></p></main>`;
+function route(): void {
+  const path = location.pathname.replace(/\/$/, "") || "/";
+  if (path.startsWith("/lab")) {
+    document.title = "PixelLab";
+    mountPixelLab(root);
+  } else if (path.startsWith("/play/")) {
+    void mountPlay(root, decodeURIComponent(path.slice("/play/".length)));
+  } else if (path.startsWith("/progress/")) {
+    mountProgress(root, decodeURIComponent(path.slice("/progress/".length)));
+  } else if (path === "/brief") {
+    mountBrief(root);
+  } else {
+    void mountHome(root);
+  }
 }
+
+window.addEventListener("popstate", route);
+route();

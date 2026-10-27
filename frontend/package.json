@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "gen:types": "json2ts -i ../schema/game.schema.json -o src/types/game.ts --unreachableDefinitions --additionalProperties false --maxItems -1",
     "screens": "node scripts/lab-screens.mjs",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "e2e:site": "node scripts/e2e-site.mjs"
   },
   "devDependencies": {
     "json-schema-to-typescript": "^15.0.4",
