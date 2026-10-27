@@ -1,6 +1,6 @@
 // Условия (SPEC §5.5) и их человекочитаемые подсказки для серых вариантов.
 
-import { count, effective, type GameState } from "./state";
+import { count, effective, type GameState, skillValue } from "./state";
 import type { Condition, World } from "./world";
 
 export function check(cond: Condition | null | undefined, state: GameState, world: World): boolean {
@@ -13,9 +13,12 @@ export function check(cond: Condition | null | undefined, state: GameState, worl
   if ("defeated" in cond) return state.defeated.includes(cond.defeated);
   let value: number;
   let op: ">=" | "<=";
-  if ("stat" in cond) {
+  if ("skill" in cond) {
+    value = skillValue(state, world, cond.skill);
+    op = cond.op;
+  } else if ("stat" in cond) {
     const eff = effective(state, world);
-    value = { hp: state.hp, focus: state.focus, attack: eff.attack, defense: eff.defense }[cond.stat];
+    value = { hp: state.hp, focus: state.focus, attack: eff.attack, defense: eff.defense, morale: state.morale }[cond.stat];
     op = cond.op;
   } else if ("gold" in cond) {
     value = state.gold;
@@ -27,7 +30,7 @@ export function check(cond: Condition | null | undefined, state: GameState, worl
   return op === ">=" ? value >= cond.value : value <= cond.value;
 }
 
-const STAT_NAMES = { hp: "здоровье", attack: "атака", defense: "защита", focus: "фокус" };
+const STAT_NAMES = { hp: "здоровье", attack: "атака", defense: "защита", focus: "фокус", morale: "дух" };
 
 /** «ключ от архива», «уровень 3», «победить: Служитель тумана, Морская тень»… */
 export function describe(cond: Condition, world: World): string {
@@ -46,5 +49,6 @@ export function describe(cond: Condition, world: World): string {
   }
   if ("gold" in cond) return cond.gold === ">=" ? `${cond.value} золота` : `не больше ${cond.value} золота`;
   if ("level" in cond) return cond.level === ">=" ? `уровень ${cond.value}` : `уровень не выше ${cond.value}`;
+  if ("skill" in cond) return `${world.skillName(cond.skill)} ${cond.op === ">=" ? "≥" : "≤"} ${cond.value}`;
   return `${STAT_NAMES[cond.stat]} ${cond.op === ">=" ? "≥" : "≤"} ${cond.value}`;
 }

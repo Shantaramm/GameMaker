@@ -1,5 +1,6 @@
 // Эффекты вне боя, опыт, экипировка и торговля. Зеркало simulator.py.
 
+import { MOD_SKILL_CAP, SKILL_CAP } from "./inner";
 import { count, effective, type GameState } from "./state";
 import { SLOTS, type Effect, type Slot, type World } from "./world";
 
@@ -62,7 +63,18 @@ export function applyHeroEffect(e: Effect, state: GameState, world: World): stri
     state.hp = Math.max(1, state.hp - e.damage); // вне боя урон не убивает
     return `Здоровье −${e.damage}`;
   }
+  if ("mod_skill" in e) {
+    state.inner[e.mod_skill] = Math.max(0, Math.min(MOD_SKILL_CAP, (state.inner[e.mod_skill] ?? 0) + e.delta));
+    const after = effective(state, world);
+    state.morale = Math.min(state.morale, after.maxMorale);
+    state.hp = Math.min(state.hp, after.maxHp);
+    return `${world.skillName(e.mod_skill)} ${e.delta >= 0 ? "+" : "−"}${Math.abs(e.delta)}`;
+  }
   if ("mod_stat" in e) {
+    if (e.mod_stat === "morale") {
+      state.morale = Math.max(1, Math.min(eff.maxMorale, state.morale + e.delta));
+      return `Дух ${e.delta >= 0 ? "+" : "−"}${Math.abs(e.delta)}`;
+    }
     if (e.mod_stat === "hp") {
       state.maxHp = Math.max(1, state.maxHp + e.delta);
       state.hp = Math.max(1, Math.min(effective(state, world).maxHp, state.hp + e.delta));
@@ -72,7 +84,7 @@ export function applyHeroEffect(e: Effect, state: GameState, world: World): stri
     } else {
       state[e.mod_stat] = Math.max(0, state[e.mod_stat] + e.delta);
     }
-    const names = { hp: "Здоровье", attack: "Атака", defense: "Защита", focus: "Фокус" };
+    const names = { hp: "Здоровье", attack: "Атака", defense: "Защита", focus: "Фокус", morale: "Дух" };
     return `${names[e.mod_stat]} ${e.delta >= 0 ? "+" : "−"}${Math.abs(e.delta)}`;
   }
   return null;
@@ -90,11 +102,24 @@ export function gainXp(state: GameState, xp: number, world: World): number {
     state.attack += prog.per_level.attack;
     state.defense += prog.per_level.defense;
     state.maxFocus += prog.per_level.focus;
+    state.skillPoints += 1;
     const eff = effective(state, world);
     state.hp = eff.maxHp;
     state.focus = eff.maxFocus;
+    state.morale = eff.maxMorale;
   }
   return gained;
+}
+
+/** Потратить очко навыка (игрок сам выбирает навык); предел без вещей — SKILL_CAP. */
+export function spendSkillPoint(state: GameState, world: World, key: string): boolean {
+  if (state.skillPoints <= 0 || (state.inner[key] ?? 0) >= SKILL_CAP) return false;
+  state.inner[key] = (state.inner[key] ?? 0) + 1;
+  state.skillPoints -= 1;
+  const eff = effective(state, world);
+  if (key === "will") state.morale = Math.min(eff.maxMorale, state.morale + 1);
+  if (key === "endurance" && world.noCombat) state.hp = Math.min(eff.maxHp, state.hp + 1);
+  return true;
 }
 
 export function nextLevelXp(state: GameState, world: World): number | null {

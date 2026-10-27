@@ -8,10 +8,22 @@
     "language": "ru",
     "est_minutes": 20
   },
+  "inner_skills": [
+    {"key": "logic", "name": "Логика", "description": "Связывает показания, ловит на противоречиях."},
+    {"key": "knowledge", "name": "Архивы", "description": "Помнит старые дела, газеты и портовые байки."},
+    {"key": "empathy", "name": "Чутьё на людей", "description": "Слышит страх и вину за словами."},
+    {"key": "will", "name": "Выдержка", "description": "Не отводит взгляд. От неё зависит Дух."},
+    {"key": "endurance", "name": "Портовая закалка", "description": "Холод, сырость и бессонные ночи."},
+    {"key": "presence", "name": "Голос закона", "description": "Давит значком и тоном."},
+    {"key": "perception", "name": "Глаз сыщика", "description": "Видит соль на рукаве и следы на песке."},
+    {"key": "finesse", "name": "Тонкие пальцы", "description": "Замки, карманы, тихие шаги."}
+  ],
   "hero": {
     "id": "arina",
     "name": "Арина Стрельцова",
     "role": "hero",
+    "strengths": ["logic", "perception"],
+    "weakness": "presence",
     "description": "Следовательница из столицы, выросла в этом порту. Упрямая, наблюдательная, привыкла полагаться только на себя. Вернулась, потому что среди пропавших — её бывший учитель.",
     "appearance": {"head": "oval", "skin": "fair", "hair": "long_braid", "hair_color": "chestnut", "eyes": "sharp", "eye_color": "green", "brows": "straight", "mouth": "thin", "outfit": "detective_coat", "outfit_color": "slate", "accent_color": "brass", "accessory": [], "bg_color": "navy"}
   },
@@ -144,10 +156,15 @@
             "type": "dialogue", "id": "meet_tim", "start_node": "n1",
             "nodes": [
               {"id": "n1", "speaker": "tim", "emotion": "happy", "text": "Арина! Ты всё-таки приехала. Я думал, письмо утонуло вместе с почтовым ботом.", "next": "n2"},
-              {"id": "n2", "speaker": "arina", "emotion": "neutral", "text": "Я здесь. Что происходит, Тим?", "choices": [
+              {"id": "n2", "speaker": "arina", "emotion": "neutral", "text": "Я здесь. Что происходит, Тим?",
+               "passive": [{"skill": "empathy", "difficulty": "easy", "text": "Он улыбается слишком широко. Так улыбаются, когда три ночи не спали от страха."}],
+               "choices": [
                 {"text": "Я рада тебя видеть. Рассказывай всё, я слушаю.", "effects": [{"set_flag": "trusted_tim", "value": true}], "next": "n3"},
-                {"text": "Без лирики. Что с маяком?", "effects": [], "next": "n3"}
+                {"text": "Без лирики. Что с маяком?", "effects": [], "next": "n3"},
+                {"text": "Письмо пришло неделю назад. Ты написал его до того, как погас маяк?", "effects": [], "next": "n2b",
+                 "check": {"skill": "logic", "difficulty": "medium", "failure": "n3"}}
               ]},
+              {"id": "n2b", "speaker": "tim", "emotion": "surprised", "text": "…Ты всегда это замечала. Да. Маяк мигал три ночи подряд — неровно, будто кто-то подавал знак. А потом погас совсем.", "next": "n3"},
               {"id": "n3", "speaker": "tim", "emotion": "scared", "text": "Маяк погас три ночи назад. Смотритель пропал. А в маяке теперь живёт этот… магистр. Говорят, в архиве управы есть всё про него.", "next": "n4"},
               {"id": "n4", "speaker": "tim", "emotion": "neutral", "text": "Возьми настойку — бабушка передала. И… можно мне с тобой?", "choices": [
                 {"text": "Идём вместе.", "effects": [{"give_item": "tonic"}, {"set_flag": "tim_joined", "value": true}], "next": "end"},
@@ -164,12 +181,15 @@
               {"id": "n1", "speaker": "marfa", "emotion": "happy", "text": "Стрельцова! Выросла-то как. Рыбу не предлагаю — ты по делу, вижу. Нож, плащ, настойку?", "choices": [
                 {"text": "Что слышно в порту?", "effects": [{"set_flag": "heard_rumor", "value": true}], "next": "n2"},
                 {"text": "Вы чем-то встревожены.", "effects": [{"set_flag": "talked_marfa", "value": true}], "next": "n3"},
+                {"text": "Вы боитесь не крыс, Марфа.", "effects": [], "next": "n5",
+                 "check": {"skill": "empathy", "difficulty": "medium", "failure": "n3"}},
                 {"text": "Крысы в переулке больше не побеспокоят.", "condition": {"all": [{"defeated": "rats"}, {"flag": "marfa_rewarded", "is": false}]}, "effects": [{"give_gold": 20}, {"set_flag": "marfa_rewarded", "value": true}], "next": "n4"},
                 {"text": "Покажите товар.", "effects": [], "next": "end"}
               ]},
               {"id": "n2", "speaker": "marfa", "emotion": "scared", "text": "Говорят, магистр носит морю «подношения». Кто к маяку ночью сунулся — того больше не видели.", "next": "end"},
               {"id": "n3", "speaker": "marfa", "emotion": "angry", "text": "Крысы! В рыбном переулке завелись — с собаку ростом, сети рвут. Прогонишь — не обижу.", "next": "end"},
-              {"id": "n4", "speaker": "marfa", "emotion": "happy", "text": "Вот это я понимаю — столичная выучка! Держи, заслужила.", "next": "end"}
+              {"id": "n4", "speaker": "marfa", "emotion": "happy", "text": "Вот это я понимаю — столичная выучка! Держи, заслужила.", "next": "end"},
+              {"id": "n5", "speaker": "marfa", "emotion": "sad", "text": "…Сын мой ходил к маяку. Три ночи назад. Сказал — свет погас, надо глянуть. Не вернулся. А я стою, торгую. Что мне ещё делать?", "next": "end"}
             ]
           }
         },
@@ -227,7 +247,9 @@
               {"id": "n1", "speaker": "efim", "emotion": "surprised", "text": "Кто здесь?! А, Стрельцова. Выросла. Всё равно без стука не входят.", "next": "n2"},
               {"id": "n2", "speaker": "arina", "emotion": "neutral", "text": "Ефим Лукич, мне нужна правда о магистре.", "choices": [
                 {"text": "Показать журнал Олеандра", "condition": {"has_item": "ledger"}, "effects": [{"learn_skill": "salt_ward"}], "next": "n3"},
-                {"text": "Что вы о нём знаете?", "effects": [], "next": "n4"}
+                {"text": "Что вы о нём знаете?", "effects": [], "next": "n4"},
+                {"text": "Смотритель заказывал ящиками соль. Учёному столько не нужно. Зачем?", "effects": [], "next": "n3",
+                 "check": {"skill": "knowledge", "difficulty": "challenging", "failure": "n4"}}
               ]},
               {"id": "n3", "speaker": "efim", "emotion": "scared", "text": "Подношения морю… Слушай. Тьма из глубин боится соли. Очерти круг — и она не тронет.", "next": "end"},
               {"id": "n4", "speaker": "efim", "emotion": "angry", "text": "Знаю, что он платит за аренду маяка золотом, которого у учёных не бывает. Его бумаги — в сейфе наверху, если хватит духу.", "next": "end"}
@@ -261,10 +283,15 @@
             "type": "dialogue", "id": "meet_oleander", "start_node": "n1",
             "nodes": [
               {"id": "n1", "speaker": "oleander", "emotion": "happy", "text": "Следователь Стрельцова. Море шептало, что вы придёте.", "next": "n2"},
-              {"id": "n2", "speaker": "arina", "emotion": "angry", "text": "Где смотритель и остальные?", "choices": [
+              {"id": "n2", "speaker": "arina", "emotion": "angry", "text": "Где смотритель и остальные?",
+               "passive": [{"skill": "logic", "difficulty": "medium", "text": "«Море шептало». Он говорит о море, как о заказчике. Кто-то платит ему — и это не город."}],
+               "choices": [
                 {"text": "Ты ответишь за каждого пропавшего.", "effects": [], "next": "n3"},
-                {"text": "Я читала твой журнал. Дат там хватит на виселицу.", "condition": {"has_item": "ledger"}, "effects": [], "next": "n4"}
+                {"text": "Я читала твой журнал. Дат там хватит на виселицу.", "condition": {"has_item": "ledger"}, "effects": [], "next": "n4"},
+                {"text": "Молча выдержать его взгляд.", "effects": [], "next": "n6",
+                 "check": {"skill": "will", "difficulty": "challenging", "red": true, "failure": "n5", "damage": "morale"}}
               ]},
+              {"id": "n6", "speaker": "oleander", "emotion": "surprised", "text": "Вы не боитесь. Любопытно. Те, кого я отдал морю, тоже сначала не боялись. Потом — благодарили.", "next": "n5"},
               {"id": "n3", "speaker": "oleander", "emotion": "neutral", "text": "Они там, где им и место. Впрочем, спорить я не люблю.", "next": "n5"},
               {"id": "n4", "speaker": "oleander", "emotion": "surprised", "text": "Вы рылись в моих бумагах? Как грубо.", "next": "n5"},
               {"id": "n5", "speaker": "oleander", "emotion": "angry", "text": "Пусть с вами поговорит туман.", "next": "end"}

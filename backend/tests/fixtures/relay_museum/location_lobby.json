@@ -1,0 +1,54 @@
+{"intro": "Девять вечера. Свет в вестибюле горит вполсилы — экономят. Завтра в семь утра из музея увезут то единственное, ради чего сюда вообще ходили.",
+"on_enter": [
+ {"type": "dialogue", "id": "first_thought", "start_node": "t1", "nodes": [
+  {"id": "t1", "speaker": "skill:knowledge", "text": "«Утро над Сурой», 1912 год. Художник Аверин писал её три лета подряд и так и не продал. Ты рассказывал о ней на каждом выпускном уроке. Сегодня — последний раз, когда она здесь.", "next": "t2"},
+  {"id": "t2", "speaker": "skill:will", "text": "Не раскисай. Это просто картина. Просто сорок лет твоей жизни, висящие на гвозде.", "next": "end"}]}
+],
+"objects": [
+ {"type": "thing", "id": "old_booklet", "zone": "entrance", "look": "table", "name": "Буклет 1987 года", "event": {"type": "narration", "id": "read_booklet", "text": "«Утро над Сурой» — гордость музея. На обороте выцветшей ручкой: «Савве — на память о первом уроке в музее. Не давай детям смотреть, учи видеть. Н.»"}},
+ {"type": "npc", "id": "nina_in_cloakroom", "zone": "cloakroom", "character": "nina", "dialogue": {"type": "dialogue", "id": "talk_nina", "start_node": "n1",
+  "entries": [{"condition": {"flag": "forgery_proven", "is": true}, "node": "na1"}, {"condition": {"flag": "nina_trusts", "is": true}, "node": "nb1"}],
+  "nodes": [
+   {"id": "n1", "speaker": "nina", "emotion": "sad", "text": "Савва Ильич. Вы знаете, что её завтра увозят? Сорок лет я рассказывала про неё детям. А теперь — «на временное хранение в областной фонд». Временное, как же.",
+    "passive": [{"skill": "empathy", "difficulty": "easy", "text": "Она не уходит домой. Она сторожит — как и ты."}],
+    "choices": [
+     {"text": "Вы не верите, что её вернут?", "next": "n2"},
+     {"text": "Вы что-то недоговариваете, Нина Аркадьевна.", "next": "n3", "check": {"skill": "empathy", "difficulty": "medium", "failure": "n3f", "damage": "morale"}},
+     {"text": "Мне пора на обход.", "next": "end"}]},
+   {"id": "n2", "speaker": "nina", "emotion": "neutral", "text": "Я верю тому, что вижу. А вижу я, что Вадим Петрович третий месяц не платит смотрителям, а вчера заказал новую раму. Зачем раме картина, которая уезжает?",
+    "passive": [{"skill": "logic", "difficulty": "medium", "text": "Рама нужна не той картине, что уедет. А той, что останется."}],
+    "choices": [
+     {"text": "Новая рама… для какой картины?", "next": "n4"},
+     {"text": "Это не моё дело. Я сторож.", "next": "n6"}]},
+   {"id": "n3", "speaker": "nina", "emotion": "scared", "text": "…Ира. Реставраторша. Плакала вчера в мастерской. Я спросила — говорит, краска не сохнет. Краска, Савва Ильич. На картине, которой сто лет.", "next": "n4"},
+   {"id": "n3f", "speaker": "nina", "emotion": "angry", "text": "Недоговариваю? Я сорок лет договаривала за весь этот город. Идите на свой обход.", "next": "end"},
+   {"id": "n4", "speaker": "nina", "emotion": "neutral", "text": "Возьмите. Ключ от запасника — старый, мой. Вадим Петрович про него забыл, как забывает про всё, что не стоит денег.",
+    "choices": [
+     {"text": "Спасибо. Я осторожно.", "effects": [{"give_item": "storage_key"}, {"set_flag": "nina_trusts", "value": true}], "next": "n5"},
+     {"text": "Не надо. Я сторож, а не следователь.", "next": "n6"}]},
+   {"id": "n5", "speaker": "nina", "emotion": "happy", "text": "«Осторожно» — это не про вас. Вы сорок лет учили детей, что правда важнее спокойствия. Посмотрим, правда ли вы так думали.", "next": "end"},
+   {"id": "n6", "speaker": "nina", "emotion": "sad", "text": "Сторож. Ну да. Сторожат ведь не только стены.", "next": "end"},
+   {"id": "nb1", "speaker": "nina", "emotion": "neutral", "text": "Были в запаснике? По лицу не скажешь. У вас всегда было лицо человека, который ещё не решил.",
+    "choices": [
+     {"text": "А вы бы что сделали на моём месте?", "next": "nb2"},
+     {"text": "Я ещё ищу.", "next": "end"}]},
+   {"id": "nb2", "speaker": "nina", "emotion": "sad", "text": "Я? Я бы испугалась. Мне семьдесят, Савва Ильич, и это мой последний год. Не спрашивайте старуху о смелости — спросите о памяти.", "next": "end"},
+   {"id": "na1", "speaker": "nina", "emotion": "sad", "text": "Знаете. По глазам вижу. И что теперь? Правда — это хорошо. Только после неё обычно кто-то остаётся без работы.",
+    "passive": [{"skill": "will", "difficulty": "challenging", "text": "Она хочет, чтобы ты решил за неё. Не давай ей этого — и не отнимай."}],
+    "choices": [
+     {"text": "А если промолчать?", "next": "na2"},
+     {"text": "Правда важнее. Вы сами меня этому учили.", "next": "na3"},
+     {"text": "Нина Аркадьевна, вы ведь знали Аверина?", "next": "na4", "check": {"skill": "knowledge", "difficulty": "challenging", "failure": "na4f"}},
+     {"text": "Я ещё не решил.", "next": "end"}]},
+   {"id": "na2", "speaker": "nina", "emotion": "neutral", "text": "Тогда в городе будет висеть красивая ложь. Дети будут смотреть на неё и учиться видеть. Разве это плохо? Я не знаю. Я правда не знаю.", "next": "end"},
+   {"id": "na3", "speaker": "nina", "emotion": "happy", "text": "Учила. Мой внук у вас учился — помните Петю? Теперь в Москве, врёт людям за деньги. Говорит, это называется «реклама». Так что не знаю, кто из нас кого чему научил.", "next": "end"},
+   {"id": "na4", "speaker": "nina", "emotion": "surprised", "text": "…Его дочь. Я знала его дочь. Женщина на берегу — это она, ей там шесть. Платок он ей подарил в то лето. Если платка нет — значит, это не та картина. Значит, её больше нет совсем.", "next": "na5"},
+   {"id": "na4f", "speaker": "nina", "emotion": "neutral", "text": "Аверин умер в тридцать седьмом, Савва Ильич. Его никто не знал. Его просто забыли — как забудут и нас.", "next": "end"},
+   {"id": "na5", "speaker": "skill:empathy", "text": "Для неё это не подделка. Это вторые похороны.", "next": "end"}
+  ]}},
+ {"type": "chest", "id": "cloakroom_box", "zone": "cloakroom", "look": "chest", "contents": [{"give_item": "flashlight"}, {"give_item": "thermos_tea"}]},
+ {"type": "exit", "id": "lobby_to_gallery", "zone": "stairs", "kind": "door", "to": "gallery"},
+ {"type": "exit", "id": "lobby_to_director", "zone": "stairs", "kind": "door", "to": "director_office"},
+ {"type": "exit", "id": "lobby_to_yard", "zone": "entrance", "kind": "left_edge", "to": "yard"}
+],
+"enemies": []}

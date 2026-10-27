@@ -17,7 +17,7 @@ export function button(text: string, onClick: () => void, className = "btn", dis
   return b;
 }
 
-export function bar(value: number, max: number, kind: "hp" | "focus" | "xp", label = true): HTMLElement {
+export function bar(value: number, max: number, kind: "hp" | "focus" | "xp" | "morale", label = true): HTMLElement {
   const pct = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
   return el("div", { className: `bar bar-${kind}` },
     el("div", { className: "bar-fill", style: `width:${pct}%` }),

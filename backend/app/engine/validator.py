@@ -28,7 +28,7 @@ MAIN_ROLES = ("hero", "companion", "antagonist")
 # Какие эффекты где допустимы. goto, флаги, предметы и золото — только в сюжетных событиях.
 STORY_EFFECTS = {
     s.EffSetFlag, s.EffGiveItem, s.EffTakeItem, s.EffGiveGold, s.EffTakeGold, s.EffLearnSkill,
-    s.EffModStat, s.EffHeal, s.EffDamage, s.EffGoto,
+    s.EffModStat, s.EffModSkill, s.EffHeal, s.EffDamage, s.EffGoto,
 }
 EFFECTS_BY_CONTEXT: dict[str, set[type]] = {
     "story": STORY_EFFECTS,
@@ -41,6 +41,13 @@ EFFECTS_BY_CONTEXT: dict[str, set[type]] = {
     "tactic_enemies": {s.EffDamage, s.EffModStat},
 }
 BATTLE_ONLY_STATS = {"attack", "defense"}  # mod_stat в навыках и способностях врага
+LIGHT_COMBAT_MAX_FIGHTS = 3
+# Минимум «глубины» по профилю (§5.10): проверок и пассивных голосов на игру, реплик в ключевом разговоре.
+QUALITY_BY_DEPTH = {
+    "light": {"checks": 2, "passives": 0, "nodes": 0},
+    "rich": {"checks": 4, "passives": 2, "nodes": 4},
+    "deep": {"checks": 6, "passives": 4, "nodes": 6},
+}
 
 
 class ValidationReport(BaseModel):
@@ -56,6 +63,10 @@ class ValidationReport(BaseModel):
     @property
     def warnings(self) -> list[Issue]:
         return [i for i in self.issues if i.severity == "warning"]
+
+    @property
+    def quality(self) -> list[Issue]:
+        return [i for i in self.issues if i.severity == "quality"]
 
     @property
     def ok(self) -> bool:
@@ -109,6 +120,8 @@ class _Checker:
         self.foes = {o.id for loc in game.locations for o in loc.objects if isinstance(o, s.Foe)}
         self.flags_checked: dict[str, str] = {}
         self.flags_set: set[str] = set()
+        self.checks_total = 0
+        self.passives_total = 0
 
     def error(self, path: str, message: str) -> None:
         self.issues.append(Issue(path=path, message=message))
@@ -127,6 +140,7 @@ class _Checker:
             self.check_location(i, loc)
         self.check_location_graph()
         self.check_locked_behind_itself()
+        self.check_profile()
         for flag, path in self.flags_checked.items():
             if flag in self.flags and flag not in self.flags_set:
                 self.warn(path, f"флаг '{flag}' проверяется, но нигде не выставляется")
@@ -226,7 +240,10 @@ class _Checker:
             elif isinstance(e, s.EffTakeItem):
                 self.ref(e.take_item, self.items, format_path(p, "take_item"), "предмет")
             elif isinstance(e, s.EffLearnSkill):
-                self.ref(e.learn_skill, self.skills, format_path(p, "learn_skill"), "навык")
+                if self.game.profile.combat == "none":
+                    self.error(p, "в игре без боёв нет боевых навыков: вместо learn_skill используй mod_skill — рост внутреннего навыка")
+                else:
+                    self.ref(e.learn_skill, self.skills, format_path(p, "learn_skill"), "навык")
             elif isinstance(e, s.EffGoto):
                 has_goto = True
                 self.ref(e.goto, self.locations | self.endings, format_path(p, "goto"), "переход (локация или концовка)")
@@ -380,6 +397,7 @@ class _Checker:
                     self.error(format_path(path, "to"), "выход ведёт в ту же локацию")
 
     def check_event(self, event: s.Event, path: str) -> None:
+        self.check_condition(event.condition, format_path(path, "condition"))
         if isinstance(event, s.Dialogue):
             self.check_dialogue(event, path)
         elif isinstance(event, s.Choice):
@@ -414,9 +432,15 @@ class _Checker:
         exits: set[str] = set()  # узлы, из которых диалог сразу завершается
         for ni, node in enumerate(event.nodes):
             p = format_path(path, "nodes", ni)
-            if node.speaker != "narrator":
+            if node.speaker.startswith("skill:"):
+                if node.speaker[6:] not in s.SKILL_KEYS:
+                    self.error(format_path(p, "speaker"), f"неизвестный навык '{node.speaker[6:]}'; есть: {', '.join(s.SKILL_KEYS)}")
+            elif node.speaker != "narrator":
                 self.ref(node.speaker, self.characters, format_path(p, "speaker"), "персонаж")
             self.check_line(node.text, format_path(p, "text"))
+            for pi, passive in enumerate(node.passive):
+                self.check_line(passive.text, format_path(p, "passive", pi, "text"))
+            self.passives_total += len(node.passive)
             targets: set[str] = set()
             if node.choices:
                 if node.next is not None:
@@ -431,8 +455,17 @@ class _Checker:
                         targets.add(choice.next)
                     else:
                         self.error(format_path(cp, "next"), f"неизвестный узел '{choice.next}'")
-                if all(c.condition is not None for c in node.choices):
-                    self.error(format_path(p, "choices"), "у всех вариантов есть condition — игрок может застрять; нужен хотя бы один вариант без условия")
+                    if choice.check is not None:
+                        self.checks_total += 1
+                        fail = choice.check.failure
+                        if fail == "end":
+                            exits.add(node.id)
+                        elif fail in nodes:
+                            targets.add(fail)
+                        else:
+                            self.error(format_path(cp, "check", "failure"), f"неизвестный узел '{fail}' — куда ведёт провал проверки")
+                if all(c.condition is not None or c.check is not None for c in node.choices):
+                    self.error(format_path(p, "choices"), "у всех вариантов есть condition или check — игрок может застрять; нужен хотя бы один вариант без условия и без проверки")
             elif node.next is None:
                 self.error(format_path(p, "next"), "у узла без choices должен быть next (id узла или 'end')")
             elif node.next == "end":
@@ -443,11 +476,20 @@ class _Checker:
                 self.error(format_path(p, "next"), f"неизвестный узел '{node.next}'")
             successors[node.id] = targets
 
+        starts = [event.start_node] if event.start_node in nodes else []
+        for ei, entry in enumerate(event.entries):
+            self.check_condition(entry.condition, format_path(path, "entries", ei, "condition"))
+            if entry.node in nodes:
+                starts.append(entry.node)
+            else:
+                self.error(format_path(path, "entries", ei, "node"), f"неизвестный узел '{entry.node}'")
         if event.start_node in nodes:
-            reached = _reachable(event.start_node, successors)
+            reached: set[str] = set()
+            for start in starts:
+                reached |= _reachable(start, successors)
             for ni, node in enumerate(event.nodes):
                 if node.id not in reached:
-                    self.error(format_path(path, "nodes", ni), f"узел '{node.id}' недостижим из start_node")
+                    self.error(format_path(path, "nodes", ni), f"узел '{node.id}' недостижим из start_node и entries")
 
         can_exit = set(exits)
         changed = True
@@ -460,6 +502,58 @@ class _Checker:
         for ni, node in enumerate(event.nodes):
             if node.id not in can_exit:
                 self.error(format_path(path, "nodes", ni), f"из узла '{node.id}' не достижим 'end' — диалог зацикливается")
+
+    # --- профиль игры (§5.10) ---
+
+    def check_profile(self) -> None:
+        g = self.game
+        foes = [(format_path("locations", li, "objects", oi), o) for li, loc in enumerate(g.locations)
+                for oi, o in enumerate(loc.objects) if isinstance(o, s.Foe)]
+        if g.profile.combat == "none":
+            for path, _ in foes:
+                self.error(path, "в игре без боёв (profile.combat = none) не бывает врагов на карте — замени на разговор или проверку навыка")
+            for i, _ in enumerate(g.enemies):
+                self.error(format_path("enemies", i), "в игре без боёв не описывают врагов")
+            for i, t in enumerate(g.tactics):
+                if not t.id.startswith("base_"):
+                    self.error(format_path("tactics", i), "в игре без боёв нет тактик боя")
+            for i, _ in enumerate(g.skills):
+                self.error(format_path("skills", i), "в игре без боёв нет боевых навыков — герой растёт внутренними навыками")
+            if g.start_skills:
+                self.error("start_skills", "в игре без боёв нет боевых навыков")
+        elif g.profile.combat == "light" and len(foes) > LIGHT_COMBAT_MAX_FIGHTS:
+            for path, _ in foes[LIGHT_COMBAT_MAX_FIGHTS:]:
+                self.error(path, f"в игре с лёгкими боями их не больше {LIGHT_COMBAT_MAX_FIGHTS}; этот бой лишний — замени на разговор или проверку")
+
+        keys = [sk.key for sk in g.inner_skills]
+        if len(keys) != len(set(keys)):
+            self.error("inner_skills", "навыки повторяются: нужно 8 разных ключей")
+        for i, c in enumerate(g.characters):
+            if c.strengths or c.weakness:
+                self.error(format_path("characters", i, "strengths"), "сильные и слабый навыки задаются только герою")
+        if g.hero.weakness and g.hero.weakness in g.hero.strengths:
+            self.error("hero.weakness", "слабый навык не может быть одновременно сильным")
+
+        need = QUALITY_BY_DEPTH[g.profile.dialogue]
+        if self.checks_total < need["checks"] or self.passives_total < need["passives"]:
+            # дописать проверки и голоса в локации, где они ещё совсем не звучат
+            for li, loc in enumerate(g.locations):
+                talks = [o for o in loc.objects if isinstance(o, s.Npc)]
+                if talks and not any(c.check for o in talks for n in o.dialogue.nodes for c in n.choices):
+                    self.quality(format_path("locations", li, "objects"),
+                                 f"в игре мало проверок навыков ({self.checks_total} из {need['checks']}) и голосов ({self.passives_total} из {need['passives']}): "
+                                 "добавь в разговоры этой локации 1–2 варианта с check (успех и провал — разные ветки) и passive — реплику голоса навыка")
+        if need["nodes"]:
+            key_roles = {c.id for c in g.characters if c.role in ("companion", "antagonist")} | {q.giver for q in g.quests if q.giver}
+            for li, loc in enumerate(g.locations):
+                for oi, o in enumerate(loc.objects):
+                    if isinstance(o, s.Npc) and o.character in key_roles and len(o.dialogue.nodes) < need["nodes"]:
+                        self.quality(format_path("locations", li, "objects", oi, "dialogue"),
+                                     f"ключевой разговор слишком короткий ({len(o.dialogue.nodes)} реплик, нужно от {need['nodes']}): "
+                                     "дай персонажу подтекст — чего он хочет и что скрывает, выбор с последствиями, проверку навыка")
+
+    def quality(self, path: str, message: str) -> None:
+        self.issues.append(Issue(path=path, message=message, severity="quality"))
 
     # --- мир целиком ---
 

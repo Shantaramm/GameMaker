@@ -8,6 +8,52 @@
   "language": "ru",
   "est_minutes": 20
  },
+ "profile": {
+  "combat": "tactical",
+  "dialogue": "rich"
+ },
+ "inner_skills": [
+  {
+   "key": "logic",
+   "name": "Логика",
+   "description": "Связывает показания, ловит на противоречиях."
+  },
+  {
+   "key": "knowledge",
+   "name": "Архивы",
+   "description": "Помнит старые дела, газеты и портовые байки."
+  },
+  {
+   "key": "empathy",
+   "name": "Чутьё на людей",
+   "description": "Слышит страх и вину за словами."
+  },
+  {
+   "key": "will",
+   "name": "Выдержка",
+   "description": "Не отводит взгляд. От неё зависит Дух."
+  },
+  {
+   "key": "endurance",
+   "name": "Портовая закалка",
+   "description": "Холод, сырость и бессонные ночи."
+  },
+  {
+   "key": "presence",
+   "name": "Голос закона",
+   "description": "Давит значком и тоном."
+  },
+  {
+   "key": "perception",
+   "name": "Глаз сыщика",
+   "description": "Видит соль на рукаве и следы на песке."
+  },
+  {
+   "key": "finesse",
+   "name": "Тонкие пальцы",
+   "description": "Замки, карманы, тихие шаги."
+  }
+ ],
  "hero": {
   "id": "arina",
   "name": "Арина Стрельцова",
@@ -27,7 +73,12 @@
    "accent_color": "brass",
    "accessory": [],
    "bg_color": "navy"
-  }
+  },
+  "strengths": [
+   "logic",
+   "perception"
+  ],
+  "weakness": "presence"
  },
  "characters": [
   {
@@ -57,7 +108,8 @@
    "combat": {
     "style": "ranged",
     "skills": []
-   }
+   },
+   "strengths": []
   },
   {
    "id": "marfa",
@@ -80,7 +132,8 @@
      "earring"
     ],
     "bg_color": "tan"
-   }
+   },
+   "strengths": []
   },
   {
    "id": "efim",
@@ -104,7 +157,8 @@
      "glasses"
     ],
     "bg_color": "cream"
-   }
+   },
+   "strengths": []
   },
   {
    "id": "oleander",
@@ -127,14 +181,16 @@
      "scar"
     ],
     "bg_color": "indigo"
-   }
+   },
+   "strengths": []
   }
  ],
  "stats_template": {
   "hp": 60,
   "attack": 9,
   "defense": 4,
-  "focus": 6
+  "focus": 6,
+  "morale": 5
  },
  "progression": {
   "xp_to_level": [
@@ -149,10 +205,21 @@
    "hp": 8,
    "attack": 2,
    "defense": 1,
-   "focus": 1
+   "focus": 1,
+   "morale": 0
   }
  },
  "start_gold": 15,
+ "hero_skills": {
+  "logic": 4,
+  "knowledge": 2,
+  "empathy": 2,
+  "will": 2,
+  "endurance": 2,
+  "presence": 1,
+  "perception": 4,
+  "finesse": 2
+ },
  "start_skills": [
   "sharp_strike"
  ],
@@ -252,7 +319,8 @@
      "attack": 0,
      "defense": 1,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -272,7 +340,8 @@
      "attack": 0,
      "defense": 3,
      "focus": 0,
-     "hp": 5
+     "hp": 5,
+     "skills": {}
     },
     "range": 1
    },
@@ -292,7 +361,8 @@
      "attack": 2,
      "defense": 0,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -312,7 +382,8 @@
      "attack": 2,
      "defense": 0,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 2
    },
@@ -332,7 +403,8 @@
      "attack": 0,
      "defense": 1,
      "focus": 1,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -723,6 +795,7 @@
         "speaker": "tim",
         "text": "Арина! Ты всё-таки приехала. Я думал, письмо утонуло вместе с почтовым ботом.",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "n2"
        },
@@ -731,6 +804,13 @@
         "speaker": "arina",
         "text": "Я здесь. Что происходит, Тим?",
         "emotion": "neutral",
+        "passive": [
+         {
+          "skill": "empathy",
+          "difficulty": "easy",
+          "text": "Он улыбается слишком широко. Так улыбаются, когда три ночи не спали от страха."
+         }
+        ],
         "choices": [
          {
           "text": "Я рада тебя видеть. Рассказывай всё, я слушаю.",
@@ -746,14 +826,35 @@
           "text": "Без лирики. Что с маяком?",
           "effects": [],
           "next": "n3"
+         },
+         {
+          "text": "Письмо пришло неделю назад. Ты написал его до того, как погас маяк?",
+          "effects": [],
+          "next": "n2b",
+          "check": {
+           "skill": "logic",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "n3"
+          }
          }
         ]
+       },
+       {
+        "id": "n2b",
+        "speaker": "tim",
+        "text": "…Ты всегда это замечала. Да. Маяк мигал три ночи подряд — неровно, будто кто-то подавал знак. А потом погас совсем.",
+        "emotion": "surprised",
+        "passive": [],
+        "choices": [],
+        "next": "n3"
        },
        {
         "id": "n3",
         "speaker": "tim",
         "text": "Маяк погас три ночи назад. Смотритель пропал. А в маяке теперь живёт этот… магистр. Говорят, в архиве управы есть всё про него.",
         "emotion": "scared",
+        "passive": [],
         "choices": [],
         "next": "n4"
        },
@@ -762,6 +863,7 @@
         "speaker": "tim",
         "text": "Возьми настойку — бабушка передала. И… можно мне с тобой?",
         "emotion": "neutral",
+        "passive": [],
         "choices": [
          {
           "text": "Идём вместе.",
@@ -788,7 +890,8 @@
         ]
        }
       ],
-      "start_node": "n1"
+      "start_node": "n1",
+      "entries": []
      }
     },
     {
@@ -805,6 +908,7 @@
         "speaker": "marfa",
         "text": "Стрельцова! Выросла-то как. Рыбу не предлагаю — ты по делу, вижу. Нож, плащ, настойку?",
         "emotion": "happy",
+        "passive": [],
         "choices": [
          {
           "text": "Что слышно в порту?",
@@ -825,6 +929,17 @@
            }
           ],
           "next": "n3"
+         },
+         {
+          "text": "Вы боитесь не крыс, Марфа.",
+          "effects": [],
+          "next": "n5",
+          "check": {
+           "skill": "empathy",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "n3"
+          }
          },
          {
           "text": "Крысы в переулке больше не побеспокоят.",
@@ -862,6 +977,7 @@
         "speaker": "marfa",
         "text": "Говорят, магистр носит морю «подношения». Кто к маяку ночью сунулся — того больше не видели.",
         "emotion": "scared",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -870,6 +986,7 @@
         "speaker": "marfa",
         "text": "Крысы! В рыбном переулке завелись — с собаку ростом, сети рвут. Прогонишь — не обижу.",
         "emotion": "angry",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -878,11 +995,22 @@
         "speaker": "marfa",
         "text": "Вот это я понимаю — столичная выучка! Держи, заслужила.",
         "emotion": "happy",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "n5",
+        "speaker": "marfa",
+        "text": "…Сын мой ходил к маяку. Три ночи назад. Сказал — свет погас, надо глянуть. Не вернулся. А я стою, торгую. Что мне ещё делать?",
+        "emotion": "sad",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "n1"
+      "start_node": "n1",
+      "entries": []
      },
      "shop": "marfa_stall"
     },
@@ -1075,6 +1203,7 @@
         "speaker": "efim",
         "text": "Кто здесь?! А, Стрельцова. Выросла. Всё равно без стука не входят.",
         "emotion": "surprised",
+        "passive": [],
         "choices": [],
         "next": "n2"
        },
@@ -1083,6 +1212,7 @@
         "speaker": "arina",
         "text": "Ефим Лукич, мне нужна правда о магистре.",
         "emotion": "neutral",
+        "passive": [],
         "choices": [
          {
           "text": "Показать журнал Олеандра",
@@ -1100,6 +1230,17 @@
           "text": "Что вы о нём знаете?",
           "effects": [],
           "next": "n4"
+         },
+         {
+          "text": "Смотритель заказывал ящиками соль. Учёному столько не нужно. Зачем?",
+          "effects": [],
+          "next": "n3",
+          "check": {
+           "skill": "knowledge",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "n4"
+          }
          }
         ]
        },
@@ -1108,6 +1249,7 @@
         "speaker": "efim",
         "text": "Подношения морю… Слушай. Тьма из глубин боится соли. Очерти круг — и она не тронет.",
         "emotion": "scared",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -1116,11 +1258,13 @@
         "speaker": "efim",
         "text": "Знаю, что он платит за аренду маяка золотом, которого у учёных не бывает. Его бумаги — в сейфе наверху, если хватит духу.",
         "emotion": "angry",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "n1"
+      "start_node": "n1",
+      "entries": []
      }
     },
     {
@@ -1218,6 +1362,7 @@
         "speaker": "oleander",
         "text": "Следователь Стрельцова. Море шептало, что вы придёте.",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "n2"
        },
@@ -1226,6 +1371,13 @@
         "speaker": "arina",
         "text": "Где смотритель и остальные?",
         "emotion": "angry",
+        "passive": [
+         {
+          "skill": "logic",
+          "difficulty": "medium",
+          "text": "«Море шептало». Он говорит о море, как о заказчике. Кто-то платит ему — и это не город."
+         }
+        ],
         "choices": [
          {
           "text": "Ты ответишь за каждого пропавшего.",
@@ -1239,14 +1391,36 @@
           },
           "effects": [],
           "next": "n4"
+         },
+         {
+          "text": "Молча выдержать его взгляд.",
+          "effects": [],
+          "next": "n6",
+          "check": {
+           "skill": "will",
+           "difficulty": "challenging",
+           "red": true,
+           "failure": "n5",
+           "damage": "morale"
+          }
          }
         ]
+       },
+       {
+        "id": "n6",
+        "speaker": "oleander",
+        "text": "Вы не боитесь. Любопытно. Те, кого я отдал морю, тоже сначала не боялись. Потом — благодарили.",
+        "emotion": "surprised",
+        "passive": [],
+        "choices": [],
+        "next": "n5"
        },
        {
         "id": "n3",
         "speaker": "oleander",
         "text": "Они там, где им и место. Впрочем, спорить я не люблю.",
         "emotion": "neutral",
+        "passive": [],
         "choices": [],
         "next": "n5"
        },
@@ -1255,6 +1429,7 @@
         "speaker": "oleander",
         "text": "Вы рылись в моих бумагах? Как грубо.",
         "emotion": "surprised",
+        "passive": [],
         "choices": [],
         "next": "n5"
        },
@@ -1263,11 +1438,13 @@
         "speaker": "oleander",
         "text": "Пусть с вами поговорит туман.",
         "emotion": "angry",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "n1"
+      "start_node": "n1",
+      "entries": []
      }
     },
     {
@@ -1364,6 +1541,7 @@
         "id": "n1",
         "speaker": "narrator",
         "text": "Огромная линза треснула. Одной её не удержать, пока зажигаешь фитиль.",
+        "passive": [],
         "choices": [
          {
           "text": "Тим, держи линзу. Я зажгу.",
@@ -1403,7 +1581,8 @@
         ]
        }
       ],
-      "start_node": "n1"
+      "start_node": "n1",
+      "entries": []
      },
      "once": false
     }

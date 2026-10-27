@@ -27,6 +27,7 @@ from ..engine.validator import _schema_issues, validate
 from ..llm import LLM
 from .fragments import PLAN_FIELDS, ItemsContent, LocationContent, Outline, assemble, dump, fragment_schema, referenced_ids
 from .json_utils import JsonError, parse_json
+from .profile import SKILLS, brief_guide, profile_guide
 from .prompts import render
 
 MAX_FRAGMENT_ATTEMPTS = 3
@@ -72,9 +73,9 @@ def split_brief(markdown: str) -> tuple[str, list[str]]:
     return body.strip(), questions[:5]
 
 
-async def generate_brief(idea: str, llm: LLM, game_id: str | None = None) -> dict[str, Any]:
+async def generate_brief(idea: str, llm: LLM, game_id: str | None = None, profile: s.GameProfile | None = None) -> dict[str, Any]:
     text = await llm.complete(
-        [{"role": "system", "content": render("brief")}, {"role": "user", "content": idea}],
+        [{"role": "system", "content": render("brief", profile=brief_guide(profile or s.GameProfile()))}, {"role": "user", "content": idea}],
         step="brief", quality="text", game_id=game_id, temperature=0.9,
     )
     body, questions = split_brief(text)
@@ -85,9 +86,10 @@ async def generate_brief(idea: str, llm: LLM, game_id: str | None = None) -> dic
 
 class Pipeline:
     def __init__(self, llm: LLM, brief: str, game_id: str, on_status: StatusFn | None = None,
-                 library: ArtLibrary | None = None) -> None:
+                 library: ArtLibrary | None = None, profile: s.GameProfile | None = None) -> None:
         self.llm = llm
         self.brief = brief
+        self.profile = profile  # выбор пользователя; если задан — важнее того, что модель написала в каркасе
         self.game_id = game_id
         self.on_status = on_status
         self.library = library or load_library()
@@ -107,7 +109,10 @@ class Pipeline:
     async def run(self) -> GenerationResult:
         await self.status("outline", 0.05)
         self.outline = await self.fragment("outline", Outline, render(
-            "outline", brief=self.brief, catalog=self.catalog, schema=_json(fragment_schema(Outline))), "Составь каркас игры.")
+            "outline", brief=self.brief, catalog=self.catalog, schema=_json(fragment_schema(Outline)),
+            profile=profile_guide(self.profile or s.GameProfile())), "Составь каркас игры.")
+        if self.profile is not None:
+            self.outline.profile = self.profile
         await self.status("outline", 0.1, outline=self.preview())
 
         plans = self.outline.locations
@@ -115,13 +120,15 @@ class Pipeline:
         for k, plan in enumerate(plans):
             await self.status("locations", 0.1 + 0.6 * k / len(plans), done=k, total=len(plans))
             system = render("location", brief=self.brief, outline=outline_json, location=_json(dump(plan)),
-                            catalog=self.catalog, schema=_json(fragment_schema(LocationContent)))
+                            catalog=self.catalog, schema=_json(fragment_schema(LocationContent)),
+                            profile=profile_guide(self.outline.profile), skills=SKILLS)
             self.contents[plan.id] = await self.fragment(f"location:{plan.id}", LocationContent, system, f"Наполни локацию «{plan.title}» ({plan.id}).")
         await self.status("locations", 0.7, done=len(plans), total=len(plans))
 
         await self.status("items", 0.75)
         refs = referenced_ids(self.contents, self.outline)
-        system = render("items", brief=self.brief, referenced=_json(refs), catalog=self.catalog, schema=_json(fragment_schema(ItemsContent)))
+        system = render("items", brief=self.brief, referenced=_json(refs), catalog=self.catalog, schema=_json(fragment_schema(ItemsContent)),
+                        profile=profile_guide(self.outline.profile))
         self.items = await self.fragment("items", ItemsContent, system, "Опиши предметы, навыки, магазины и тактики.", quality="fast")
 
         return await self.check_and_playtest()
@@ -139,6 +146,11 @@ class Pipeline:
                     continue
             else:
                 game = report.game
+                if report.quality and round_ == 0:
+                    # замечания о качестве (мелкие диалоги в глубокой игре) — один раунд починки, дальше как есть
+                    await self.fix_all(report.quality)
+                    continue
+                warnings += [i.model_copy(update={"severity": "warning"}) for i in report.quality]
 
             await self.status("balance", 0.88)
             level_issues = prepare(game)

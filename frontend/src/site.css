@@ -73,6 +73,15 @@
 .site .hero-card figcaption { display: flex; flex-direction: column; text-align: left; align-self: center; }
 .site .hero-card small { color: var(--muted); }
 
+.profile { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: var(--panel); border: 2px solid var(--line); }
+.profile-row { display: grid; grid-template-columns: 80px 1fr; gap: 4px 10px; align-items: center; }
+.profile-row small { grid-column: 2; font-size: 13px; }
+.profile-title { font-weight: 600; }
+.segmented { display: flex; flex-wrap: wrap; gap: 0; }
+.segmented .seg { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 2px solid var(--line); margin-left: -2px; padding: 6px 12px; cursor: pointer; }
+.segmented .seg:first-child { margin-left: 0; }
+.segmented .seg:hover { color: var(--text); }
+.segmented .seg.on { color: #1a1408; background: var(--gold); border-color: #8a6a1a; position: relative; z-index: 1; font-weight: 600; }
 .site-nav { display: flex; gap: 18px; margin: -12px 0 8px; font-size: 15px; }
 .site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
 .site-nav a:hover { color: var(--text); }
@@ -95,6 +104,8 @@
 .game-card-body small { font-size: 13px; }
 .game-card-body .row { margin-top: auto; }
 .game-card .btn { text-decoration: none; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 1px 8px; border: 1px solid var(--line); color: var(--muted); background: rgba(255, 255, 255, 0.03); }
 .badge { font-size: 12px; padding: 2px 8px; border: 1px solid var(--gold); color: var(--gold); }
 .my-games { display: flex; flex-direction: column; gap: 6px; }
 .my-game { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); }
@@ -107,6 +118,9 @@
   .site h1 { font-size: 28px; }
   .site .row .btn { flex: 1 1 auto; }
   .game-grid { grid-template-columns: 1fr; }
+  .profile-row { grid-template-columns: 1fr; }
+  .profile-row small { grid-column: 1; }
+  .segmented .seg { flex: 1 1 auto; padding: 6px 8px; font-size: 14px; }
   .cover-title h3 { font-size: 22px; }
   .site-nav { margin-top: -6px; }
 }

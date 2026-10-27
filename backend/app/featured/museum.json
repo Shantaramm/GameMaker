@@ -1,0 +1,2531 @@
+{
+ "schema_version": "2",
+ "meta": {
+  "title": "Последняя смена",
+  "logline": "Ночной сторож провинциального музея замечает, что знаменитую картину подменили, — и до утра должен решить, что дороже: правда или люди, которых она оставит без работы.",
+  "tone": "тихая философская драма с загадкой",
+  "art_style": "пиксель-арт",
+  "language": "ru",
+  "est_minutes": 30
+ },
+ "profile": {
+  "combat": "none",
+  "dialogue": "deep"
+ },
+ "inner_skills": [
+  {
+   "key": "logic",
+   "name": "Логика",
+   "description": "Сводит концы с концами и не верит совпадениям."
+  },
+  {
+   "key": "knowledge",
+   "name": "Эрудиция",
+   "description": "Сорок лет уроков истории: даты, каталоги, чужие биографии."
+  },
+  {
+   "key": "empathy",
+   "name": "Чуткость",
+   "description": "Слышит, о чём человек молчит."
+  },
+  {
+   "key": "will",
+   "name": "Самообладание",
+   "description": "Не даёт раскиснуть и согласиться из жалости. От него зависит Дух."
+  },
+  {
+   "key": "endurance",
+   "name": "Старые кости",
+   "description": "Холодный запасник, ночь без сна, больное сердце. От них зависит Здоровье."
+  },
+  {
+   "key": "presence",
+   "name": "Учительский голос",
+   "description": "Тот тон, от которого затихал класс. Остался ли он?"
+  },
+  {
+   "key": "perception",
+   "name": "Глаз сторожа",
+   "description": "Сорок лет одних и тех же залов — любая перемена режет глаз."
+  },
+  {
+   "key": "finesse",
+   "name": "Тихие руки",
+   "description": "Замки, ящики, шаги по скрипучему паркету."
+  }
+ ],
+ "hero": {
+  "id": "savva",
+  "name": "Савва Ильич",
+  "role": "hero",
+  "description": "Шестьдесят лет, ночной сторож. Сорок лет учил детей истории, пока школу не закрыли. Наблюдательный, начитанный, мягкий.",
+  "appearance": {
+   "head": "old",
+   "skin": "fair",
+   "hair": "balding",
+   "hair_color": "gray",
+   "eyes": "sleepy",
+   "eye_color": "gray",
+   "brows": "bushy",
+   "mouth": "stern",
+   "facial_hair": "mustache",
+   "outfit": "work_jacket",
+   "outfit_color": "navy",
+   "accent_color": "brass",
+   "accessory": [
+    "glasses"
+   ],
+   "bg_color": "slate"
+  },
+  "strengths": [
+   "knowledge",
+   "empathy"
+  ],
+  "weakness": "presence"
+ },
+ "characters": [
+  {
+   "id": "ira",
+   "name": "Ира",
+   "role": "companion",
+   "description": "Реставраторша, двадцать четыре года. Талантливая копиистка, которую попросили «освежить» картину — и она поняла, что её попросили закончить.",
+   "appearance": {
+    "head": "heart",
+    "skin": "light",
+    "hair": "bob",
+    "hair_color": "ginger",
+    "eyes": "big",
+    "eye_color": "green",
+    "brows": "thin",
+    "mouth": "small",
+    "outfit": "dress",
+    "outfit_color": "teal",
+    "accent_color": "cream",
+    "accessory": [
+     "earring"
+    ],
+    "bg_color": "moss"
+   },
+   "joins": {
+    "flag": "ira_joined",
+    "is": true
+   },
+   "strengths": []
+  },
+  {
+   "id": "nina",
+   "name": "Нина Аркадьевна",
+   "role": "npc",
+   "description": "Экскурсовод, семьдесят лет. Сорок лет рассказывала детям про «Утро над Сурой». Помнит всё и всех.",
+   "appearance": {
+    "head": "old",
+    "skin": "porcelain",
+    "hair": "bun",
+    "hair_color": "white",
+    "eyes": "narrow",
+    "eye_color": "blue",
+    "brows": "thin",
+    "mouth": "thin",
+    "outfit": "dress",
+    "outfit_color": "plum",
+    "accent_color": "gold",
+    "accessory": [
+     "pendant"
+    ],
+    "bg_color": "violet"
+   },
+   "strengths": []
+  },
+  {
+   "id": "vadim",
+   "name": "Вадим Петрович",
+   "role": "antagonist",
+   "description": "Директор музея. Продал подлинник, чтобы заплатить зарплаты и отремонтировать крышу. Устал, умён, по-своему честен.",
+   "appearance": {
+    "head": "square",
+    "skin": "beige",
+    "hair": "side_part",
+    "hair_color": "dark_brown",
+    "eyes": "narrow",
+    "eye_color": "brown",
+    "brows": "thick",
+    "mouth": "smirk",
+    "outfit": "business_suit",
+    "outfit_color": "charcoal",
+    "accent_color": "crimson",
+    "accessory": [],
+    "bg_color": "brown"
+   },
+   "strengths": []
+  },
+  {
+   "id": "grisha",
+   "name": "Гриша",
+   "role": "npc",
+   "description": "Водитель грузовика из областного фонда. Ему всё равно, что везти.",
+   "appearance": {
+    "head": "round",
+    "skin": "tan",
+    "hair": "crew_cut",
+    "hair_color": "brown",
+    "eyes": "small",
+    "eye_color": "hazel",
+    "brows": "straight",
+    "mouth": "wide",
+    "facial_hair": "stubble",
+    "outfit": "work_jacket",
+    "outfit_color": "rust",
+    "accent_color": "gray",
+    "accessory": [],
+    "bg_color": "gray"
+   },
+   "strengths": []
+  }
+ ],
+ "stats_template": {
+  "hp": 5,
+  "attack": 0,
+  "defense": 0,
+  "focus": 0,
+  "morale": 5
+ },
+ "progression": {
+  "xp_to_level": [
+   25,
+   60,
+   110,
+   180,
+   270,
+   380
+  ],
+  "per_level": {
+   "hp": 0,
+   "attack": 0,
+   "defense": 0,
+   "focus": 0,
+   "morale": 0
+  }
+ },
+ "start_gold": 15,
+ "hero_skills": {
+  "logic": 2,
+  "knowledge": 4,
+  "empathy": 4,
+  "will": 2,
+  "endurance": 2,
+  "presence": 1,
+  "perception": 2,
+  "finesse": 2
+ },
+ "start_skills": [],
+ "start_items": [],
+ "start_equipment": {
+  "body": "teacher_jacket"
+ },
+ "skills": [],
+ "items": [
+  {
+   "id": "storage_key",
+   "name": "Ключ Нины от запасника",
+   "description": "Старый, с биркой «запасник, 1979». Директор про него забыл.",
+   "icon": "key_ornate",
+   "kind": "key",
+   "effect": [],
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "original_canvas",
+   "name": "Подлинник «Утро над Сурой»",
+   "description": "Свёрнутый в мешковину холст. Девочка на берегу держит красный платок.",
+   "icon": "scroll",
+   "kind": "misc",
+   "effect": [],
+   "value_tier": 5,
+   "price": 100
+  },
+  {
+   "id": "thermos_tea",
+   "name": "Чай из термоса",
+   "description": "Крепкий, сладкий, сторожевой. Согревает руки и сердце.",
+   "icon": "flask",
+   "kind": "consumable",
+   "effect": [
+    {
+     "heal": 1
+    }
+   ],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "validol",
+   "name": "Валидол",
+   "description": "Таблетка под язык. Ровно столько спокойствия, чтобы не принять решение со страха.",
+   "icon": "pills",
+   "kind": "consumable",
+   "effect": [
+    {
+     "mod_stat": "morale",
+     "delta": 1
+    }
+   ],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "flashlight",
+   "name": "Фонарик сторожа",
+   "description": "Тусклый, но в нужном месте. С ним любая мелочь видна.",
+   "icon": "lantern",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "trinket",
+    "bonus": {
+     "attack": 0,
+     "defense": 0,
+     "focus": 0,
+     "hp": 0,
+     "skills": {
+      "perception": 1
+     }
+    },
+    "range": 1
+   },
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "teacher_jacket",
+   "name": "Пиджак учителя",
+   "description": "Тот самый, с мелом на рукаве. В нём голос сам собой становится твёрже.",
+   "icon": "coat",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "body",
+    "bonus": {
+     "attack": 0,
+     "defense": 0,
+     "focus": 0,
+     "hp": 0,
+     "skills": {
+      "presence": 1
+     }
+    },
+    "range": 1
+   },
+   "value_tier": 2,
+   "price": 22
+  }
+ ],
+ "enemies": [],
+ "shops": [],
+ "tactics": [],
+ "quests": [
+  {
+   "id": "last_shift",
+   "title": "Последняя смена",
+   "main": true,
+   "stages": [
+    {
+     "text": "Понять, что не так с картиной",
+     "done": {
+      "any": [
+       {
+        "flag": "noticed_paint",
+        "is": true
+       },
+       {
+        "flag": "noticed_scarf",
+        "is": true
+       },
+       {
+        "flag": "forgery_proven",
+        "is": true
+       }
+      ]
+     }
+    },
+    {
+     "text": "Поговорить с директором начистоту",
+     "done": {
+      "flag": "director_confronted",
+      "is": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "hear_ira",
+   "title": "Выслушать Иру",
+   "main": false,
+   "giver": "ira",
+   "stages": [
+    {
+     "text": "Узнать, что Ира скрывает",
+     "done": {
+      "flag": "ira_joined",
+      "is": true
+     }
+    }
+   ]
+  }
+ ],
+ "flags": [
+  {
+   "id": "noticed_paint",
+   "description": "Савва заметил свежую краску на картине"
+  },
+  {
+   "id": "noticed_scarf",
+   "description": "Савва вспомнил, что у женщины на картине был платок"
+  },
+  {
+   "id": "forgery_proven",
+   "description": "Подмена доказана"
+  },
+  {
+   "id": "nina_trusts",
+   "description": "Нина отдала ключ от запасника"
+  },
+  {
+   "id": "ira_joined",
+   "description": "Ира идёт вместе с Саввой"
+  },
+  {
+   "id": "original_found",
+   "description": "Подлинник найден"
+  },
+  {
+   "id": "director_confronted",
+   "description": "Разговор с директором начистоту"
+  },
+  {
+   "id": "director_confessed",
+   "description": "Директор согласился признаться сам"
+  },
+  {
+   "id": "bench_remembered",
+   "description": "Савва вспомнил, зачем стал учителем"
+  }
+ ],
+ "locations": [
+  {
+   "id": "lobby",
+   "title": "Вестибюль",
+   "intro": "Девять вечера. Свет в вестибюле горит вполсилы — экономят. Завтра в семь утра из музея увезут то единственное, ради чего сюда вообще ходили.",
+   "theme": "office",
+   "background": {
+    "setting": "indoor",
+    "time": "night",
+    "far": "room_wall",
+    "props": [
+     {
+      "id": "candelabra",
+      "x": 25
+     },
+     {
+      "id": "bookshelf",
+      "x": 85
+     },
+     {
+      "id": "door",
+      "x": 135
+     }
+    ],
+    "ground": "planks",
+    "overlay": "none",
+    "mood_palette": "warm_candle"
+   },
+   "size": "medium",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "entrance",
+     "floor": 0,
+     "name": "вход"
+    },
+    {
+     "id": "cloakroom",
+     "floor": 0,
+     "name": "гардероб"
+    },
+    {
+     "id": "stairs",
+     "floor": 0,
+     "name": "у лестницы"
+    }
+   ],
+   "objects": [
+    {
+     "id": "old_booklet",
+     "zone": "entrance",
+     "type": "thing",
+     "look": "table",
+     "name": "Буклет 1987 года",
+     "event": {
+      "type": "narration",
+      "id": "read_booklet",
+      "text": "«Утро над Сурой» — гордость музея. На обороте выцветшей ручкой: «Савве — на память о первом уроке в музее. Не давай детям смотреть, учи видеть. Н.»"
+     },
+     "once": true
+    },
+    {
+     "id": "nina_in_cloakroom",
+     "zone": "cloakroom",
+     "type": "npc",
+     "character": "nina",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_nina",
+      "nodes": [
+       {
+        "id": "n1",
+        "speaker": "nina",
+        "text": "Савва Ильич. Вы знаете, что её завтра увозят? Сорок лет я рассказывала про неё детям. А теперь — «на временное хранение в областной фонд». Временное, как же.",
+        "emotion": "sad",
+        "passive": [
+         {
+          "skill": "empathy",
+          "difficulty": "easy",
+          "text": "Она не уходит домой. Она сторожит — как и ты."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Вы не верите, что её вернут?",
+          "effects": [],
+          "next": "n2"
+         },
+         {
+          "text": "Вы что-то недоговариваете, Нина Аркадьевна.",
+          "effects": [],
+          "next": "n3",
+          "check": {
+           "skill": "empathy",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "n3f",
+           "damage": "morale"
+          }
+         },
+         {
+          "text": "Мне пора на обход.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "n2",
+        "speaker": "nina",
+        "text": "Я верю тому, что вижу. А вижу я, что Вадим Петрович третий месяц не платит смотрителям, а вчера заказал новую раму. Зачем раме картина, которая уезжает?",
+        "emotion": "neutral",
+        "passive": [
+         {
+          "skill": "logic",
+          "difficulty": "medium",
+          "text": "Рама нужна не той картине, что уедет. А той, что останется."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Новая рама… для какой картины?",
+          "effects": [],
+          "next": "n4"
+         },
+         {
+          "text": "Это не моё дело. Я сторож.",
+          "effects": [],
+          "next": "n6"
+         }
+        ]
+       },
+       {
+        "id": "n3",
+        "speaker": "nina",
+        "text": "…Ира. Реставраторша. Плакала вчера в мастерской. Я спросила — говорит, краска не сохнет. Краска, Савва Ильич. На картине, которой сто лет.",
+        "emotion": "scared",
+        "passive": [],
+        "choices": [],
+        "next": "n4"
+       },
+       {
+        "id": "n3f",
+        "speaker": "nina",
+        "text": "Недоговариваю? Я сорок лет договаривала за весь этот город. Идите на свой обход.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "n4",
+        "speaker": "nina",
+        "text": "Возьмите. Ключ от запасника — старый, мой. Вадим Петрович про него забыл, как забывает про всё, что не стоит денег.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Спасибо. Я осторожно.",
+          "effects": [
+           {
+            "give_item": "storage_key"
+           },
+           {
+            "set_flag": "nina_trusts",
+            "value": true
+           }
+          ],
+          "next": "n5"
+         },
+         {
+          "text": "Не надо. Я сторож, а не следователь.",
+          "effects": [],
+          "next": "n6"
+         }
+        ]
+       },
+       {
+        "id": "n5",
+        "speaker": "nina",
+        "text": "«Осторожно» — это не про вас. Вы сорок лет учили детей, что правда важнее спокойствия. Посмотрим, правда ли вы так думали.",
+        "emotion": "happy",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "n6",
+        "speaker": "nina",
+        "text": "Сторож. Ну да. Сторожат ведь не только стены.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "nb1",
+        "speaker": "nina",
+        "text": "Были в запаснике? По лицу не скажешь. У вас всегда было лицо человека, который ещё не решил.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [
+         {
+          "text": "А вы бы что сделали на моём месте?",
+          "effects": [],
+          "next": "nb2"
+         },
+         {
+          "text": "Я ещё ищу.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "nb2",
+        "speaker": "nina",
+        "text": "Я? Я бы испугалась. Мне семьдесят, Савва Ильич, и это мой последний год. Не спрашивайте старуху о смелости — спросите о памяти.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "na1",
+        "speaker": "nina",
+        "text": "Знаете. По глазам вижу. И что теперь? Правда — это хорошо. Только после неё обычно кто-то остаётся без работы.",
+        "emotion": "sad",
+        "passive": [
+         {
+          "skill": "will",
+          "difficulty": "challenging",
+          "text": "Она хочет, чтобы ты решил за неё. Не давай ей этого — и не отнимай."
+         }
+        ],
+        "choices": [
+         {
+          "text": "А если промолчать?",
+          "effects": [],
+          "next": "na2"
+         },
+         {
+          "text": "Правда важнее. Вы сами меня этому учили.",
+          "effects": [],
+          "next": "na3"
+         },
+         {
+          "text": "Нина Аркадьевна, вы ведь знали Аверина?",
+          "effects": [],
+          "next": "na4",
+          "check": {
+           "skill": "knowledge",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "na4f"
+          }
+         },
+         {
+          "text": "Я ещё не решил.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "na2",
+        "speaker": "nina",
+        "text": "Тогда в городе будет висеть красивая ложь. Дети будут смотреть на неё и учиться видеть. Разве это плохо? Я не знаю. Я правда не знаю.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "na3",
+        "speaker": "nina",
+        "text": "Учила. Мой внук у вас учился — помните Петю? Теперь в Москве, врёт людям за деньги. Говорит, это называется «реклама». Так что не знаю, кто из нас кого чему научил.",
+        "emotion": "happy",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "na4",
+        "speaker": "nina",
+        "text": "…Его дочь. Я знала его дочь. Женщина на берегу — это она, ей там шесть. Платок он ей подарил в то лето. Если платка нет — значит, это не та картина. Значит, её больше нет совсем.",
+        "emotion": "surprised",
+        "passive": [],
+        "choices": [],
+        "next": "na5"
+       },
+       {
+        "id": "na4f",
+        "speaker": "nina",
+        "text": "Аверин умер в тридцать седьмом, Савва Ильич. Его никто не знал. Его просто забыли — как забудут и нас.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "na5",
+        "speaker": "skill:empathy",
+        "text": "Для неё это не подделка. Это вторые похороны.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "n1",
+      "entries": [
+       {
+        "condition": {
+         "flag": "forgery_proven",
+         "is": true
+        },
+        "node": "na1"
+       },
+       {
+        "condition": {
+         "flag": "nina_trusts",
+         "is": true
+        },
+        "node": "nb1"
+       }
+      ]
+     }
+    },
+    {
+     "id": "cloakroom_box",
+     "zone": "cloakroom",
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "flashlight"
+      },
+      {
+       "give_item": "thermos_tea"
+      }
+     ]
+    },
+    {
+     "id": "lobby_to_gallery",
+     "zone": "stairs",
+     "type": "exit",
+     "kind": "door",
+     "to": "gallery"
+    },
+    {
+     "id": "lobby_to_director",
+     "zone": "stairs",
+     "type": "exit",
+     "kind": "door",
+     "to": "director_office"
+    },
+    {
+     "id": "lobby_to_yard",
+     "zone": "entrance",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "yard"
+    }
+   ],
+   "on_enter": [
+    {
+     "type": "dialogue",
+     "id": "first_thought",
+     "nodes": [
+      {
+       "id": "t1",
+       "speaker": "skill:knowledge",
+       "text": "«Утро над Сурой», 1912 год. Художник Аверин писал её три лета подряд и так и не продал. Ты рассказывал о ней на каждом выпускном уроке. Сегодня — последний раз, когда она здесь.",
+       "passive": [],
+       "choices": [],
+       "next": "t2"
+      },
+      {
+       "id": "t2",
+       "speaker": "skill:will",
+       "text": "Не раскисай. Это просто картина. Просто сорок лет твоей жизни, висящие на гвозде.",
+       "passive": [],
+       "choices": [],
+       "next": "end"
+      }
+     ],
+     "start_node": "t1",
+     "entries": []
+    }
+   ]
+  },
+  {
+   "id": "gallery",
+   "title": "Зал пейзажей",
+   "intro": "Зал пейзажей. Паркет скрипит на третьей доске от входа — сорок лет скрипит. На дальней стене, в луче дежурной лампы, — «Утро над Сурой».",
+   "theme": "castle",
+   "background": {
+    "setting": "indoor",
+    "time": "night",
+    "far": "room_wall",
+    "props": [
+     {
+      "id": "statue",
+      "x": 30
+     },
+     {
+      "id": "window",
+      "x": 90
+     },
+     {
+      "id": "pillar",
+      "x": 140
+     }
+    ],
+    "ground": "planks",
+    "overlay": "none",
+    "mood_palette": "violet_dread"
+   },
+   "size": "medium",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "hall_entry",
+     "floor": 0,
+     "name": "вход в зал"
+    },
+    {
+     "id": "painting",
+     "floor": 0,
+     "name": "у картины"
+    },
+    {
+     "id": "window_bench",
+     "floor": 0,
+     "name": "скамья у окна"
+    }
+   ],
+   "objects": [
+    {
+     "id": "the_painting",
+     "zone": "painting",
+     "type": "thing",
+     "look": "banner",
+     "name": "«Утро над Сурой»",
+     "event": {
+      "type": "dialogue",
+      "id": "look_painting",
+      "nodes": [
+       {
+        "id": "p1",
+        "speaker": "narrator",
+        "text": "Рассветная река, лодка, женщина на берегу машет кому-то, кого нет на холсте. Сорок лет вы видите её каждую ночь.",
+        "passive": [
+         {
+          "skill": "perception",
+          "difficulty": "formidable",
+          "text": "Лак у лодки блестит иначе. Ты это видишь раньше, чем понимаешь."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Присмотреться к мазкам у лодки.",
+          "effects": [],
+          "next": "p2",
+          "check": {
+           "skill": "perception",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "p3"
+          }
+         },
+         {
+          "text": "Вспомнить, что писали о картине в каталогах.",
+          "effects": [],
+          "next": "p4",
+          "check": {
+           "skill": "knowledge",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "p5"
+          }
+         },
+         {
+          "text": "Просто постоять.",
+          "effects": [],
+          "next": "p6"
+         }
+        ]
+       },
+       {
+        "id": "p2",
+        "speaker": "skill:perception",
+        "text": "Мазок у лодки блестит. Сто лет назад масло так не блестит — так блестит то, что положили месяц назад.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Запомнить.",
+          "effects": [
+           {
+            "set_flag": "noticed_paint",
+            "value": true
+           }
+          ],
+          "next": "p7"
+         }
+        ]
+       },
+       {
+        "id": "p3",
+        "speaker": "skill:perception",
+        "text": "Темно. Глаза уже не те. Женщина на берегу машет — может, тебе.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "p4",
+        "speaker": "skill:knowledge",
+        "text": "Каталог 1959 года, страница сорок: «…в руке девочки — красный платок». Здесь платка нет. Аверин не стал бы его стирать.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Платок. Где платок?",
+          "effects": [
+           {
+            "set_flag": "noticed_scarf",
+            "value": true
+           }
+          ],
+          "next": "p7"
+         }
+        ]
+       },
+       {
+        "id": "p5",
+        "speaker": "skill:knowledge",
+        "text": "Помнишь только голос Нины: «Художник писал её три лета». Дальше — пусто. Возраст.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "p6",
+        "speaker": "skill:will",
+        "text": "Ты стоишь здесь, потому что боишься идти дальше. Это нормально. Но завтра её увезут, и стоять будет не перед чем.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "p7",
+        "speaker": "skill:logic",
+        "text": "Если это копия, подлинник либо уже продан, либо ещё в здании. Грузовик — утром. Значит, в здании. Копию писал кто-то, кто умеет. В городе такой человек один.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "pz",
+        "speaker": "skill:empathy",
+        "text": "Ты держишь подлинник, а смотришь на копию. И копия тоже красивая. Это самое страшное.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "p1",
+      "entries": [
+       {
+        "condition": {
+         "flag": "original_found",
+         "is": true
+        },
+        "node": "pz"
+       }
+      ]
+     },
+     "once": false
+    },
+    {
+     "id": "ira_in_gallery",
+     "zone": "hall_entry",
+     "type": "npc",
+     "character": "ira",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_ira",
+      "nodes": [
+       {
+        "id": "i1",
+        "speaker": "ira",
+        "text": "Савва Ильич? Я… я забыла папку. Уже ухожу.",
+        "emotion": "scared",
+        "passive": [
+         {
+          "skill": "perception",
+          "difficulty": "easy",
+          "text": "Папки у неё нет. Руки в охре до запястий."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Ночью? За папкой?",
+          "effects": [],
+          "next": "i2"
+         },
+         {
+          "text": "Вы плакали.",
+          "effects": [],
+          "next": "i3",
+          "check": {
+           "skill": "empathy",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "i2f"
+          }
+         },
+         {
+          "text": "Идите, конечно. Осторожно на лестнице.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "i2",
+        "speaker": "ira",
+        "text": "Да, ночью. У реставраторов тоже бывает бессонница. Вы теперь и за нами следите?",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "i2f",
+        "speaker": "ira",
+        "text": "Аллергия на растворитель. Спокойной смены.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "is1",
+        "speaker": "ira",
+        "text": "Вы смотрели на лодку. Я видела. Только не говорите никому, пока не выслушаете меня. Пожалуйста.",
+        "emotion": "scared",
+        "passive": [],
+        "choices": [],
+        "next": "i3"
+       },
+       {
+        "id": "i3",
+        "speaker": "ira",
+        "text": "Вадим Петрович попросил «освежить» картину перед отправкой. Я освежила. А потом поняла, что меня попросили не освежить. Меня попросили закончить.",
+        "emotion": "sad",
+        "passive": [
+         {
+          "skill": "empathy",
+          "difficulty": "medium",
+          "text": "Ей не стыдно за работу. Ей стыдно, что работа хорошая."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Вы написали копию.",
+          "effects": [],
+          "next": "i4"
+         },
+         {
+          "text": "Кто попросил — тот и ответит.",
+          "effects": [],
+          "next": "i5"
+         },
+         {
+          "text": "Учителю вы бы сказали правду. Говорите.",
+          "effects": [],
+          "next": "i4",
+          "check": {
+           "skill": "presence",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "i6f",
+           "damage": "morale"
+          }
+         }
+        ]
+       },
+       {
+        "id": "i4",
+        "speaker": "ira",
+        "text": "Я думала — копия на время перевозки, так делают. А вчера увидела, как подлинник несут в мастерскую в ящике с надписью «рамы». Наверх, в холодный запасник.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [],
+        "next": "i5"
+       },
+       {
+        "id": "i5",
+        "speaker": "ira",
+        "text": "Утром он отдаст подлинник покупателю, а копию — в фонд. Музей получит деньги на год. Все будут счастливы. Кроме меня. И, кажется, вас.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Пойдёмте со мной. Найдём подлинник.",
+          "effects": [
+           {
+            "set_flag": "ira_joined",
+            "value": true
+           }
+          ],
+          "next": "i7"
+         },
+         {
+          "text": "Это решать не мне.",
+          "effects": [],
+          "next": "i8"
+         }
+        ]
+       },
+       {
+        "id": "i6f",
+        "speaker": "ira",
+        "text": "Вы мне не учитель. И голос у вас, простите, не учительский. Учительский бывает у тех, кто не боится.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "i5"
+       },
+       {
+        "id": "i7",
+        "speaker": "ira",
+        "text": "Ящик заперт. Ключ у директора — или у того, кто здесь дольше директора. Идёмте. И… спасибо, что не закричали.",
+        "emotion": "happy",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "i8",
+        "speaker": "ira",
+        "text": "Тогда я буду знать, что вы видели и промолчали. Это тоже решение, Савва Ильич. Просто тихое.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "ij",
+        "speaker": "ira",
+        "text": "Я рядом. Мастерская — за той дверью. И если пойдёте к директору — не говорите про меня первым. Пусть хотя бы это будет моим.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "i1",
+      "entries": [
+       {
+        "condition": {
+         "flag": "ira_joined",
+         "is": true
+        },
+        "node": "ij"
+       },
+       {
+        "condition": {
+         "any": [
+          {
+           "flag": "noticed_paint",
+           "is": true
+          },
+          {
+           "flag": "noticed_scarf",
+           "is": true
+          }
+         ]
+        },
+        "node": "is1"
+       }
+      ]
+     }
+    },
+    {
+     "id": "window_bench",
+     "zone": "window_bench",
+     "type": "thing",
+     "look": "chair",
+     "name": "Скамья у окна",
+     "event": {
+      "type": "dialogue",
+      "id": "sit_bench",
+      "nodes": [
+       {
+        "id": "b1",
+        "speaker": "narrator",
+        "text": "Здесь, на этой скамье, вы проверяли тетради, когда школу закрыли и вы пошли в сторожа. Красная ручка, чужие ошибки, тишина.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Вспомнить, зачем вы вообще стали учителем.",
+          "effects": [
+           {
+            "mod_skill": "will",
+            "delta": 1
+           },
+           {
+            "set_flag": "bench_remembered",
+            "value": true
+           }
+          ],
+          "next": "b2"
+         },
+         {
+          "text": "Встать. Некогда.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "b2",
+        "speaker": "skill:will",
+        "text": "Не ради правды. Ради того мальчика в третьем ряду, который однажды сказал: «А я понял». Вот ради чего. Помни об этом, когда будешь решать.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "b1",
+      "entries": []
+     },
+     "once": true
+    },
+    {
+     "id": "gallery_to_lobby",
+     "zone": "hall_entry",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "lobby"
+    },
+    {
+     "id": "gallery_to_restoration",
+     "zone": "window_bench",
+     "type": "exit",
+     "kind": "door",
+     "to": "restoration"
+    }
+   ],
+   "on_enter": [
+    {
+     "type": "dialogue",
+     "id": "ira_in_hall_remark",
+     "nodes": [
+      {
+       "id": "r1",
+       "speaker": "ira",
+       "text": "Странно стоять перед ней и знать, где каждый мой мазок. Я ведь писала её как свою. А получилась — чужая.",
+       "emotion": "sad",
+       "passive": [],
+       "choices": [],
+       "next": "end"
+      }
+     ],
+     "start_node": "r1",
+     "entries": [],
+     "condition": {
+      "flag": "ira_joined",
+      "is": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "restoration",
+   "title": "Мастерская реставратора",
+   "intro": "Мастерская пахнет скипидаром и чужой бессонницей. Наверху, за лестницей, — холодный запасник, где зимой хранят то, что не помещается в залы.",
+   "theme": "house_interior",
+   "background": {
+    "setting": "indoor",
+    "time": "night",
+    "far": "room_wall",
+    "props": [
+     {
+      "id": "table",
+      "x": 40
+     },
+     {
+      "id": "crates",
+      "x": 100
+     },
+     {
+      "id": "chair",
+      "x": 140
+     }
+    ],
+    "ground": "planks",
+    "overlay": "none",
+    "mood_palette": "warm_candle"
+   },
+   "size": "small",
+   "floors": 2,
+   "zones": [
+    {
+     "id": "workbench",
+     "floor": 0,
+     "name": "рабочий стол"
+    },
+    {
+     "id": "easel",
+     "floor": 0,
+     "name": "мольберт"
+    },
+    {
+     "id": "cold_store",
+     "floor": 1,
+     "name": "холодный запасник"
+    }
+   ],
+   "objects": [
+    {
+     "id": "ira_notebook",
+     "zone": "workbench",
+     "type": "thing",
+     "look": "table",
+     "name": "Тетрадь реставратора",
+     "event": {
+      "type": "narration",
+      "id": "read_notebook",
+      "text": "Почерк Иры, ровный, как мазки. «Если меня спросят, зачем я это сделала, — скажу: мне впервые заплатили за то, что я умею. Это не оправдание. Это просто правда». И ниже, другими чернилами: «Платок не смогла. Рука не поднялась»."
+     },
+     "once": true
+    },
+    {
+     "id": "first_aid",
+     "zone": "workbench",
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "validol"
+      }
+     ]
+    },
+    {
+     "id": "easel",
+     "zone": "easel",
+     "condition": {
+      "flag": "forgery_proven",
+      "is": false
+     },
+     "type": "thing",
+     "look": "crates",
+     "name": "Мольберт и палитра",
+     "event": {
+      "type": "dialogue",
+      "id": "study_easel",
+      "nodes": [
+       {
+        "id": "e1",
+        "speaker": "narrator",
+        "text": "Мольберт, палитра с подсохшей охрой, фотографии картины в натуральную величину — на каждой карандашные пометки.",
+        "passive": [
+         {
+          "skill": "perception",
+          "difficulty": "medium",
+          "text": "На одной фотографии платок обведён кружком. И перечёркнут."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Сопоставить пометки с картиной в зале.",
+          "effects": [],
+          "next": "e2",
+          "check": {
+           "skill": "logic",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "e3"
+          }
+         },
+         {
+          "text": "Прочитать надписи на тюбиках.",
+          "effects": [],
+          "next": "e4",
+          "check": {
+           "skill": "knowledge",
+           "difficulty": "easy",
+           "red": false,
+           "failure": "e3"
+          }
+         },
+         {
+          "text": "Не трогать чужое.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "e2",
+        "speaker": "skill:logic",
+        "text": "Пометки — не реставрация. Это схема: где положить мазок, чтобы совпало с подлинником. Так готовят копию.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Сфотографировать пометки на старый телефон.",
+          "effects": [
+           {
+            "set_flag": "forgery_proven",
+            "value": true
+           }
+          ],
+          "next": "e5"
+         }
+        ]
+       },
+       {
+        "id": "e3",
+        "speaker": "skill:logic",
+        "text": "Цифры, стрелки, кружки. Похоже на план урока, который писал кто-то очень уставший.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "e4",
+        "speaker": "skill:knowledge",
+        "text": "Свинцовые белила. Их запретили сорок лет назад. Кто-то очень хотел, чтобы краска была «как тогда».",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Это доказательство. Забрать тюбик.",
+          "effects": [
+           {
+            "set_flag": "forgery_proven",
+            "value": true
+           }
+          ],
+          "next": "e5"
+         }
+        ]
+       },
+       {
+        "id": "e5",
+        "speaker": "skill:will",
+        "text": "Теперь ты знаешь наверняка. Знание — тоже груз. Неси аккуратно: его нельзя поставить обратно на полку.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "e1",
+      "entries": []
+     },
+     "once": false
+    },
+    {
+     "id": "frames_crate",
+     "zone": "cold_store",
+     "condition": {
+      "flag": "original_found",
+      "is": false
+     },
+     "type": "thing",
+     "look": "chest",
+     "name": "Ящик «рамы»",
+     "event": {
+      "type": "dialogue",
+      "id": "open_crate",
+      "nodes": [
+       {
+        "id": "c1",
+        "speaker": "narrator",
+        "text": "Ящик с надписью мелом: «РАМЫ». Изо рта пар, пальцы немеют. Замок новый, блестящий — как мазок у лодки.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Открыть ключом Нины.",
+          "condition": {
+           "has_item": "storage_key"
+          },
+          "effects": [],
+          "next": "c2"
+         },
+         {
+          "text": "Поддеть замок отвёрткой.",
+          "effects": [],
+          "next": "c2",
+          "check": {
+           "skill": "finesse",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "c3",
+           "damage": "health"
+          }
+         },
+         {
+          "text": "Подождать, пока руки согреются, и попробовать снова.",
+          "effects": [],
+          "next": "c5",
+          "check": {
+           "skill": "endurance",
+           "difficulty": "medium",
+           "red": false,
+           "failure": "c6",
+           "damage": "health"
+          }
+         },
+         {
+          "text": "Спуститься вниз.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "c2",
+        "speaker": "narrator",
+        "text": "Внутри, в мешковине, — она. Платок на месте. Красный, как на странице сорок.",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Взять картину.",
+          "effects": [
+           {
+            "give_item": "original_canvas"
+           },
+           {
+            "set_flag": "original_found",
+            "value": true
+           }
+          ],
+          "next": "c4"
+         }
+        ]
+       },
+       {
+        "id": "c3",
+        "speaker": "narrator",
+        "text": "Отвёртка срывается, ладонь в крови. Холод сразу лезет в рану.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "c4",
+        "speaker": "skill:empathy",
+        "text": "Теперь у тебя в руках сто лет и шестилетняя девочка с платком. Что ты с ними сделаешь?",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "c5",
+        "speaker": "skill:endurance",
+        "text": "Старые кости ноют, но держат. Пальцы снова слушаются — замок поддаётся со второй попытки.",
+        "passive": [],
+        "choices": [],
+        "next": "c2"
+       },
+       {
+        "id": "c6",
+        "speaker": "skill:endurance",
+        "text": "Сердце стучит в ушах. В шестьдесят лет холод не ждёт, пока ты согреешься.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "c1",
+      "entries": []
+     },
+     "once": false
+    },
+    {
+     "id": "restoration_to_gallery",
+     "zone": "workbench",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "gallery"
+    }
+   ],
+   "on_enter": [
+    {
+     "type": "dialogue",
+     "id": "ira_in_workshop_remark",
+     "nodes": [
+      {
+       "id": "w1",
+       "speaker": "ira",
+       "text": "Я здесь три месяца каждую ночь. Знаете, я ведь хотела стать художницей, а не копиисткой. Смешно: впервые написала что-то по-настоящему хорошо — и это ложь.",
+       "emotion": "sad",
+       "passive": [],
+       "choices": [],
+       "next": "end"
+      }
+     ],
+     "start_node": "w1",
+     "entries": [],
+     "condition": {
+      "flag": "ira_joined",
+      "is": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "director_office",
+   "title": "Кабинет директора",
+   "intro": "Под дверью кабинета — полоска света. Вадим Петрович тоже не спит в последнюю ночь своей картины.",
+   "theme": "office",
+   "background": {
+    "setting": "indoor",
+    "time": "night",
+    "far": "room_wall",
+    "props": [
+     {
+      "id": "bookshelf",
+      "x": 30
+     },
+     {
+      "id": "table",
+      "x": 85
+     },
+     {
+      "id": "window",
+      "x": 135
+     }
+    ],
+    "ground": "planks",
+    "overlay": "none",
+    "mood_palette": "warm_candle"
+   },
+   "size": "small",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "reception",
+     "floor": 0,
+     "name": "приёмная"
+    },
+    {
+     "id": "desk",
+     "floor": 0,
+     "name": "стол директора"
+    }
+   ],
+   "objects": [
+    {
+     "id": "opening_photo",
+     "zone": "reception",
+     "type": "thing",
+     "look": "bookshelf",
+     "name": "Фотография 1979 года",
+     "event": {
+      "type": "dialogue",
+      "id": "look_photo",
+      "nodes": [
+       {
+        "id": "f1",
+        "speaker": "narrator",
+        "text": "Открытие музея, 1979 год. Молодая Нина с указкой у картины, а рядом — мальчишка лет десяти в пионерском галстуке, задравший голову на холст.",
+        "passive": [
+         {
+          "skill": "perception",
+          "difficulty": "easy",
+          "text": "У мальчишки родинка над бровью. Как у Вадима Петровича."
+         }
+        ],
+        "choices": [],
+        "next": "f2"
+       },
+       {
+        "id": "f2",
+        "speaker": "skill:empathy",
+        "text": "Он пришёл сюда ребёнком и остался. Продать её для него — как продать собственное детство. Значит, он верит, что иначе нельзя.",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "f1",
+      "entries": []
+     },
+     "once": true
+    },
+    {
+     "id": "director_at_desk",
+     "zone": "desk",
+     "type": "npc",
+     "character": "vadim",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_vadim",
+      "nodes": [
+       {
+        "id": "d1",
+        "speaker": "vadim",
+        "text": "Савва Ильич! Не спится? Мне тоже. Последняя ночь с нашей красавицей. Коньяку? На смене нельзя, знаю. Я тоже на смене. Всю жизнь.",
+        "emotion": "happy",
+        "passive": [
+         {
+          "skill": "empathy",
+          "difficulty": "easy",
+          "text": "Он рад тебе. Это не притворство — это одиночество."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Спасибо, не буду.",
+          "effects": [],
+          "next": "d2"
+         },
+         {
+          "text": "Покажите документы на отправку.",
+          "effects": [],
+          "next": "d3",
+          "check": {
+           "skill": "presence",
+           "difficulty": "challenging",
+           "red": false,
+           "failure": "d3f",
+           "damage": "morale"
+          }
+         },
+         {
+          "text": "Спокойной ночи, Вадим Петрович.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "d2",
+        "speaker": "vadim",
+        "text": "Правильно. Вы всегда были правильным. Знаете, сколько стоит правильность? Ровно вашу зарплату. Которую я третий месяц не могу заплатить.",
+        "emotion": "neutral",
+        "passive": [
+         {
+          "skill": "empathy",
+          "difficulty": "medium",
+          "text": "Это не угроза. Это исповедь, которую он репетирует перед зеркалом."
+         }
+        ],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "d3",
+        "speaker": "vadim",
+        "text": "Документы? …Пожалуйста. Подписи, печати. Всё как положено.",
+        "emotion": "surprised",
+        "passive": [
+         {
+          "skill": "logic",
+          "difficulty": "medium",
+          "text": "Печать фонда стоит поверх даты. Её поставили раньше, чем подписали договор. Фонд ничего не заказывал."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Вернуть бумаги. Молча.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "d3f",
+        "speaker": "vadim",
+        "text": "Вы забываетесь. Вы сторож, Савва Ильич, а не ревизор. Идите на обход.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "dp",
+        "speaker": "vadim",
+        "text": "Вы всё знаете. По лицу вижу — у бывших учителей всё на лице. Хорошо. Давайте как взрослые.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Давайте.",
+          "effects": [
+           {
+            "set_flag": "director_confronted",
+            "value": true
+           }
+          ],
+          "next": "dp2"
+         }
+        ]
+       },
+       {
+        "id": "df",
+        "speaker": "vadim",
+        "text": "Это… она у вас? Положите. Пожалуйста, осторожно. Вы даже не понимаете, что держите.",
+        "emotion": "scared",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Понимаю. Лучше, чем вы думаете.",
+          "effects": [
+           {
+            "set_flag": "director_confronted",
+            "value": true
+           }
+          ],
+          "next": "dp2"
+         }
+        ]
+       },
+       {
+        "id": "dp2",
+        "speaker": "vadim",
+        "text": "Покупатель частный, не спрячет — повесит дома, будет показывать гостям. Музей получит деньги на два года: зарплаты, крыша, отопление. Нина доработает до пенсии, Ира получит ставку. Копия прекрасная — вы сами сорок лет не отличили бы. Что изменится, если вы позвоните?",
+        "emotion": "neutral",
+        "passive": [
+         {
+          "skill": "logic",
+          "difficulty": "challenging",
+          "text": "Он прав в каждой цифре. Ошибка не в цифрах. Ошибка в том, кто решил за город, что ему можно смотреть."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Изменится то, что дети будут смотреть на правду.",
+          "effects": [],
+          "next": "dp3"
+         },
+         {
+          "text": "Просто сказать «нет». Не оправдываться.",
+          "effects": [],
+          "next": "dp4",
+          "check": {
+           "skill": "will",
+           "difficulty": "challenging",
+           "red": true,
+           "failure": "dp4f",
+           "damage": "morale"
+          }
+         },
+         {
+          "text": "Вы ведь не для себя это сделали. Вы тот мальчик с фотографии.",
+          "effects": [],
+          "next": "dp4",
+          "check": {
+           "skill": "empathy",
+           "difficulty": "formidable",
+           "red": false,
+           "failure": "dp5f"
+          }
+         },
+         {
+          "text": "Мне нужно подумать.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "dp3",
+        "speaker": "vadim",
+        "text": "Дети будут смотреть на пустую стену, Савва Ильич! Музей закроют через месяц. Правда — это роскошь для тех, у кого топят.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "dp4",
+        "speaker": "vadim",
+        "text": "…Нет, значит. Хорошо. Я ведь, знаете, ждал, что кто-нибудь скажет «нет». Сорок лет ждал, что взрослые остановят. Утром позвоню в управление сам. Только картину повесьте до семи — пусть хоть одно утро будет как раньше.",
+        "emotion": "sad",
+        "passive": [],
+        "choices": [
+         {
+          "text": "Повешу. Вместе с вами.",
+          "effects": [
+           {
+            "set_flag": "director_confessed",
+            "value": true
+           }
+          ],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "dp4f",
+        "speaker": "vadim",
+        "text": "Вот видите. Вы колеблетесь. Значит, тоже понимаете. Идите, подумайте до утра. Утро всё решит за нас обоих.",
+        "emotion": "happy",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "dp5f",
+        "speaker": "vadim",
+        "text": "Не надо меня жалеть. Жалость — это то, что я покупаю на вырученные деньги для всех вас.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "dc",
+        "speaker": "vadim",
+        "text": "Я помню, что обещал. Не смотрите так. Иногда честность — это просто усталость, которой наконец разрешили.",
+        "emotion": "neutral",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "d1",
+      "entries": [
+       {
+        "condition": {
+         "flag": "director_confessed",
+         "is": true
+        },
+        "node": "dc"
+       },
+       {
+        "condition": {
+         "flag": "original_found",
+         "is": true
+        },
+        "node": "df"
+       },
+       {
+        "condition": {
+         "flag": "forgery_proven",
+         "is": true
+        },
+        "node": "dp"
+       }
+      ]
+     }
+    },
+    {
+     "id": "director_to_lobby",
+     "zone": "reception",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "lobby"
+    }
+   ],
+   "on_enter": []
+  },
+  {
+   "id": "yard",
+   "title": "Двор у служебного входа",
+   "intro": "Двор у служебного входа. Снег идёт так тихо, что слышно, как гудит фонарь. Грузовик фонда стоит носом к воротам — ждёт утра.",
+   "theme": "town_street",
+   "background": {
+    "setting": "outdoor",
+    "time": "night",
+    "sky": "stars",
+    "far": "city",
+    "props": [
+     {
+      "id": "lamp_post",
+      "x": 30
+     },
+     {
+      "id": "crates",
+      "x": 95
+     },
+     {
+      "id": "fence",
+      "x": 135
+     }
+    ],
+    "ground": "cobblestone",
+    "overlay": "snow",
+    "mood_palette": "frost"
+   },
+   "size": "small",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "gate",
+     "floor": 0,
+     "name": "ворота"
+    },
+    {
+     "id": "truck",
+     "floor": 0,
+     "name": "грузовик"
+    },
+    {
+     "id": "booth",
+     "floor": 0,
+     "name": "телефонная будка"
+    }
+   ],
+   "objects": [
+    {
+     "id": "grisha_at_truck",
+     "zone": "truck",
+     "type": "npc",
+     "character": "grisha",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_grisha",
+      "nodes": [
+       {
+        "id": "g1",
+        "speaker": "grisha",
+        "text": "Утром в семь грузим. Мне что подлинник, что копия — ящик есть ящик. Сигаретки не будет?",
+        "emotion": "neutral",
+        "passive": [
+         {
+          "skill": "perception",
+          "difficulty": "medium",
+          "text": "На накладной на сиденье — два ящика. А отправляют один."
+         }
+        ],
+        "choices": [
+         {
+          "text": "Не курю. Сколько ящиков вы везёте?",
+          "effects": [],
+          "next": "g2",
+          "check": {
+           "skill": "logic",
+           "difficulty": "easy",
+           "red": false,
+           "failure": "g3"
+          }
+         },
+         {
+          "text": "Нет. Спокойной ночи.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "g2",
+        "speaker": "grisha",
+        "text": "Два. Один в фонд, второй — по адресу, который мне на словах сказали. Я вам этого не говорил. Мне детей кормить.",
+        "emotion": "surprised",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "g3",
+        "speaker": "grisha",
+        "text": "Сколько скажут, столько и везу. Не моё дело — и не ваше.",
+        "emotion": "angry",
+        "passive": [],
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "g1",
+      "entries": []
+     }
+    },
+    {
+     "id": "yard_to_lobby",
+     "zone": "gate",
+     "type": "exit",
+     "kind": "door",
+     "to": "lobby"
+    },
+    {
+     "id": "yard_call",
+     "zone": "booth",
+     "type": "exit",
+     "kind": "door",
+     "to": "ending_truth",
+     "requires": {
+      "flag": "forgery_proven",
+      "is": true
+     },
+     "locked_text": "Позвонить — значит сказать, что именно не так. Сначала нужно знать наверняка."
+    },
+    {
+     "id": "yard_return",
+     "zone": "booth",
+     "type": "exit",
+     "kind": "door",
+     "to": "ending_return",
+     "requires": {
+      "all": [
+       {
+        "flag": "original_found",
+        "is": true
+       },
+       {
+        "flag": "director_confessed",
+        "is": true
+       }
+      ]
+     },
+     "locked_text": "Повесить подлинник на место можно, только если у вас он в руках и директор готов ответить сам."
+    },
+    {
+     "id": "yard_leave",
+     "zone": "gate",
+     "type": "exit",
+     "kind": "right_edge",
+     "to": "ending_silence"
+    }
+   ],
+   "on_enter": [
+    {
+     "type": "dialogue",
+     "id": "ira_in_yard_remark",
+     "nodes": [
+      {
+       "id": "y1",
+       "speaker": "ira",
+       "text": "Холодно. Знаете, что самое странное? Если вы промолчите, моя копия будет висеть в зале лет пятьдесят. Дольше, чем проживу я. Я стану самой известной художницей этого города — и никто не узнает моего имени.",
+       "emotion": "neutral",
+       "passive": [],
+       "choices": [],
+       "next": "end"
+      }
+     ],
+     "start_node": "y1",
+     "entries": [],
+     "condition": {
+      "flag": "ira_joined",
+      "is": true
+     }
+    }
+   ]
+  }
+ ],
+ "start_location": "lobby",
+ "endings": [
+  {
+   "id": "ending_truth",
+   "title": "Правда",
+   "text": "Вы позвонили. Через месяц музей закрыли «на реконструкцию». Подлинник вернули в фонд, где его не увидят ещё лет двадцать. Нина уехала к внуку, Ира рисует вывески. Правда победила, и стало тише. Иногда вы думаете, что это и есть её цена: тишина там, где раньше были дети.",
+   "kind": "neutral"
+  },
+  {
+   "id": "ending_return",
+   "title": "Утро над Сурой",
+   "text": "Подлинник висит на своём месте, копия уехала в фонд. Утром директор сам позвонил в управление — и ушёл, не дожидаясь приказа. Денег на отопление нет, зато есть картина и люди, которые знают, чего она стоила. Ира подписала копию на обороте своим именем. Впервые.",
+   "kind": "good"
+  },
+  {
+   "id": "ending_silence",
+   "title": "Красивая ложь",
+   "text": "Вы ушли домой до семи. Грузовик увёз ящик, в зале повисла прекрасная работа Иры. Зарплаты выплатили. Дети смотрят на женщину у реки и учатся видеть. Только вы знаете, на что они смотрят, — и больше не можете сидеть на скамье у окна.",
+   "kind": "bad"
+  }
+ ],
+ "levels": {
+  "lobby": {
+   "width": 36,
+   "height": 8,
+   "tiles": [
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "lobby_to_yard",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "old_booklet",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "nina_in_cloakroom",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "id": "cloakroom_box",
+     "floor": 0,
+     "x": 19
+    },
+    {
+     "id": "lobby_to_gallery",
+     "floor": 0,
+     "x": 26
+    },
+    {
+     "id": "lobby_to_director",
+     "floor": 0,
+     "x": 29
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "gallery",
+     "floor": 0,
+     "x": 26
+    },
+    {
+     "from": "director_office",
+     "floor": 0,
+     "x": 29
+    },
+    {
+     "from": "yard",
+     "floor": 0,
+     "x": 2
+    }
+   ]
+  },
+  "gallery": {
+   "width": 36,
+   "height": 8,
+   "tiles": [
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "...................................|",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "gallery_to_lobby",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "ira_in_gallery",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "the_painting",
+     "floor": 0,
+     "x": 17
+    },
+    {
+     "id": "window_bench",
+     "floor": 0,
+     "x": 26
+    },
+    {
+     "id": "gallery_to_restoration",
+     "floor": 0,
+     "x": 29
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "lobby",
+     "floor": 0,
+     "x": 2
+    },
+    {
+     "from": "restoration",
+     "floor": 0,
+     "x": 29
+    }
+   ]
+  },
+  "restoration": {
+   "width": 24,
+   "height": 14,
+   "tiles": [
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    ".===================H==|",
+    "....................H..|",
+    "....................H..|",
+    "....................H..|",
+    "....................H..|",
+    "....................H..|",
+    "########################",
+    "########################"
+   ],
+   "floors": [
+    {
+     "y": 11,
+     "x0": 1,
+     "x1": 22
+    },
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 22
+    }
+   ],
+   "links": [
+    {
+     "kind": "ladder",
+     "a": [
+      0,
+      20
+     ],
+     "b": [
+      1,
+      20
+     ]
+    }
+   ],
+   "objects": [
+    {
+     "id": "restoration_to_gallery",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "ira_notebook",
+     "floor": 0,
+     "x": 6
+    },
+    {
+     "id": "first_aid",
+     "floor": 0,
+     "x": 8
+    },
+    {
+     "id": "easel",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "id": "frames_crate",
+     "floor": 1,
+     "x": 11
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "gallery",
+     "floor": 0,
+     "x": 2
+    }
+   ]
+  },
+  "director_office": {
+   "width": 24,
+   "height": 8,
+   "tiles": [
+    ".......................|",
+    ".......................|",
+    ".......................|",
+    ".......................|",
+    ".......................|",
+    ".......................|",
+    "########################",
+    "########################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 22
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "director_to_lobby",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "opening_photo",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "director_at_desk",
+     "floor": 0,
+     "x": 16
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "lobby",
+     "floor": 0,
+     "x": 2
+    }
+   ]
+  },
+  "yard": {
+   "width": 24,
+   "height": 8,
+   "tiles": [
+    "|.......................",
+    "|.......................",
+    "|.......................",
+    "|.......................",
+    "|.......................",
+    "|.......................",
+    "########################",
+    "########################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 22
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "yard_leave",
+     "floor": 0,
+     "x": 22
+    },
+    {
+     "id": "yard_to_lobby",
+     "floor": 0,
+     "x": 5
+    },
+    {
+     "id": "grisha_at_truck",
+     "floor": 0,
+     "x": 11
+    },
+    {
+     "id": "yard_call",
+     "floor": 0,
+     "x": 17
+    },
+    {
+     "id": "yard_return",
+     "floor": 0,
+     "x": 19
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "lobby",
+     "floor": 0,
+     "x": 5
+    },
+    {
+     "from": "ending_truth",
+     "floor": 0,
+     "x": 17
+    },
+    {
+     "from": "ending_return",
+     "floor": 0,
+     "x": 19
+    },
+    {
+     "from": "ending_silence",
+     "floor": 0,
+     "x": 21
+    }
+   ]
+  }
+ },
+ "arenas": {}
+}

@@ -1,8 +1,9 @@
 // Выезжающие панели: инвентарь и экипировка, торговец, журнал квестов.
 
-import { buy, canSell, equip, isEquipped, nextLevelXp, sell, sellPrice, unequip, useItem } from "../engine/effects";
+import { buy, canSell, equip, isEquipped, nextLevelXp, sell, sellPrice, spendSkillPoint, unequip, useItem } from "../engine/effects";
+import { SKILL_CAP, SKILL_GROUPS } from "../engine/inner";
 import type { QuestView } from "../engine/quests";
-import { count, effective, type GameState } from "../engine/state";
+import { count, effective, type GameState, skillValue } from "../engine/state";
 import { SLOTS, type Slot, type World } from "../engine/world";
 import { iconCanvas } from "../pixel/tiles";
 import type { Item, Shop } from "../types/game";
@@ -20,7 +21,14 @@ function bonusText(item: Item): string {
   const parts = [["атака", b.attack], ["защита", b.defense], ["фокус", b.focus], ["здоровье", b.hp]]
     .filter(([, v]) => v)
     .map(([n, v]) => `${n} ${(v as number) > 0 ? "+" : ""}${v}`);
+  for (const [k, v] of Object.entries(b.skills ?? {})) if (v) parts.push(`${skillLabel(k)} ${v > 0 ? "+" : ""}${v}`);
   return parts.join(", ");
+}
+
+// названия навыков текущей игры для подписей бонусов вещей; заполняет skillsView/inventoryView
+let skillLabel: (key: string) => string = (k) => k;
+export function setSkillNames(world: World): void {
+  skillLabel = (k) => world.skillName(k);
 }
 
 export class Sheet {
@@ -56,14 +64,38 @@ export class Sheet {
   }
 }
 
+/** Лист внутренних навыков (§5.10): 4 группы по 2, значение с бонусом вещей, «+» за очко навыка. */
+export function skillsView(state: GameState, world: World, rerender: () => void): HTMLElement {
+  const groups = SKILL_GROUPS.map(([group, keys]) => el("div", { className: "skill-group" },
+    el("div", { className: "skill-group-name", textContent: group }),
+    ...keys.map((key) => {
+      const base = state.inner[key] ?? 0;
+      const value = skillValue(state, world, key);
+      const info = world.skillNames.get(key);
+      const plus = state.skillPoints > 0 && base < SKILL_CAP
+        ? button("+", () => { spendSkillPoint(state, world, key); rerender(); }, "btn btn-small skill-plus") : null;
+      return el("div", { className: "skill" },
+        el("div", { className: "skill-head" },
+          el("b", { textContent: info?.name ?? key }),
+          el("span", { className: "skill-value", textContent: value !== base ? `${value} (${base}${value > base ? "+" : ""}${value - base})` : String(value) }),
+          plus),
+        el("small", { textContent: info?.description ?? "" }));
+    })));
+  return el("div", { className: "skills-sheet" },
+    state.skillPoints > 0 ? el("p", { className: "skill-points", textContent: `Свободных очков навыков: ${state.skillPoints}. Каждое делает проверки этого навыка легче.` }) : null,
+    el("div", { className: "skill-groups" }, ...groups));
+}
+
 export function inventoryView(state: GameState, world: World, rerender: () => void, notify: (m: string[]) => void): Node[] {
   const eff = effective(state, world);
   const next = nextLevelXp(state, world);
   const stats = el("div", { className: "inv-stats" },
     el("div", {}, `Уровень ${state.level}`, next ? bar(state.xp, next, "xp") : el("span", { textContent: " (макс.)" })),
     el("div", {}, "Здоровье", bar(state.hp, eff.maxHp, "hp")),
-    el("div", {}, "Фокус", bar(state.focus, eff.maxFocus, "focus")),
-    el("div", { className: "inv-nums", textContent: `Атака ${eff.attack} · Защита ${eff.defense} · Золото ${state.gold}` }));
+    el("div", {}, "Дух", bar(state.morale, eff.maxMorale, "morale")),
+    ...(world.noCombat ? [] : [
+      el("div", {}, "Фокус", bar(state.focus, eff.maxFocus, "focus")),
+      el("div", { className: "inv-nums", textContent: `Атака ${eff.attack} · Защита ${eff.defense} · Золото ${state.gold}` })]));
 
   const slots = el("div", { className: "inv-slots" }, ...SLOTS.map((slot) => {
     const item = world.items.get(state.equipment[slot] ?? "");
@@ -95,7 +127,8 @@ export function inventoryView(state: GameState, world: World, rerender: () => vo
   if (!list.children.length) list.append(el("p", { className: "muted", textContent: "Пусто." }));
   const skills = state.skills.map((id) => world.skills.get(id)).filter(Boolean)
     .map((s) => el("li", {}, el("b", { textContent: s!.name }), ` (${s!.cost_focus} фок.) — ${s!.description}`));
-  return [stats, slots, el("h3", { textContent: "Вещи" }), list, detail, el("h3", { textContent: "Навыки" }), el("ul", { className: "skills" }, ...skills)];
+  return [stats, el("h3", { textContent: "Внутренние навыки" }), skillsView(state, world, rerender), slots, el("h3", { textContent: "Вещи" }), list, detail,
+    ...(skills.length ? [el("h3", { textContent: "Боевые навыки" }), el("ul", { className: "skills" }, ...skills)] : [])];
 }
 
 export function shopView(shop: Shop, state: GameState, world: World, rerender: () => void): Node[] {

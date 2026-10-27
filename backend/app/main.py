@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 
 from .catalog import COMMUNITY_LIMIT, card, featured_cards, featured_game
 from .config import Settings, load_settings
+from .engine.schema import GameProfile
 from .engine.art import LIBRARY_DIR
 from .generation.pipeline import GenerationFailed, Pipeline, generate_brief
 from .llm import LLM, make_llm
@@ -30,10 +31,12 @@ BRIEFS_PER_HOUR = 30
 
 class IdeaIn(BaseModel):
     idea: str = Field(min_length=3, max_length=MAX_IDEA)
+    profile: GameProfile | None = None
 
 
 class BriefIn(BaseModel):
     brief: str = Field(min_length=20, max_length=MAX_BRIEF)
+    profile: GameProfile | None = None  # бои и глубина диалогов (§5.10); без него — тактические бои и живые диалоги
 
 
 class PublishIn(BaseModel):
@@ -71,7 +74,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
         forwarded = request.headers.get("x-forwarded-for")
         return forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
 
-    async def worker(game_id: str, brief: str) -> None:
+    async def worker(game_id: str, brief: str, profile: GameProfile | None = None) -> None:
         async with semaphore:
             async def on_status(step: str, progress: float, info: dict[str, Any]) -> None:
                 if step == "ready":
@@ -84,7 +87,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
                 storage.update(game_id, **fields)
 
             try:
-                result = await Pipeline(get_llm(), brief, game_id, on_status=on_status).run()
+                result = await Pipeline(get_llm(), brief, game_id, on_status=on_status, profile=profile).run()
             except GenerationFailed as exc:
                 storage.update(game_id, status="failed", error=str(exc), detail=[str(i) for i in exc.issues[:20]])
                 return
@@ -103,7 +106,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
         if len(hits) >= BRIEFS_PER_HOUR:
             raise HTTPException(429, "Слишком много запросов. Попробуйте через час.")
         brief_hits[ip] = [*hits, now]
-        return await generate_brief(body.idea, get_llm()) | {"provider": settings.llm_provider}
+        return await generate_brief(body.idea, get_llm(), profile=body.profile) | {"provider": settings.llm_provider}
 
     @app.post("/api/games")
     async def create_game(body: BriefIn, request: Request) -> dict[str, str]:
@@ -113,7 +116,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
         game_id = secrets.token_urlsafe(9)  # неугадываемый id: игру видит только тот, у кого ссылка
         owner_token = secrets.token_urlsafe(16)  # секрет автора: им публикуют игру в каталоге; в базе — только хеш
         storage.create(game_id, body.brief, ip, settings.llm_provider, owner_hash=_hash(owner_token))
-        task = asyncio.create_task(worker(game_id, body.brief))
+        task = asyncio.create_task(worker(game_id, body.brief, body.profile))
         tasks.add(task)
         task.add_done_callback(tasks.discard)
         return {"game_id": game_id, "owner_token": owner_token}

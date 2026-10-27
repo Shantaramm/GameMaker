@@ -17,7 +17,13 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, Tag
 TAG_PREFIX = "~"
 
 Id = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*$", max_length=64)]
-Stat = Literal["hp", "attack", "defense", "focus"]
+Stat = Literal["hp", "attack", "defense", "focus", "morale"]
+# Внутренние навыки (§5.10): механика одна, названия под жанр пишет LLM.
+SkillKey = Literal["logic", "knowledge", "empathy", "will", "endurance", "presence", "perception", "finesse"]
+SKILL_KEYS: tuple[str, ...] = ("logic", "knowledge", "empathy", "will", "endurance", "presence", "perception", "finesse")
+Difficulty = Literal["trivial", "easy", "medium", "challenging", "formidable", "legendary"]
+# Кто говорит реплику: персонаж, рассказчик или голос навыка героя ("skill:logic").
+Speaker = Annotated[str, Field(pattern=r"^(skill:)?[a-z][a-z0-9_]*$", max_length=64)]
 Emotion = Literal["neutral", "angry", "sad", "happy", "scared", "surprised"]
 Role = Literal["hero", "companion", "npc", "antagonist"]
 PaletteName = Id
@@ -94,7 +100,13 @@ class CondDefeated(Strict):
     defeated: Id  # id объекта-врага на карте
 
 
-_COND_KEYS = ("all", "any", "not", "flag", "has_item", "stat", "gold", "level", "defeated")
+class CondSkill(Strict):
+    skill: SkillKey
+    op: Literal[">=", "<="]
+    value: int
+
+
+_COND_KEYS = ("all", "any", "not", "flag", "has_item", "stat", "gold", "level", "defeated", "skill")
 
 Condition = Annotated[
     Union[
@@ -107,6 +119,7 @@ Condition = Annotated[
         Annotated[CondGold, _tag("gold")],
         Annotated[CondLevel, _tag("level")],
         Annotated[CondDefeated, _tag("defeated")],
+        Annotated[CondSkill, _tag("skill")],
     ],
     _key_discriminator(_COND_KEYS),
 ]
@@ -137,6 +150,11 @@ class EffModStat(Strict):
     delta: int
 
 
+class EffModSkill(Strict):
+    mod_skill: SkillKey
+    delta: int = Field(ge=-2, le=2)
+
+
 class EffHeal(Strict):
     heal: int = Field(ge=1)
 
@@ -159,7 +177,7 @@ class EffGoto(Strict):
 
 _EFFECT_KEYS = (
     "set_flag", "give_item", "take_item", "give_gold", "take_gold", "learn_skill",
-    "mod_stat", "heal", "damage", "goto",
+    "mod_stat", "mod_skill", "heal", "damage", "goto",
 )
 
 Effect = Annotated[
@@ -171,6 +189,7 @@ Effect = Annotated[
         Annotated[EffTakeGold, _tag("take_gold")],
         Annotated[EffLearnSkill, _tag("learn_skill")],
         Annotated[EffModStat, _tag("mod_stat")],
+        Annotated[EffModSkill, _tag("mod_skill")],
         Annotated[EffHeal, _tag("heal")],
         Annotated[EffDamage, _tag("damage")],
         Annotated[EffGoto, _tag("goto")],
@@ -268,15 +287,19 @@ class Character(Strict):
     # Только для компаньона: с какого момента он следует за героем; None — с начала игры.
     joins: Condition | None = None
     combat: CompanionCombat | None = None
+    # Только герой: сильные и слабый внутренние навыки (§5.10); значения считает код.
+    strengths: list[SkillKey] = Field(default_factory=list, max_length=2)
+    weakness: SkillKey | None = None
 
 
 class Stats(Strict):
     """Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме."""
 
-    hp: int = Field(ge=1)
+    hp: int = Field(ge=0)
     attack: int = Field(ge=0)
     defense: int = Field(ge=0)
     focus: int = Field(ge=0)
+    morale: int = Field(default=0, ge=0)  # Дух (§5.10); в игре без боёв максимум считается от Воли
 
 
 class Skill(Strict):
@@ -296,6 +319,7 @@ class EquipBonus(Strict):
     defense: int = 0
     focus: int = 0
     hp: int = 0
+    skills: dict[SkillKey, int] = Field(default_factory=dict)  # бонусы к внутренним навыкам, ±2
 
 
 class Equip(Strict):
@@ -359,6 +383,21 @@ class Quest(Strict):
     stages: list[QuestStage] = Field(min_length=1)
 
 
+class GameProfile(Strict):
+    """Какую игру хочет пользователь (§5.10): бои и глубина диалогов."""
+
+    combat: Literal["tactical", "light", "none"] = "tactical"
+    dialogue: Literal["light", "rich", "deep"] = "rich"
+
+
+class InnerSkill(Strict):
+    """Внутренний навык героя: ключ механики и название с голосом под мир игры."""
+
+    key: SkillKey
+    name: str = Field(min_length=1, max_length=40)
+    description: str = Field(max_length=300)
+
+
 class Tactic(Strict):
     """Тактический приём, который покупается прямо в бою за кураж или золото (§5.9)."""
 
@@ -398,20 +437,45 @@ class StartEquipment(Strict):
 # --- События (§5.5) ---------------------------------------------------------
 
 
+class SkillCheck(Strict):
+    """Проверка навыка в варианте ответа (§5.10): 2d6 + навык против сложности; успех — next, провал — failure."""
+
+    skill: SkillKey
+    difficulty: Difficulty
+    red: bool = False  # красная — одна попытка навсегда; белая — повтор после роста навыка
+    failure: Id  # node_id или "end"
+    damage: Literal["health", "morale"] | None = None
+
+
+class PassiveCheck(Strict):
+    """Голос навыка вмешивается в разговор сам, без броска, если навык + 6 ≥ сложности."""
+
+    skill: SkillKey
+    difficulty: Difficulty
+    text: str = Field(min_length=1, max_length=400)
+
+
 class DialogueChoice(Strict):
     text: str = Field(min_length=1)
     condition: Condition | None = None
     effects: list[Effect] = Field(default_factory=list)
-    next: Id  # node_id или "end"
+    next: Id  # node_id или "end"; при проверке — куда ведёт успех
+    check: SkillCheck | None = None
 
 
 class DialogueNode(Strict):
     id: Id
-    speaker: Id  # character_id или "narrator"
+    speaker: Speaker  # character_id, "narrator" или "skill:<ключ>" — внутренний голос героя
     text: str = Field(min_length=1)
     emotion: Emotion | None = None
+    passive: list[PassiveCheck] = Field(default_factory=list, max_length=3)
     choices: list[DialogueChoice] = Field(default_factory=list)
     next: Id | None = None  # node_id или "end"; нужен, когда choices пусто
+
+
+class DialogueEntry(Strict):
+    condition: Condition
+    node: Id
 
 
 class Dialogue(Strict):
@@ -419,6 +483,9 @@ class Dialogue(Strict):
     id: Id
     nodes: list[DialogueNode] = Field(min_length=1)
     start_node: Id
+    # С какой реплики начать по состоянию: первая подходящая, иначе start_node (§5.10).
+    entries: list[DialogueEntry] = Field(default_factory=list)
+    condition: Condition | None = None  # событие показывается, только если условие выполнено
 
 
 class ChoiceOption(Strict):
@@ -432,12 +499,14 @@ class Choice(Strict):
     id: Id
     prompt: str = Field(min_length=1)
     options: list[ChoiceOption] = Field(min_length=1)
+    condition: Condition | None = None
 
 
 class Narration(Strict):
     type: Literal["narration"]
     id: Id
     text: str = Field(min_length=1)
+    condition: Condition | None = None
 
 
 def _type_tag(value: Any) -> str | None:
@@ -611,12 +680,15 @@ class Ending(Strict):
 class Game(Strict):
     schema_version: Literal["2"] = "2"
     meta: Meta
+    profile: GameProfile = Field(default_factory=GameProfile)
+    inner_skills: list[InnerSkill] = Field(default_factory=list, max_length=8)
     hero: Character
     characters: list[Character] = Field(default_factory=list)
     # Заполняет balance.py.
     stats_template: Stats | None = None
     progression: Progression | None = None
     start_gold: int | None = Field(default=None, ge=0)
+    hero_skills: dict[SkillKey, int] = Field(default_factory=dict)  # стартовые внутренние навыки героя
     start_skills: list[Id] = Field(default_factory=list)
     start_items: list[Id] = Field(default_factory=list)
     start_equipment: StartEquipment = Field(default_factory=StartEquipment)
@@ -642,7 +714,7 @@ class Game(Strict):
         return next(loc for loc in self.locations if loc.id == location_id)
 
 
-for _model in (CondAll, CondAny, CondNot, Character, Tactic):
+for _model in (CondAll, CondAny, CondNot, Character, Tactic, DialogueEntry):
     _model.model_rebuild()
 
 

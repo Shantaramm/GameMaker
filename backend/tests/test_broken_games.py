@@ -191,7 +191,7 @@ def test_orphan_and_looping_nodes(demo):
     errors = error_paths(demo)
     assert "не достижим 'end'" in errors[base + ".nodes[2]"]
     assert "не достижим 'end'" in errors[base + ".nodes[4]"]
-    assert errors[base + ".nodes[5]"] == "узел 'n5' недостижим из start_node"
+    assert errors[base + ".nodes[5]"] == "узел 'n5' недостижим из start_node и entries"
 
 
 def test_all_options_conditional_is_softlock(demo):

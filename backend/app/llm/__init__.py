@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
+from pathlib import Path
 from typing import Callable, Literal, Protocol
 
 from ..config import Settings
@@ -81,21 +82,29 @@ DEMO_BRIEF = """# Погасший маяк
 
 
 class DemoLLM:
-    """Без ключа GigaChat: на любой запрос отвечает фрагментами демо-игры «Погасший маяк».
+    """Без ключа GigaChat: на любой запрос отвечает фрагментами готовой игры.
 
+    Профиль «без боёв» → «Последняя смена» (глубокие диалоги), иначе — «Погасший маяк».
     Позволяет прогнать весь путь пользователя (бриф → генерация → игра) до появления ключа.
     Содержимое идеи не учитывается — интерфейс честно сообщает о демо-режиме.
     """
 
     name = "demo"
 
+    def __init__(self) -> None:
+        self.picked: dict[str | None, str] = {}  # game_id → какая игра отдаётся
+
     async def complete(self, messages: Messages, *, step: str, quality: Quality = "text",
                        game_id: str | None = None, temperature: float = 0.7) -> str:
         from ..generation.fragments import dump
 
-        outline, contents, items = _demo_fragments()
+        if step in ("brief", "outline"):
+            no_combat = "бои — none" in messages[0]["content"] or "совсем без боёв" in messages[0]["content"]
+            self.picked[game_id] = "museum" if no_combat else "demo"
+        which = self.picked.get(game_id, "demo")
+        outline, contents, items = _demo_fragments() if which == "demo" else _museum_fragments()
         if step == "brief":
-            return DEMO_BRIEF
+            return DEMO_BRIEF if which == "demo" else _museum_brief()
         if step == "outline":
             return json.dumps(dump(outline), ensure_ascii=False)
         if step.startswith("location:"):
@@ -114,6 +123,24 @@ def _demo_fragments():
 
     fixture = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "demo_game.json"
     return split_game(validate(json.loads(fixture.read_text(encoding="utf-8"))).game)
+
+
+RELAY_MUSEUM = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "relay_museum"
+
+
+@lru_cache(maxsize=1)
+def _museum_fragments():
+    from ..generation.fragments import ItemsContent, LocationContent, Outline
+
+    outline = Outline.model_validate_json((RELAY_MUSEUM / "outline.json").read_text(encoding="utf-8"))
+    contents = {p.id: LocationContent.model_validate_json((RELAY_MUSEUM / f"location_{p.id}.json").read_text(encoding="utf-8"))
+                for p in outline.locations}
+    items = ItemsContent.model_validate_json((RELAY_MUSEUM / "items.json").read_text(encoding="utf-8"))
+    return outline, contents, items
+
+
+def _museum_brief() -> str:
+    return (RELAY_MUSEUM / "brief.md").read_text(encoding="utf-8")
 
 
 def make_llm(settings: Settings) -> LLM:

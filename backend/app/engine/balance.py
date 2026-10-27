@@ -48,6 +48,25 @@ PROGRESSION = s.Progression(
 PRICE_BY_TIER = {1: 10, 2: 22, 3: 40, 4: 65, 5: 100}
 SELL_RATE = 0.5
 
+# Внутренние навыки (§5.10): значения героя и названия по умолчанию (если LLM не дала свои).
+SKILL_BASE = 2
+SKILL_STRONG = 4
+SKILL_WEAK = 1
+SKILL_EQUIP_CAP = 2
+HEALTH_BASE = 3           # игра без боёв: Здоровье = 3 + Стойкость
+MORALE_BASE = 3           # во всех играх: Дух = 3 + Воля
+NO_COMBAT_HEAL_CAP = 2    # игра без боёв: лечение расходником — не больше 2 единиц Здоровья
+DEFAULT_INNER_SKILLS = [
+    s.InnerSkill(key="logic", name="Логика", description="Связывает факты, замечает противоречия."),
+    s.InnerSkill(key="knowledge", name="Знания", description="Помнит книги, слухи и историю мира."),
+    s.InnerSkill(key="empathy", name="Эмпатия", description="Чувствует, что человек скрывает за словами."),
+    s.InnerSkill(key="will", name="Воля", description="Держит удар, не даёт сломаться. От неё зависит Дух."),
+    s.InnerSkill(key="endurance", name="Стойкость", description="Выдерживает боль и холод. От неё зависит Здоровье."),
+    s.InnerSkill(key="presence", name="Напор", description="Давит, убеждает силой, пугает."),
+    s.InnerSkill(key="perception", name="Восприятие", description="Видит мелочи, слышит шорохи."),
+    s.InnerSkill(key="finesse", name="Ловкость", description="Ловкие руки, тихие шаги, быстрая реакция."),
+]
+
 # Тактики в бою (§5.9): цена по tier в кураже или золоте.
 TACTIC_POINTS_BY_TIER = {1: 2, 2: 4, 3: 6}
 TACTIC_GOLD_BY_TIER = {1: 8, 2: 16, 3: 28}
@@ -95,6 +114,7 @@ def apply_balance(game: s.Game) -> s.Game:
     game.stats_template = HERO_STATS.model_copy()
     game.progression = PROGRESSION.model_copy(deep=True)
     game.start_gold = START_GOLD
+    apply_inner_skills(game)
 
     contexts = _enemy_contexts(game)
     max_depth = max((d for d, _ in contexts.values()), default=0) or 1
@@ -116,7 +136,8 @@ def apply_balance(game: s.Game) -> s.Game:
             ]
 
     have = {t.id for t in game.tactics}
-    game.tactics = [t.model_copy(deep=True) for t in BASE_TACTICS if t.id not in have] + game.tactics
+    if game.profile.combat != "none":
+        game.tactics = [t.model_copy(deep=True) for t in BASE_TACTICS if t.id not in have] + game.tactics
     for tactic in game.tactics:
         table = TACTIC_POINTS_BY_TIER if tactic.currency == "points" else TACTIC_GOLD_BY_TIER
         tactic.cost = table[tactic.tier]
@@ -131,8 +152,28 @@ def apply_balance(game: s.Game) -> s.Game:
                 defense=max(-cap.defense, min(b.defense, cap.defense)),
                 focus=max(-cap.focus, min(b.focus, cap.focus)),
                 hp=max(-cap.hp, min(b.hp, cap.hp)),
+                skills={k: max(-SKILL_EQUIP_CAP, min(v, SKILL_EQUIP_CAP)) for k, v in b.skills.items() if v},
             )
+        if game.profile.combat == "none" and item.kind == "consumable":
+            item.effect = [s.EffHeal(heal=min(e.heal, NO_COMBAT_HEAL_CAP)) if isinstance(e, s.EffHeal) else e for e in item.effect]
     return game
+
+
+def apply_inner_skills(game: s.Game) -> None:
+    """Названия навыков (свои от LLM или по умолчанию), стартовые значения героя, Здоровье и Дух по профилю."""
+    given = {sk.key: sk for sk in game.inner_skills}
+    game.inner_skills = [given.get(d.key, d) for d in DEFAULT_INNER_SKILLS]
+    strong = set(game.hero.strengths)
+    game.hero_skills = {
+        key: SKILL_STRONG if key in strong else SKILL_WEAK if key == game.hero.weakness else SKILL_BASE
+        for key in s.SKILL_KEYS
+    }
+    game.stats_template.morale = MORALE_BASE + game.hero_skills["will"]
+    if game.profile.combat == "none":
+        # без боёв HP — это Здоровье из нескольких единиц; уровень даёт только очко навыка
+        game.stats_template = s.Stats(hp=HEALTH_BASE + game.hero_skills["endurance"], attack=0, defense=0, focus=0,
+                                      morale=game.stats_template.morale)
+        game.progression.per_level = s.Stats(hp=0, attack=0, defense=0, focus=0)
 
 
 def weaken_enemies(game: s.Game, enemy_ids: set[str], factor: float = TUNE_FACTOR) -> None:

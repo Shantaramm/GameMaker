@@ -101,7 +101,7 @@ def test_info_reports_provider(client):
 
 def test_catalog_has_featured_games_and_serves_them(client):
     body = client.get("/api/catalog").json()
-    assert [c["id"] for c in body["featured"]] == ["demo", "postman"]
+    assert [c["id"] for c in body["featured"]] == ["demo", "postman", "museum"]
     postman = body["featured"][1]
     assert postman["title"] == "Последнее письмо перед снегом" and postman["locations"] == 5
     assert [c["role"] for c in postman["characters"]] == ["hero", "companion"]
@@ -158,3 +158,14 @@ def test_old_database_is_migrated(tmp_path):
     db.close()
     storage = Storage(tmp_path / "games.sqlite")
     assert storage.get("old")["published"] == 0
+
+
+def test_demo_mode_without_combat_builds_dialogue_game(client):
+    profile = {"combat": "none", "dialogue": "deep"}
+    brief = client.post("/api/brief", json={"idea": "тихая история без драк", "profile": profile}).json()
+    assert brief["brief_markdown"].startswith("# Последняя смена")
+    game_id = client.post("/api/games", json={"brief": BRIEF, "profile": profile}).json()["game_id"]
+    st, _ = wait_ready(client, game_id)
+    assert st["status"] == "ready", st
+    game = client.get(f"/api/games/{game_id}").json()
+    assert game["profile"] == profile and not game.get("enemies") and game["inner_skills"]

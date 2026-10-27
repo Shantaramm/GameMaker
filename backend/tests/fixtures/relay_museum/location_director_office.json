@@ -1,0 +1,47 @@
+{"intro": "Под дверью кабинета — полоска света. Вадим Петрович тоже не спит в последнюю ночь своей картины.",
+"on_enter": [],
+"objects": [
+ {"type": "thing", "id": "opening_photo", "zone": "reception", "look": "bookshelf", "name": "Фотография 1979 года", "event": {"type": "dialogue", "id": "look_photo", "start_node": "f1", "nodes": [
+  {"id": "f1", "speaker": "narrator", "text": "Открытие музея, 1979 год. Молодая Нина с указкой у картины, а рядом — мальчишка лет десяти в пионерском галстуке, задравший голову на холст.",
+   "passive": [{"skill": "perception", "difficulty": "easy", "text": "У мальчишки родинка над бровью. Как у Вадима Петровича."}],
+   "next": "f2"},
+  {"id": "f2", "speaker": "skill:empathy", "text": "Он пришёл сюда ребёнком и остался. Продать её для него — как продать собственное детство. Значит, он верит, что иначе нельзя.", "next": "end"}]}},
+ {"type": "npc", "id": "director_at_desk", "zone": "desk", "character": "vadim", "dialogue": {"type": "dialogue", "id": "talk_vadim", "start_node": "d1",
+  "entries": [{"condition": {"flag": "director_confessed", "is": true}, "node": "dc"},
+              {"condition": {"flag": "original_found", "is": true}, "node": "df"},
+              {"condition": {"flag": "forgery_proven", "is": true}, "node": "dp"}],
+  "nodes": [
+   {"id": "d1", "speaker": "vadim", "emotion": "happy", "text": "Савва Ильич! Не спится? Мне тоже. Последняя ночь с нашей красавицей. Коньяку? На смене нельзя, знаю. Я тоже на смене. Всю жизнь.",
+    "passive": [{"skill": "empathy", "difficulty": "easy", "text": "Он рад тебе. Это не притворство — это одиночество."}],
+    "choices": [
+     {"text": "Спасибо, не буду.", "next": "d2"},
+     {"text": "Покажите документы на отправку.", "next": "d3", "check": {"skill": "presence", "difficulty": "challenging", "failure": "d3f", "damage": "morale"}},
+     {"text": "Спокойной ночи, Вадим Петрович.", "next": "end"}]},
+   {"id": "d2", "speaker": "vadim", "emotion": "neutral", "text": "Правильно. Вы всегда были правильным. Знаете, сколько стоит правильность? Ровно вашу зарплату. Которую я третий месяц не могу заплатить.",
+    "passive": [{"skill": "empathy", "difficulty": "medium", "text": "Это не угроза. Это исповедь, которую он репетирует перед зеркалом."}],
+    "next": "end"},
+   {"id": "d3", "speaker": "vadim", "emotion": "surprised", "text": "Документы? …Пожалуйста. Подписи, печати. Всё как положено.",
+    "passive": [{"skill": "logic", "difficulty": "medium", "text": "Печать фонда стоит поверх даты. Её поставили раньше, чем подписали договор. Фонд ничего не заказывал."}],
+    "choices": [{"text": "Вернуть бумаги. Молча.", "next": "end"}]},
+   {"id": "d3f", "speaker": "vadim", "emotion": "angry", "text": "Вы забываетесь. Вы сторож, Савва Ильич, а не ревизор. Идите на обход.", "next": "end"},
+   {"id": "dp", "speaker": "vadim", "emotion": "sad", "text": "Вы всё знаете. По лицу вижу — у бывших учителей всё на лице. Хорошо. Давайте как взрослые.",
+    "choices": [{"text": "Давайте.", "effects": [{"set_flag": "director_confronted", "value": true}], "next": "dp2"}]},
+   {"id": "df", "speaker": "vadim", "emotion": "scared", "text": "Это… она у вас? Положите. Пожалуйста, осторожно. Вы даже не понимаете, что держите.",
+    "choices": [{"text": "Понимаю. Лучше, чем вы думаете.", "effects": [{"set_flag": "director_confronted", "value": true}], "next": "dp2"}]},
+   {"id": "dp2", "speaker": "vadim", "emotion": "neutral", "text": "Покупатель частный, не спрячет — повесит дома, будет показывать гостям. Музей получит деньги на два года: зарплаты, крыша, отопление. Нина доработает до пенсии, Ира получит ставку. Копия прекрасная — вы сами сорок лет не отличили бы. Что изменится, если вы позвоните?",
+    "passive": [{"skill": "logic", "difficulty": "challenging", "text": "Он прав в каждой цифре. Ошибка не в цифрах. Ошибка в том, кто решил за город, что ему можно смотреть."}],
+    "choices": [
+     {"text": "Изменится то, что дети будут смотреть на правду.", "next": "dp3"},
+     {"text": "Просто сказать «нет». Не оправдываться.", "next": "dp4", "check": {"skill": "will", "difficulty": "challenging", "red": true, "failure": "dp4f", "damage": "morale"}},
+     {"text": "Вы ведь не для себя это сделали. Вы тот мальчик с фотографии.", "next": "dp4", "check": {"skill": "empathy", "difficulty": "formidable", "failure": "dp5f"}},
+     {"text": "Мне нужно подумать.", "next": "end"}]},
+   {"id": "dp3", "speaker": "vadim", "emotion": "angry", "text": "Дети будут смотреть на пустую стену, Савва Ильич! Музей закроют через месяц. Правда — это роскошь для тех, у кого топят.", "next": "end"},
+   {"id": "dp4", "speaker": "vadim", "emotion": "sad", "text": "…Нет, значит. Хорошо. Я ведь, знаете, ждал, что кто-нибудь скажет «нет». Сорок лет ждал, что взрослые остановят. Утром позвоню в управление сам. Только картину повесьте до семи — пусть хоть одно утро будет как раньше.",
+    "choices": [{"text": "Повешу. Вместе с вами.", "effects": [{"set_flag": "director_confessed", "value": true}], "next": "end"}]},
+   {"id": "dp4f", "speaker": "vadim", "emotion": "happy", "text": "Вот видите. Вы колеблетесь. Значит, тоже понимаете. Идите, подумайте до утра. Утро всё решит за нас обоих.", "next": "end"},
+   {"id": "dp5f", "speaker": "vadim", "emotion": "angry", "text": "Не надо меня жалеть. Жалость — это то, что я покупаю на вырученные деньги для всех вас.", "next": "end"},
+   {"id": "dc", "speaker": "vadim", "emotion": "neutral", "text": "Я помню, что обещал. Не смотрите так. Иногда честность — это просто усталость, которой наконец разрешили.", "next": "end"}
+  ]}},
+ {"type": "exit", "id": "director_to_lobby", "zone": "reception", "kind": "left_edge", "to": "lobby"}
+],
+"enemies": []}

@@ -1,0 +1,10 @@
+{"items": [
+ {"id": "storage_key", "name": "Ключ Нины от запасника", "description": "Старый, с биркой «запасник, 1979». Директор про него забыл.", "icon": "key_ornate", "kind": "key", "value_tier": 2},
+ {"id": "original_canvas", "name": "Подлинник «Утро над Сурой»", "description": "Свёрнутый в мешковину холст. Девочка на берегу держит красный платок.", "icon": "scroll", "kind": "misc", "value_tier": 5},
+ {"id": "thermos_tea", "name": "Чай из термоса", "description": "Крепкий, сладкий, сторожевой. Согревает руки и сердце.", "icon": "flask", "kind": "consumable", "effect": [{"heal": 1}], "value_tier": 1},
+ {"id": "validol", "name": "Валидол", "description": "Таблетка под язык. Ровно столько спокойствия, чтобы не принять решение со страха.", "icon": "pills", "kind": "consumable", "effect": [{"mod_stat": "morale", "delta": 1}], "value_tier": 1},
+ {"id": "flashlight", "name": "Фонарик сторожа", "description": "Тусклый, но в нужном месте. С ним любая мелочь видна.", "icon": "lantern", "kind": "equipment", "equip": {"slot": "trinket", "bonus": {"skills": {"perception": 1}}}, "value_tier": 1},
+ {"id": "teacher_jacket", "name": "Пиджак учителя", "description": "Тот самый, с мелом на рукаве. В нём голос сам собой становится твёрже.", "icon": "coat", "kind": "equipment", "equip": {"slot": "body", "bonus": {"skills": {"presence": 1}}}, "value_tier": 2}
+],
+"skills": [], "shops": [], "tactics": [],
+"start_skills": [], "start_items": [], "start_equipment": {"body": "teacher_jacket"}}

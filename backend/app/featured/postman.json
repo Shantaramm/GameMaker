@@ -8,6 +8,52 @@
   "language": "ru",
   "est_minutes": 25
  },
+ "profile": {
+  "combat": "tactical",
+  "dialogue": "rich"
+ },
+ "inner_skills": [
+  {
+   "key": "logic",
+   "name": "Логика",
+   "description": "Связывает факты, замечает противоречия."
+  },
+  {
+   "key": "knowledge",
+   "name": "Знания",
+   "description": "Помнит книги, слухи и историю мира."
+  },
+  {
+   "key": "empathy",
+   "name": "Эмпатия",
+   "description": "Чувствует, что человек скрывает за словами."
+  },
+  {
+   "key": "will",
+   "name": "Воля",
+   "description": "Держит удар, не даёт сломаться. От неё зависит Дух."
+  },
+  {
+   "key": "endurance",
+   "name": "Стойкость",
+   "description": "Выдерживает боль и холод. От неё зависит Здоровье."
+  },
+  {
+   "key": "presence",
+   "name": "Напор",
+   "description": "Давит, убеждает силой, пугает."
+  },
+  {
+   "key": "perception",
+   "name": "Восприятие",
+   "description": "Видит мелочи, слышит шорохи."
+  },
+  {
+   "key": "finesse",
+   "name": "Ловкость",
+   "description": "Ловкие руки, тихие шаги, быстрая реакция."
+  }
+ ],
  "hero": {
   "id": "miron",
   "name": "Мирон",
@@ -29,7 +75,8 @@
     "freckles"
    ],
    "bg_color": "sky"
-  }
+  },
+  "strengths": []
  },
  "characters": [
   {
@@ -57,7 +104,8 @@
    "joins": {
     "flag": "zlata_joined",
     "is": true
-   }
+   },
+   "strengths": []
   },
   {
    "id": "pelageya",
@@ -78,7 +126,8 @@
     "accent_color": "crimson",
     "accessory": [],
     "bg_color": "tan"
-   }
+   },
+   "strengths": []
   },
   {
    "id": "vera",
@@ -101,7 +150,8 @@
      "earring"
     ],
     "bg_color": "orange"
-   }
+   },
+   "strengths": []
   },
   {
    "id": "gordey",
@@ -123,7 +173,8 @@
     "accent_color": "gold",
     "accessory": [],
     "bg_color": "plum"
-   }
+   },
+   "strengths": []
   },
   {
    "id": "yakov",
@@ -148,14 +199,16 @@
      "scar"
     ],
     "bg_color": "crimson"
-   }
+   },
+   "strengths": []
   }
  ],
  "stats_template": {
   "hp": 60,
   "attack": 9,
   "defense": 4,
-  "focus": 6
+  "focus": 6,
+  "morale": 5
  },
  "progression": {
   "xp_to_level": [
@@ -170,10 +223,21 @@
    "hp": 8,
    "attack": 2,
    "defense": 1,
-   "focus": 1
+   "focus": 1,
+   "morale": 0
   }
  },
  "start_gold": 15,
+ "hero_skills": {
+  "logic": 2,
+  "knowledge": 2,
+  "empathy": 2,
+  "will": 2,
+  "endurance": 2,
+  "presence": 2,
+  "perception": 2,
+  "finesse": 2
+ },
  "start_skills": [
   "steady_breath"
  ],
@@ -304,7 +368,8 @@
      "attack": 1,
      "defense": 0,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -324,7 +389,8 @@
      "attack": 3,
      "defense": 0,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -344,7 +410,8 @@
      "attack": 2,
      "defense": 0,
      "focus": 0,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -364,7 +431,8 @@
      "attack": 0,
      "defense": 2,
      "focus": 0,
-     "hp": 5
+     "hp": 5,
+     "skills": {}
     },
     "range": 1
    },
@@ -384,7 +452,8 @@
      "attack": 0,
      "defense": 1,
      "focus": 1,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -404,7 +473,8 @@
      "attack": 0,
      "defense": 0,
      "focus": 1,
-     "hp": 0
+     "hp": 0,
+     "skills": {}
     },
     "range": 1
    },
@@ -782,6 +852,7 @@
         "speaker": "pelageya",
         "text": "Мирон, вот оно. Прошение о лекаре, с подписями всей деревни. Если до снега не дойдёт — до весны у нас никого не будет, а у Сидоровых малой кашляет.",
         "emotion": "neutral",
+        "passive": [],
         "choices": [
          {
           "text": "Давай, мама. Донесу.",
@@ -820,6 +891,7 @@
         "speaker": "pelageya",
         "text": "Тут ещё десять монет на дорогу и мой отвар от простуды. И не геройствуй, слышишь? Письмо важнее гордости.",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -828,11 +900,13 @@
         "speaker": "pelageya",
         "text": "Гордей много чего говорит. Только почему-то обозы из-за перевала к нему всё ездят, а к нам — нет. Будь осторожен, сынок.",
         "emotion": "sad",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "m1"
+      "start_node": "m1",
+      "entries": []
      }
     },
     {
@@ -862,6 +936,7 @@
         "speaker": "gordey",
         "text": "А, наш почтальон! Куда собрался, голубчик? Там обвал, камни с дом. Переждал бы ты до весны, а письмо — что письмо, полежит.",
         "emotion": "happy",
+        "passive": [],
         "choices": [
          {
           "text": "Прошение не может ждать. Я пойду.",
@@ -880,6 +955,7 @@
         "speaker": "gordey",
         "text": "Упрямый, весь в отца. Ну иди, иди. Только не говори потом, что тебя не предупреждали.",
         "emotion": "angry",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -888,11 +964,13 @@
         "speaker": "gordey",
         "text": "Я?.. Мне люди сказали. Надёжные люди. И вообще, староста тут я, и мне виднее, кому куда ходить.",
         "emotion": "surprised",
+        "passive": [],
         "choices": [],
         "next": "g2"
        }
       ],
-      "start_node": "g1"
+      "start_node": "g1",
+      "entries": []
      }
     },
     {
@@ -916,6 +994,7 @@
         "speaker": "vera",
         "text": "Мироша! Тёплые варежки, сухари, отвар — всё для дороги. А ещё у меня беда: ящик соли с заставы так и не привезли. Говорят, «обвал». Ага, обвал, как же.",
         "emotion": "happy",
+        "passive": [],
         "choices": [
          {
           "text": "Вот твоя соль, Вера. Нашёл на заставе.",
@@ -956,6 +1035,7 @@
         "speaker": "vera",
         "text": "Ящик с синей печатью, не перепутаешь. Вернёшь — отблагодарю. Чем-нибудь поинтереснее монет.",
         "emotion": "neutral",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -964,11 +1044,13 @@
         "speaker": "vera",
         "text": "Моя соль! С заставы, значит… Вот что, держи ключ. Гордей оставил мне на хранение — от чердака. Сказал, «чтоб жена не нашла». Я-то думала, там наливка. А теперь думаю — не наливка.",
         "emotion": "surprised",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "v1"
+      "start_node": "v1",
+      "entries": []
      },
      "shop": "vera_shop"
     },
@@ -1196,6 +1278,7 @@
         "speaker": "zlata",
         "text": "Тише ты, почтальон. Стая внизу, у логова. Я их третий день веду, а одной вожака не взять.",
         "emotion": "neutral",
+        "passive": [],
         "choices": [
          {
           "text": "Пойдём вместе. Мне всё равно туда.",
@@ -1234,6 +1317,7 @@
         "speaker": "zlata",
         "text": "Вот это разговор. Держи камень покрепче и бей в нос, когда я скажу. А потом — на заставу. Я давно хочу посмотреть на этот их «обвал».",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -1242,6 +1326,7 @@
         "speaker": "zlata",
         "text": "Дальше — вверх. Только застава там не пустая: дымом пахнет с утра.",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -1250,11 +1335,13 @@
         "speaker": "zlata",
         "text": "Сам так сам. Только вожак тебя «сам» и съест.",
         "emotion": "angry",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "z1"
+      "start_node": "z1",
+      "entries": []
      }
     },
     {
@@ -1496,6 +1583,7 @@
         "speaker": "yakov",
         "text": "Ну, почтальон… Удивил. Иди, неси свою бумажку. Всё равно в городе тебе никто не поверит: староста скажет, что ты врёшь, — и все кивнут.",
         "emotion": "angry",
+        "passive": [],
         "choices": [
          {
           "text": "Поверят. У меня долговая книга Гордея.",
@@ -1522,6 +1610,7 @@
         "speaker": "yakov",
         "text": "Книга?.. Вот же старый дурак, держал её дома! Ладно, ладно. Ворота открыты. Только я в город с тобой не пойду — горы большие.",
         "emotion": "scared",
+        "passive": [],
         "choices": [],
         "next": "end"
        },
@@ -1530,11 +1619,13 @@
         "speaker": "yakov",
         "text": "Скромный какой. Ну иди, иди. До весны, почтальон.",
         "emotion": "happy",
+        "passive": [],
         "choices": [],
         "next": "end"
        }
       ],
-      "start_node": "y1"
+      "start_node": "y1",
+      "entries": []
      }
     },
     {

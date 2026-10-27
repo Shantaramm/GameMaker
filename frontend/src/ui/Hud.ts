@@ -9,20 +9,26 @@ export class Hud {
   readonly root = el("div", { className: "hud" });
   private stats = el("div", { className: "hud-stats" });
   private place = el("div", { className: "hud-place" });
+  private inventory: HTMLButtonElement;
 
   constructor(onInventory: () => void, onJournal: () => void) {
+    this.inventory = button("Герой", onInventory, "btn btn-small");
     this.root.append(this.stats, this.place,
-      el("div", { className: "hud-buttons" }, button("Вещи", onInventory, "btn btn-small"), button("Журнал", onJournal, "btn btn-small")));
+      el("div", { className: "hud-buttons" }, this.inventory, button("Журнал", onJournal, "btn btn-small")));
   }
 
   update(state: GameState, world: World): void {
     const eff = effective(state, world);
+    // Здоровье и Дух — всегда (§5.10); фокус — только там, где есть бои
     this.stats.replaceChildren(
       el("span", { className: "hud-level", textContent: `Ур.${state.level}` }),
-      bar(state.hp, eff.maxHp, "hp"),
-      bar(state.focus, eff.maxFocus, "focus", false),
+      el("span", { className: "hud-bar", title: "Здоровье" }, bar(state.hp, eff.maxHp, "hp")),
+      el("span", { className: "hud-bar", title: "Дух" }, bar(state.morale, eff.maxMorale, "morale")),
+      ...(world.noCombat ? [] : [bar(state.focus, eff.maxFocus, "focus", false)]),
       el("span", { className: "hud-gold", textContent: `◆${state.gold}` }));
     this.place.textContent = world.location(state.location).title;
+    this.inventory.textContent = state.skillPoints > 0 ? `Герой ●${state.skillPoints}` : "Герой";
+    this.inventory.classList.toggle("has-points", state.skillPoints > 0);
   }
 }
 

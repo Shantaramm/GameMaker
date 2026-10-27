@@ -94,7 +94,7 @@ try {
   await page.goto(`${BASE}/games`);
   await page.waitForSelector(".game-card");
   const featured = await page.locator(".game-grid").first().locator(".game-card h3").allTextContents();
-  check(featured.join("|") === "Погасший маяк|Последнее письмо перед снегом", `подборка: ${featured}`);
+  check(featured.join("|") === "Погасший маяк|Последнее письмо перед снегом|Последняя смена", `подборка: ${featured}`);
   const community = page.locator(".game-grid").nth(1).locator(".game-card");
   check(await community.count() === 1 && (await community.locator(".badge").textContent()) === "ваша", "игра автора среди игр игроков");
   check(await page.locator(".my-game", { hasText: "Погасший маяк" }).getByRole("button", { name: "Скрыть из каталога" }).isVisible(), "в «Моих играх» можно скрыть");
@@ -119,6 +119,22 @@ try {
   check(await page2.locator(".game-grid").nth(1).locator(".game-card").count() === 1, "чужой браузер видит опубликованную игру");
   check(!(await page2.locator(".my-games").isVisible()) && !(await page2.locator(".badge").isVisible()), "но не может её скрыть");
   await page2.screenshot(shotsDir ? { path: `${shotsDir}site-5-catalog-phone.png`, fullPage: true } : {});
+
+  // профиль «без боёв, глубокие диалоги» на телефоне: бриф и игра — про разговоры, без врагов
+  await page2.goto(BASE);
+  await page2.waitForSelector(".profile");
+  await page2.getByRole("radio", { name: "Без боёв" }).click();
+  await page2.getByRole("radio", { name: "Глубокие" }).click();
+  check(await page2.locator(".profile", { hasText: "Disco Elysium" }).isVisible(), "подсказка к глубоким диалогам");
+  await page2.locator("textarea.idea").fill("Ночной сторож музея замечает, что картину подменили, и до утра решает, что дороже: правда или люди.");
+  if (shotsDir) await page2.screenshot({ path: `${shotsDir}site-6-profile-phone.png`, fullPage: true });
+  await page2.getByRole("button", { name: "Развернуть в бриф" }).click();
+  await page2.waitForURL("**/brief");
+  check((await page2.locator("textarea.brief").inputValue()).startsWith("# Последняя смена"), "бриф под профиль без боёв");
+  await page2.getByRole("button", { name: "Создать игру" }).click();
+  await page2.getByRole("button", { name: "Играть ▸" }).click({ timeout: 60000 });
+  await page2.waitForSelector(".screen h1");
+  check((await page2.locator(".screen h1").textContent()) === "Последняя смена", "игра без боёв собралась");
 
   check(errors.length === 0, `ошибки в консоли:\n${errors.join("\n")}`);
   console.log(`✓ идея → бриф → генерация → игра → концовка → ссылка (${((Date.now() - started) / 1000).toFixed(1)} с)`);

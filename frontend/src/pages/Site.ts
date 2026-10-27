@@ -1,6 +1,6 @@
 // Главная, бриф, экран генерации (SPEC §11.1–11.3) и каталог готовых игр.
 
-import { api, ApiError, draft, type GameCard, mine, type Status } from "../api";
+import { api, ApiError, draft, type GameCard, mine, type Profile, type Status } from "../api";
 import { publishToggle } from "../ui/publish";
 import demoGame from "../data/demo_game.json";
 import { backgroundSeed, renderBackground } from "../pixel/background";
@@ -47,7 +47,7 @@ async function demoBanner(): Promise<HTMLElement | null> {
   } catch {
     return el("p", { className: "banner warn", textContent: "Сервер генерации недоступен. Демо-игра работает и без него." });
   }
-  return el("p", { className: "banner", textContent: "Демо-режим: GigaChat ещё не подключён, поэтому любая идея превратится в демо-игру «Погасший маяк». Весь путь — бриф, генерация, игра, ссылка — работает по-настоящему." });
+  return el("p", { className: "banner", textContent: "Демо-режим: GigaChat ещё не подключён, поэтому любая идея превратится в готовую игру — «Погасший маяк», а без боёв — «Последняя смена». Весь путь — бриф, генерация, игра, ссылка — работает по-настоящему." });
 }
 
 function busyButton(b: HTMLButtonElement, text: string): () => void {
@@ -60,10 +60,48 @@ function busyButton(b: HTMLButtonElement, text: string): () => void {
   };
 }
 
+// --- профиль игры (§5.10): сколько боёв и насколько глубокие разговоры ---
+
+const COMBAT_OPTIONS: [Profile["combat"], string, string][] = [
+  ["tactical", "Тактические", "2–4 пошаговых боя на изометрическом поле, торговец, снаряжение."],
+  ["light", "Немного", "1–3 боя, важных для сюжета. Главное — разговоры и находки."],
+  ["none", "Без боёв", "Всё решают разговоры, улики и внутренние навыки героя: логика, чуткость, воля…"],
+];
+const DIALOGUE_OPTIONS: [Profile["dialogue"], string, string][] = [
+  ["light", "Лёгкие", "Короткие живые реплики и загадка, которую надо разгадать."],
+  ["rich", "Живые", "Разговоры с характером, выбор с последствиями, проверки навыков."],
+  ["deep", "Глубокие", "Как в Disco Elysium: подтекст, секреты, голоса навыков, финал без правильного ответа."],
+];
+
+function profilePicker(): HTMLElement {
+  const box = el("div", { className: "profile" });
+  const render = () => {
+    const p = draft.profile();
+    const row = <K extends keyof Profile>(key: K, title: string, options: [Profile[K], string, string][]) => {
+      const current = options.find(([v]) => v === p[key])!;
+      return el("div", { className: "profile-row" },
+        el("span", { className: "profile-title", textContent: title }),
+        el("div", { className: "segmented", role: "radiogroup" }, ...options.map(([value, label]) => {
+          const b = button(label, () => {
+            draft.set("profile", JSON.stringify({ ...draft.profile(), [key]: value }));
+            render();
+          }, `seg${value === p[key] ? " on" : ""}`);
+          b.setAttribute("role", "radio");
+          b.setAttribute("aria-checked", String(value === p[key]));
+          return b;
+        })),
+        el("small", { className: "muted", textContent: current[2] }));
+    };
+    box.replaceChildren(row("combat", "Бои", COMBAT_OPTIONS), row("dialogue", "Диалоги", DIALOGUE_OPTIONS));
+  };
+  render();
+  return box;
+}
+
 async function startGame(brief: string, error: HTMLElement, b: HTMLButtonElement): Promise<void> {
   const done = busyButton(b, "Отправляем…");
   try {
-    const { game_id, owner_token } = await api.create(brief);
+    const { game_id, owner_token } = await api.create(brief, draft.profile());
     mine.add(game_id, owner_token);
     draft.set("brief", brief);
     go(`/progress/${game_id}`);
@@ -85,7 +123,7 @@ export async function mountHome(root: HTMLElement): Promise<void> {
     if (idea.value.trim().length < 3) return void (error.textContent = "Напишите хотя бы пару слов.");
     const done = busyButton(expand, "Пишем бриф…");
     try {
-      const brief = await api.brief(idea.value.trim());
+      const brief = await api.brief(idea.value.trim(), draft.profile());
       draft.set("brief", brief.brief_markdown);
       draft.set("questions", JSON.stringify(brief.questions));
       go("/brief");
@@ -110,6 +148,7 @@ export async function mountHome(root: HTMLElement): Promise<void> {
     el("p", { className: "lead", textContent: "Опишите историю — ИИ превратит её в пиксельную RPG, в которую можно сыграть и поделиться ссылкой." }),
     await demoBanner(),
     idea,
+    profilePicker(),
     el("div", { className: "row" }, expand, create),
     error,
     el("h3", { textContent: "Например" }),
@@ -142,6 +181,7 @@ export function mountBrief(root: HTMLElement): void {
     questions.length ? el("div", { className: "questions" }, el("b", { textContent: "Подумайте над вопросами — ответы можно дописать прямо в бриф:" }),
       el("ul", {}, ...questions.map((q) => el("li", { textContent: q })))) : null,
     text,
+    profilePicker(),
     el("div", { className: "row" }, button("← Назад", () => go("/"), "btn btn-ghost"), create),
     error,
   ));
@@ -274,10 +314,16 @@ function gameCard(c: GameCard, extra: Node | null = null): HTMLElement {
     drawCover(canvas, c, ++frame);
   }, COVER_FRAME_MS);
   const meta = [c.est_minutes ? `≈${c.est_minutes} мин` : "", `${c.locations} локаций`, c.endings > 1 ? `${c.endings} концовки` : ""].filter(Boolean).join(" · ");
+  const p = c.profile ?? {};
+  const tags = [
+    p.combat === "none" ? "Без боёв" : p.combat === "light" ? "Немного боёв" : "Тактические бои",
+    { light: "лёгкие диалоги", rich: "живые диалоги", deep: "глубокие диалоги" }[p.dialogue ?? "rich"],
+  ];
   const cover = el("a", { className: "cover", href: `/play/${c.id}` }, canvas,
     el("div", { className: "cover-title" }, el("h3", { textContent: c.title }), c.tone ? el("small", { textContent: c.tone }) : null));
   return el("article", { className: "game-card" }, cover,
     el("div", { className: "game-card-body" },
+      el("div", { className: "tags" }, ...tags.map((t) => el("span", { className: "tag", textContent: t }))),
       el("p", { className: "logline", textContent: c.logline }),
       el("small", { className: "muted", textContent: meta }),
       el("div", { className: "row" }, el("a", { className: "btn btn-primary", href: `/play/${c.id}`, textContent: "Играть ▸" }), extra)));

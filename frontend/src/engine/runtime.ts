@@ -1,28 +1,61 @@
 // Контроллер игры: взаимодействие с объектами, диалоги, бои, переходы, сохранение (SPEC §5.7).
 // С интерфейсом общается через GameUI: каждое окно — промис, который разрешается, когда игрок его закрыл.
 
-import type { Ending, Shop } from "../types/game";
+import type { DialogueChoice, Ending, Shop, SkillCheck } from "../types/game";
+import { chance, checkKey, checkOpen, checkTarget, checkXp, DIFFICULTY_NAME, EXAMINE_XP, healthUnit, passiveHeard, QUEST_XP, type Roll, roll } from "./inner";
 import { type Battle, pyRound, REST_HEAL, rewards, startBattle } from "./tactics";
 import { check, describe } from "./conditions";
 import { applyStoryEffects, gainXp } from "./effects";
 import { spawnFor } from "./pathfinding";
 import { questChanges, questViews, type QuestView } from "./quests";
-import { newState, save, type GameState } from "./state";
+import { effective, newState, save, skillValue, upgrade, type GameState } from "./state";
 import { NARRATOR, World, type Condition, type Effect, type GameEvent, type MapObject } from "./world";
 
 // --- диалог ---------------------------------------------------------------------
 
+export interface CheckView {
+  skill: string;           // ключ навыка
+  name: string;            // название навыка в этой игре
+  difficulty: string;      // «сложно»
+  target: number;
+  value: number;
+  chance: number;          // 0..1
+  red: boolean;
+  status: "new" | "passed" | "failed";
+}
+
 export interface ChoiceView {
   text: string;
   available: boolean;
-  hint: string | null; // «Нужно: ключ от архива»
+  hint: string | null; // «Нужно: ключ от архива», «Провал — попробуйте, когда навык вырастет»
+  check: CheckView | null;
+}
+
+export interface PassiveView {
+  skill: string;
+  name: string;
+  difficulty: string;
+  text: string;
 }
 
 export interface LineView {
-  speaker: string; // id персонажа или "narrator"
+  speaker: string; // id персонажа, "narrator" или "skill:<ключ>"
   text: string;
   emotion: string;
+  passives: PassiveView[]; // голоса навыков, которые прозвучали перед репликой
   choices: ChoiceView[]; // пусто — «Далее»
+}
+
+export interface ChooseResult {
+  messages: string[];
+  roll: (Roll & { skill: string; name: string; red: boolean }) | null;
+  over: boolean; // Здоровье или Дух на нуле
+}
+
+export interface RunnerHooks {
+  random: () => number;
+  /** Опыт за успешную проверку; возвращает сообщения о новом уровне. */
+  reward: (xp: number) => string[];
 }
 
 /** Пошаговый проход по событию: Dialogue, Choice или Narration. */
@@ -30,32 +63,49 @@ export class DialogueRunner {
   private nodeId: string | null;
   done = false;
   goto: string | null = null;
+  over = false;
 
-  constructor(readonly event: GameEvent, private state: GameState, private world: World) {
-    this.nodeId = event.type === "dialogue" ? event.start_node : null;
+  constructor(readonly event: GameEvent, private state: GameState, private world: World, private hooks: RunnerHooks | null = null) {
+    this.nodeId = event.type === "dialogue" ? startNode(event, state, world) : null;
   }
 
   private hint(cond: unknown): string | null {
     return cond ? `Нужно: ${describe(cond as Condition, this.world)}` : null;
   }
 
+  private checkView(dialogueId: string, nodeId: string, index: number, chk: SkillCheck): CheckView {
+    const value = skillValue(this.state, this.world, chk.skill);
+    const record = this.state.checks[checkKey(dialogueId, nodeId, index)];
+    const target = checkTarget(chk.difficulty);
+    return {
+      skill: chk.skill, name: this.world.skillName(chk.skill), difficulty: DIFFICULTY_NAME[chk.difficulty], target, value,
+      chance: chance(value, target), red: !!chk.red, status: !record ? "new" : record.ok ? "passed" : "failed",
+    };
+  }
+
   current(): LineView {
     const e = this.event;
-    if (e.type === "narration") return { speaker: NARRATOR, text: e.text, emotion: "neutral", choices: [] };
+    if (e.type === "narration") return { speaker: NARRATOR, text: e.text, emotion: "neutral", passives: [], choices: [] };
     if (e.type === "choice")
       return {
-        speaker: NARRATOR, text: e.prompt, emotion: "neutral",
+        speaker: NARRATOR, text: e.prompt, emotion: "neutral", passives: [],
         choices: e.options.map((o) => {
           const ok = check(o.condition as Condition, this.state, this.world);
-          return { text: o.text, available: ok, hint: ok ? null : this.hint(o.condition) };
+          return { text: o.text, available: ok, hint: ok ? null : this.hint(o.condition), check: null };
         }),
       };
     const node = e.nodes.find((n) => n.id === this.nodeId)!;
+    const passives = (node.passive ?? [])
+      .filter((p) => passiveHeard(skillValue(this.state, this.world, p.skill), p.difficulty))
+      .map((p) => ({ skill: p.skill, name: this.world.skillName(p.skill), difficulty: DIFFICULTY_NAME[p.difficulty], text: p.text }));
     return {
-      speaker: node.speaker, text: node.text, emotion: node.emotion ?? "neutral",
-      choices: (node.choices ?? []).map((c) => {
+      speaker: node.speaker, text: node.text, emotion: node.emotion ?? "neutral", passives,
+      choices: (node.choices ?? []).map((c, i) => {
         const ok = check(c.condition as Condition, this.state, this.world);
-        return { text: c.text, available: ok, hint: ok ? null : this.hint(c.condition) };
+        const chk = c.check ? this.checkView(e.id, node.id, i, c.check as SkillCheck) : null;
+        const open = !c.check || checkOpen(this.state.checks[checkKey(e.id, node.id, i)], c.check as SkillCheck, chk!.value);
+        const hint = !ok ? this.hint(c.condition) : open ? null : c.check!.red ? "Провал. Второй попытки не будет" : "Провал — попробуйте, когда навык вырастет";
+        return { text: c.text, available: ok && open, hint, check: chk };
       }),
     };
   }
@@ -71,25 +121,78 @@ export class DialogueRunner {
     this.moveTo(node.next ?? "end");
   }
 
-  /** Выбор варианта; возвращает сообщения об эффектах. */
-  choose(index: number): string[] {
+  /** Выбор варианта: эффекты, затем проверка навыка (если есть). */
+  choose(index: number): ChooseResult {
     const e = this.event;
+    const none: ChooseResult = { messages: [], roll: null, over: false };
     const options = e.type === "choice" ? e.options : e.type === "dialogue" ? e.nodes.find((n) => n.id === this.nodeId)!.choices ?? [] : [];
     const option = options[index];
-    if (!option || !check(option.condition as Condition, this.state, this.world)) return [];
+    if (!option || !check(option.condition as Condition, this.state, this.world)) return none;
+    if (e.type === "dialogue" && !this.current().choices[index].available) return none;
     const res = applyStoryEffects(option.effects as Effect[], this.state, this.world);
     if (res.goto) {
       this.goto = res.goto;
       this.done = true;
-    } else if (e.type === "dialogue") this.moveTo((option as { next: string }).next);
-    else this.done = true;
-    return res.messages;
+      return { ...none, messages: res.messages };
+    }
+    if (e.type !== "dialogue") {
+      this.done = true;
+      return { ...none, messages: res.messages };
+    }
+    const choice = option as DialogueChoice;
+    if (!choice.check) {
+      this.moveTo(choice.next);
+      return { ...none, messages: res.messages };
+    }
+    return this.resolveCheck(e.id, this.nodeId!, index, choice, res.messages);
+  }
+
+  /** Бросок 2d6 + навык (как resolve_check в simulator.py). */
+  private resolveCheck(dialogueId: string, nodeId: string, index: number, choice: DialogueChoice, messages: string[]): ChooseResult {
+    const chk = choice.check as SkillCheck;
+    const key = checkKey(dialogueId, nodeId, index);
+    if (this.state.checks[key]?.ok) {
+      this.moveTo(choice.next);
+      return { messages, roll: null, over: false };
+    }
+    const value = skillValue(this.state, this.world, chk.skill);
+    const r = roll(value, checkTarget(chk.difficulty), this.hooks?.random ?? Math.random);
+    this.state.checks[key] = { ok: r.success, at: value };
+    const out: ChooseResult = { messages, roll: { ...r, skill: chk.skill, name: this.world.skillName(chk.skill), red: !!chk.red }, over: false };
+    if (r.success) {
+      messages.push(...(this.hooks?.reward(checkXp(chk.difficulty)) ?? []));
+      this.moveTo(choice.next);
+      return out;
+    }
+    if (chk.damage === "health") {
+      const unit = healthUnit(effective(this.state, this.world).maxHp, this.world.noCombat);
+      this.state.hp -= unit;
+      messages.push(`Здоровье −${unit}`);
+    } else if (chk.damage === "morale") {
+      this.state.morale -= 1;
+      messages.push("Дух −1");
+    }
+    if (this.state.hp <= 0 || this.state.morale <= 0) {
+      this.state.hp = Math.max(0, this.state.hp);
+      this.state.morale = Math.max(0, this.state.morale);
+      this.over = out.over = true;
+      this.done = true;
+      return out;
+    }
+    this.moveTo(chk.failure);
+    return out;
   }
 
   private moveTo(next: string): void {
     if (next === "end") this.done = true;
     else this.nodeId = next;
   }
+}
+
+/** Первая реплика диалога: первая подходящая entries, иначе start_node (как start_node в simulator.py). */
+export function startNode(dialogue: Extract<GameEvent, { type: "dialogue" }>, state: GameState, world: World): string {
+  for (const entry of dialogue.entries ?? []) if (check(entry.condition as Condition, state, world)) return entry.node;
+  return dialogue.start_node;
 }
 
 // --- интерфейс ---------------------------------------------------------------------
@@ -116,7 +219,7 @@ export class GameController {
 
   constructor(game: World["game"], readonly gameId: string, readonly ui: GameUI, readonly random: () => number, saved: GameState | null) {
     this.world = new World(game, gameId);
-    this.state = saved ?? newState(this.world);
+    this.state = saved ? upgrade(saved, this.world) : newState(this.world);
     if (!saved) {
       const [floor, x] = spawnFor(this.world.level(this.state.location), null);
       Object.assign(this.state, { floor, x });
@@ -169,6 +272,10 @@ export class GameController {
         }
       } else if (obj.type === "thing") {
         if (obj.once ?? true) this.state.used.push(obj.id);
+        if (!this.state.examined.includes(obj.id)) {
+          this.state.examined.push(obj.id);
+          this.ui.notify(this.reward(EXAMINE_XP));
+        }
         jump = await this.run(obj.event as GameEvent, {});
       } else if (obj.type === "chest") {
         if (!check(obj.requires as Condition, this.state, this.world)) {
@@ -207,9 +314,21 @@ export class GameController {
   }
 
   private async run(event: GameEvent, context: { npc?: string }): Promise<string | null> {
-    const runner = new DialogueRunner(event, this.state, this.world);
+    if (!check(event.condition as Condition, this.state, this.world)) return null;
+    const runner = new DialogueRunner(event, this.state, this.world, { random: this.random, reward: (xp) => this.reward(xp) });
     await this.ui.dialogue(runner, context);
+    if (runner.over) {
+      save(this.gameId, this.state);
+      this.ui.gameOver();
+      return null;
+    }
     return runner.goto;
+  }
+
+  /** Опыт не за бой (§5.10): проверки, осмотры, квесты. Возвращает сообщения о новом уровне и очках навыков. */
+  reward(xp: number): string[] {
+    const levels = gainXp(this.state, xp, this.world);
+    return levels ? [`Новый уровень: ${this.state.level}. Очков навыков: ${this.state.skillPoints}`] : [];
   }
 
   /** Бой; возвращает цель goto, "fled" или "over" (поражение / конец). */
@@ -224,9 +343,9 @@ export class GameController {
       this.state.defeated.push(obj.id);
       const { xp, gold } = rewards(obj, this.world);
       this.state.gold += gold;
-      const levels = gainXp(this.state, xp, this.world);
+      const levels = this.reward(xp);
       const res = applyStoryEffects(obj.on_win as Effect[], this.state, this.world);
-      this.ui.notify([`Победа! +${xp} опыта, +${gold} золота`, ...(levels ? [`Новый уровень: ${this.state.level}`] : []), ...res.messages]);
+      this.ui.notify([`Победа! +${xp} опыта, +${gold} золота`, ...levels, ...res.messages]);
       return res.goto;
     }
     if (obj.on_lose === "game_over" || obj.on_lose === undefined) {
@@ -276,6 +395,12 @@ export class GameController {
     const now = questViews(this.state, this.world);
     const changes = questChanges(this.quests, now);
     this.quests = now;
+    for (const v of now) {
+      if (v.complete && !this.state.questsRewarded.includes(v.quest.id)) {
+        this.state.questsRewarded.push(v.quest.id);
+        changes.push(...this.reward(QUEST_XP));
+      }
+    }
     if (changes.length) this.ui.notify(changes);
     save(this.gameId, this.state);
     this.ui.refresh();

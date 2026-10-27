@@ -29,6 +29,8 @@ class LocationPlan(s.Strict):
 
 class Outline(s.Strict):
     meta: s.Meta
+    profile: s.GameProfile = Field(default_factory=s.GameProfile)  # выбирает пользователь; пайплайн его закрепляет
+    inner_skills: list[s.InnerSkill] = Field(default_factory=list, max_length=8)
     hero: s.Character
     characters: list[s.Character] = Field(default_factory=list)
     flags: list[s.FlagDef] = Field(default_factory=list)
@@ -84,7 +86,8 @@ def assemble(outline: Outline, contents: dict[str, LocationContent], items: Item
     i = dump(items)
     return {
         "schema_version": "2",
-        "meta": o["meta"], "hero": o["hero"], "characters": o.get("characters", []),
+        "meta": o["meta"], "profile": o.get("profile", {}), "inner_skills": o.get("inner_skills", []),
+        "hero": o["hero"], "characters": o.get("characters", []),
         "start_skills": i.get("start_skills", []), "start_items": i.get("start_items", []),
         "start_equipment": i.get("start_equipment", {}),
         "skills": i.get("skills", []), "items": i.get("items", []), "enemies": list(enemies.values()),
@@ -116,7 +119,7 @@ def split_game(game: s.Game) -> tuple[Outline, dict[str, LocationContent], Items
         ))
         contents[loc.id] = LocationContent(intro=loc.intro, on_enter=loc.on_enter, objects=loc.objects,
                                            enemies=enemies_by_loc.get(loc.id, []))
-    outline = Outline(meta=game.meta, hero=game.hero, characters=game.characters, flags=game.flags, quests=game.quests,
+    outline = Outline(meta=game.meta, profile=game.profile, inner_skills=game.inner_skills, hero=game.hero, characters=game.characters, flags=game.flags, quests=game.quests,
                       locations=plans, start_location=game.start_location, endings=game.endings)
     tactics = [t.model_copy(update={"cost": None}) for t in game.tactics if not t.id.startswith("base_")]
     items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics,

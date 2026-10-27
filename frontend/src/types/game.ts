@@ -8,11 +8,19 @@
 export interface Game {
   schema_version?: "2";
   meta: Meta;
+  profile?: GameProfile;
+  /**
+   * @maxItems 8
+   */
+  inner_skills?: InnerSkill[];
   hero: Character;
   characters?: Character[];
   stats_template?: Stats | null;
   progression?: Progression | null;
   start_gold?: number | null;
+  hero_skills?: {
+    [k: string]: number;
+  };
   start_skills?: string[];
   start_items?: string[];
   start_equipment?: StartEquipment;
@@ -52,6 +60,27 @@ export interface Meta {
   est_minutes: number;
 }
 /**
+ * Какую игру хочет пользователь (§5.10): бои и глубина диалогов.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "GameProfile".
+ */
+export interface GameProfile {
+  combat?: "tactical" | "light" | "none";
+  dialogue?: "light" | "rich" | "deep";
+}
+/**
+ * Внутренний навык героя: ключ механики и название с голосом под мир игры.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "InnerSkill".
+ */
+export interface InnerSkill {
+  key: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  name: string;
+  description: string;
+}
+/**
  * This interface was referenced by `Game`'s JSON-Schema
  * via the `definition` "Character".
  */
@@ -61,8 +90,15 @@ export interface Character {
   role: "hero" | "companion" | "npc" | "antagonist";
   description: string;
   appearance: PortraitSpec;
-  joins?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  joins?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   combat?: CompanionCombat | null;
+  /**
+   * @maxItems 2
+   */
+  strengths?: ("logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse")[];
+  weakness?: ("logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse") | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -96,8 +132,10 @@ export interface CondAll {
    * @minItems 1
    */
   all: [
-    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated,
-    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated)[]
+    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill,
+    ...(
+      CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill
+    )[]
   ];
 }
 /**
@@ -109,8 +147,10 @@ export interface CondAny {
    * @minItems 1
    */
   any: [
-    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated,
-    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated)[]
+    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill,
+    ...(
+      CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill
+    )[]
   ];
 }
 /**
@@ -118,7 +158,7 @@ export interface CondAny {
  * via the `definition` "CondNot".
  */
 export interface CondNot {
-  not: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated;
+  not: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -140,7 +180,7 @@ export interface CondItem {
  * via the `definition` "CondStat".
  */
 export interface CondStat {
-  stat: "hp" | "attack" | "defense" | "focus";
+  stat: "hp" | "attack" | "defense" | "focus" | "morale";
   op: ">=" | "<=";
   value: number;
 }
@@ -168,6 +208,15 @@ export interface CondDefeated {
   defeated: string;
 }
 /**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondSkill".
+ */
+export interface CondSkill {
+  skill: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  op: ">=" | "<=";
+  value: number;
+}
+/**
  * Как компаньон сражается в тактическом бою (§5.9); статы считает код от статов героя.
  *
  * This interface was referenced by `Game`'s JSON-Schema
@@ -191,6 +240,7 @@ export interface Stats {
   attack: number;
   defense: number;
   focus: number;
+  morale?: number;
 }
 /**
  * Кривая опыта и прирост статов за уровень. Заполняет balance.py.
@@ -232,6 +282,7 @@ export interface Skill {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
@@ -244,6 +295,7 @@ export interface Skill {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
@@ -299,7 +351,15 @@ export interface EffLearnSkill {
  * via the `definition` "EffModStat".
  */
 export interface EffModStat {
-  mod_stat: "hp" | "attack" | "defense" | "focus";
+  mod_stat: "hp" | "attack" | "defense" | "focus" | "morale";
+  delta: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "EffModSkill".
+ */
+export interface EffModSkill {
+  mod_skill: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
   delta: number;
 }
 /**
@@ -341,6 +401,7 @@ export interface Item {
     | EffTakeGold
     | EffLearnSkill
     | EffModStat
+    | EffModSkill
     | EffHeal
     | EffDamage
     | EffGoto
@@ -367,6 +428,9 @@ export interface EquipBonus {
   defense?: number;
   focus?: number;
   hp?: number;
+  skills?: {
+    [k: string]: number;
+  };
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -421,6 +485,7 @@ export interface EnemyAbility {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
@@ -433,6 +498,7 @@ export interface EnemyAbility {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
@@ -475,13 +541,16 @@ export interface Tactic {
     | EffTakeGold
     | EffLearnSkill
     | EffModStat
+    | EffModSkill
     | EffHeal
     | EffDamage
     | EffGoto
   )[];
   duration?: number;
   move_bonus?: number;
-  unlock?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  unlock?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   cost?: number | null;
 }
 /**
@@ -493,7 +562,9 @@ export interface Quest {
   title: string;
   main?: boolean;
   giver?: string | null;
-  start?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  start?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   /**
    * @minItems 1
    */
@@ -505,7 +576,7 @@ export interface Quest {
  */
 export interface QuestStage {
   text: string;
-  done: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated;
+  done: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -576,7 +647,8 @@ export interface Npc {
   id: string;
   zone: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   type: "npc";
   character: string;
   dialogue: Dialogue;
@@ -594,6 +666,10 @@ export interface Dialogue {
    */
   nodes: [DialogueNode, ...DialogueNode[]];
   start_node: string;
+  entries?: DialogueEntry[];
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -604,8 +680,23 @@ export interface DialogueNode {
   speaker: string;
   text: string;
   emotion?: ("neutral" | "angry" | "sad" | "happy" | "scared" | "surprised") | null;
+  /**
+   * @maxItems 3
+   */
+  passive?: PassiveCheck[];
   choices?: DialogueChoice[];
   next?: string | null;
+}
+/**
+ * Голос навыка вмешивается в разговор сам, без броска, если навык + 6 ≥ сложности.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "PassiveCheck".
+ */
+export interface PassiveCheck {
+  skill: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  difficulty: "trivial" | "easy" | "medium" | "challenging" | "formidable" | "legendary";
+  text: string;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -614,7 +705,8 @@ export interface DialogueNode {
 export interface DialogueChoice {
   text: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   effects?: (
     | EffSetFlag
     | EffGiveItem
@@ -623,11 +715,35 @@ export interface DialogueChoice {
     | EffTakeGold
     | EffLearnSkill
     | EffModStat
+    | EffModSkill
     | EffHeal
     | EffDamage
     | EffGoto
   )[];
   next: string;
+  check?: SkillCheck | null;
+}
+/**
+ * Проверка навыка в варианте ответа (§5.10): 2d6 + навык против сложности; успех — next, провал — failure.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "SkillCheck".
+ */
+export interface SkillCheck {
+  skill: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  difficulty: "trivial" | "easy" | "medium" | "challenging" | "formidable" | "legendary";
+  red?: boolean;
+  failure: string;
+  damage?: ("health" | "morale") | null;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "DialogueEntry".
+ */
+export interface DialogueEntry {
+  condition:
+    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill;
+  node: string;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -637,7 +753,8 @@ export interface Foe {
   id: string;
   zone: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   type: "enemy";
   /**
    * @minItems 1
@@ -652,6 +769,7 @@ export interface Foe {
     | EffTakeGold
     | EffLearnSkill
     | EffModStat
+    | EffModSkill
     | EffHeal
     | EffDamage
     | EffGoto
@@ -666,6 +784,7 @@ export interface Foe {
         | EffTakeGold
         | EffLearnSkill
         | EffModStat
+        | EffModSkill
         | EffHeal
         | EffDamage
         | EffGoto
@@ -680,7 +799,8 @@ export interface Chest {
   id: string;
   zone: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   type: "chest";
   look: string;
   /**
@@ -695,6 +815,7 @@ export interface Chest {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
@@ -707,13 +828,15 @@ export interface Chest {
       | EffTakeGold
       | EffLearnSkill
       | EffModStat
+      | EffModSkill
       | EffHeal
       | EffDamage
       | EffGoto
     )[]
   ];
   requires?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   locked_text?: string | null;
 }
 /**
@@ -724,7 +847,8 @@ export interface Thing {
   id: string;
   zone: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   type: "thing";
   look: string;
   name: string;
@@ -743,6 +867,9 @@ export interface Choice {
    * @minItems 1
    */
   options: [ChoiceOption, ...ChoiceOption[]];
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -751,7 +878,8 @@ export interface Choice {
 export interface ChoiceOption {
   text: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   effects?: (
     | EffSetFlag
     | EffGiveItem
@@ -760,6 +888,7 @@ export interface ChoiceOption {
     | EffTakeGold
     | EffLearnSkill
     | EffModStat
+    | EffModSkill
     | EffHeal
     | EffDamage
     | EffGoto
@@ -773,6 +902,9 @@ export interface Narration {
   type: "narration";
   id: string;
   text: string;
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -782,12 +914,14 @@ export interface Exit {
   id: string;
   zone: string;
   condition?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   type: "exit";
   kind: "door" | "left_edge" | "right_edge";
   to: string;
   requires?:
-    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
   locked_text?: string | null;
 }
 /**

@@ -6,6 +6,8 @@
 Упомянуты в локациях и должны быть описаны:
 {{referenced}}
 
+{{profile}}
+
 Правила:
 - Опиши каждый упомянутый предмет, навык и магазин. Можно добавить товары в магазины.
 - kind: consumable (используется, есть effect: heal / damage / mod_stat), equipment (надевается, есть equip: slot hand / body / trinket и bonus), key (ключ, без effect), misc (сюжетный предмет, без effect).

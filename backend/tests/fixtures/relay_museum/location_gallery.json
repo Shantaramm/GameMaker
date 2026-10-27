@@ -1,0 +1,64 @@
+{"intro": "Зал пейзажей. Паркет скрипит на третьей доске от входа — сорок лет скрипит. На дальней стене, в луче дежурной лампы, — «Утро над Сурой».",
+"on_enter": [
+ {"type": "dialogue", "id": "ira_in_hall_remark", "condition": {"flag": "ira_joined", "is": true}, "start_node": "r1", "nodes": [
+  {"id": "r1", "speaker": "ira", "emotion": "sad", "text": "Странно стоять перед ней и знать, где каждый мой мазок. Я ведь писала её как свою. А получилась — чужая.", "next": "end"}]}
+],
+"objects": [
+ {"type": "thing", "id": "the_painting", "zone": "painting", "look": "banner", "name": "«Утро над Сурой»", "once": false, "event": {"type": "dialogue", "id": "look_painting", "start_node": "p1",
+  "entries": [{"condition": {"flag": "original_found", "is": true}, "node": "pz"}],
+  "nodes": [
+   {"id": "p1", "speaker": "narrator", "text": "Рассветная река, лодка, женщина на берегу машет кому-то, кого нет на холсте. Сорок лет вы видите её каждую ночь.",
+    "passive": [{"skill": "perception", "difficulty": "formidable", "text": "Лак у лодки блестит иначе. Ты это видишь раньше, чем понимаешь."}],
+    "choices": [
+     {"text": "Присмотреться к мазкам у лодки.", "next": "p2", "check": {"skill": "perception", "difficulty": "challenging", "failure": "p3"}},
+     {"text": "Вспомнить, что писали о картине в каталогах.", "next": "p4", "check": {"skill": "knowledge", "difficulty": "medium", "failure": "p5"}},
+     {"text": "Просто постоять.", "next": "p6"}]},
+   {"id": "p2", "speaker": "skill:perception", "text": "Мазок у лодки блестит. Сто лет назад масло так не блестит — так блестит то, что положили месяц назад.",
+    "choices": [{"text": "Запомнить.", "effects": [{"set_flag": "noticed_paint", "value": true}], "next": "p7"}]},
+   {"id": "p3", "speaker": "skill:perception", "text": "Темно. Глаза уже не те. Женщина на берегу машет — может, тебе.", "next": "end"},
+   {"id": "p4", "speaker": "skill:knowledge", "text": "Каталог 1959 года, страница сорок: «…в руке девочки — красный платок». Здесь платка нет. Аверин не стал бы его стирать.",
+    "choices": [{"text": "Платок. Где платок?", "effects": [{"set_flag": "noticed_scarf", "value": true}], "next": "p7"}]},
+   {"id": "p5", "speaker": "skill:knowledge", "text": "Помнишь только голос Нины: «Художник писал её три лета». Дальше — пусто. Возраст.", "next": "end"},
+   {"id": "p6", "speaker": "skill:will", "text": "Ты стоишь здесь, потому что боишься идти дальше. Это нормально. Но завтра её увезут, и стоять будет не перед чем.", "next": "end"},
+   {"id": "p7", "speaker": "skill:logic", "text": "Если это копия, подлинник либо уже продан, либо ещё в здании. Грузовик — утром. Значит, в здании. Копию писал кто-то, кто умеет. В городе такой человек один.", "next": "end"},
+   {"id": "pz", "speaker": "skill:empathy", "text": "Ты держишь подлинник, а смотришь на копию. И копия тоже красивая. Это самое страшное.", "next": "end"}
+  ]}},
+ {"type": "npc", "id": "ira_in_gallery", "zone": "hall_entry", "character": "ira", "dialogue": {"type": "dialogue", "id": "talk_ira", "start_node": "i1",
+  "entries": [{"condition": {"flag": "ira_joined", "is": true}, "node": "ij"},
+              {"condition": {"any": [{"flag": "noticed_paint", "is": true}, {"flag": "noticed_scarf", "is": true}]}, "node": "is1"}],
+  "nodes": [
+   {"id": "i1", "speaker": "ira", "emotion": "scared", "text": "Савва Ильич? Я… я забыла папку. Уже ухожу.",
+    "passive": [{"skill": "perception", "difficulty": "easy", "text": "Папки у неё нет. Руки в охре до запястий."}],
+    "choices": [
+     {"text": "Ночью? За папкой?", "next": "i2"},
+     {"text": "Вы плакали.", "next": "i3", "check": {"skill": "empathy", "difficulty": "challenging", "failure": "i2f"}},
+     {"text": "Идите, конечно. Осторожно на лестнице.", "next": "end"}]},
+   {"id": "i2", "speaker": "ira", "emotion": "angry", "text": "Да, ночью. У реставраторов тоже бывает бессонница. Вы теперь и за нами следите?", "next": "end"},
+   {"id": "i2f", "speaker": "ira", "emotion": "neutral", "text": "Аллергия на растворитель. Спокойной смены.", "next": "end"},
+   {"id": "is1", "speaker": "ira", "emotion": "scared", "text": "Вы смотрели на лодку. Я видела. Только не говорите никому, пока не выслушаете меня. Пожалуйста.", "next": "i3"},
+   {"id": "i3", "speaker": "ira", "emotion": "sad", "text": "Вадим Петрович попросил «освежить» картину перед отправкой. Я освежила. А потом поняла, что меня попросили не освежить. Меня попросили закончить.",
+    "passive": [{"skill": "empathy", "difficulty": "medium", "text": "Ей не стыдно за работу. Ей стыдно, что работа хорошая."}],
+    "choices": [
+     {"text": "Вы написали копию.", "next": "i4"},
+     {"text": "Кто попросил — тот и ответит.", "next": "i5"},
+     {"text": "Учителю вы бы сказали правду. Говорите.", "next": "i4", "check": {"skill": "presence", "difficulty": "medium", "failure": "i6f", "damage": "morale"}}]},
+   {"id": "i4", "speaker": "ira", "emotion": "sad", "text": "Я думала — копия на время перевозки, так делают. А вчера увидела, как подлинник несут в мастерскую в ящике с надписью «рамы». Наверх, в холодный запасник.", "next": "i5"},
+   {"id": "i5", "speaker": "ira", "emotion": "neutral", "text": "Утром он отдаст подлинник покупателю, а копию — в фонд. Музей получит деньги на год. Все будут счастливы. Кроме меня. И, кажется, вас.",
+    "choices": [
+     {"text": "Пойдёмте со мной. Найдём подлинник.", "effects": [{"set_flag": "ira_joined", "value": true}], "next": "i7"},
+     {"text": "Это решать не мне.", "next": "i8"}]},
+   {"id": "i6f", "speaker": "ira", "emotion": "angry", "text": "Вы мне не учитель. И голос у вас, простите, не учительский. Учительский бывает у тех, кто не боится.", "next": "i5"},
+   {"id": "i7", "speaker": "ira", "emotion": "happy", "text": "Ящик заперт. Ключ у директора — или у того, кто здесь дольше директора. Идёмте. И… спасибо, что не закричали.", "next": "end"},
+   {"id": "i8", "speaker": "ira", "emotion": "sad", "text": "Тогда я буду знать, что вы видели и промолчали. Это тоже решение, Савва Ильич. Просто тихое.", "next": "end"},
+   {"id": "ij", "speaker": "ira", "emotion": "neutral", "text": "Я рядом. Мастерская — за той дверью. И если пойдёте к директору — не говорите про меня первым. Пусть хотя бы это будет моим.", "next": "end"}
+  ]}},
+ {"type": "thing", "id": "window_bench", "zone": "window_bench", "look": "chair", "name": "Скамья у окна", "event": {"type": "dialogue", "id": "sit_bench", "start_node": "b1", "nodes": [
+  {"id": "b1", "speaker": "narrator", "text": "Здесь, на этой скамье, вы проверяли тетради, когда школу закрыли и вы пошли в сторожа. Красная ручка, чужие ошибки, тишина.",
+   "choices": [
+    {"text": "Вспомнить, зачем вы вообще стали учителем.", "effects": [{"mod_skill": "will", "delta": 1}, {"set_flag": "bench_remembered", "value": true}], "next": "b2"},
+    {"text": "Встать. Некогда.", "next": "end"}]},
+  {"id": "b2", "speaker": "skill:will", "text": "Не ради правды. Ради того мальчика в третьем ряду, который однажды сказал: «А я понял». Вот ради чего. Помни об этом, когда будешь решать.", "next": "end"}]}},
+ {"type": "exit", "id": "gallery_to_lobby", "zone": "hall_entry", "kind": "left_edge", "to": "lobby"},
+ {"type": "exit", "id": "gallery_to_restoration", "zone": "window_bench", "kind": "door", "to": "restoration"}
+],
+"enemies": []}

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 FEATURED_DIR = Path(__file__).resolve().parent / "featured"
-FEATURED = ["demo", "postman"]   # порядок карточек в подборке
+FEATURED = ["demo", "postman", "museum"]   # порядок карточек в подборке
 COMMUNITY_LIMIT = 60
 
 
@@ -33,6 +33,7 @@ def card(game_id: str, game: dict[str, Any], **extra: Any) -> dict[str, Any]:
     boss = max(game.get("enemies", []), key=lambda e: e["tier"], default=None)
     return {
         "background": start["background"],
+        "profile": game.get("profile", {"combat": "tactical", "dialogue": "rich"}),
         "enemy": {"id": boss["id"], "name": boss["name"], "appearance": boss["appearance"]} if boss else None,
         "id": game_id, "title": meta["title"], "logline": meta.get("logline", ""), "tone": meta.get("tone", ""),
         "est_minutes": meta.get("est_minutes"), "locations": len(game["locations"]), "endings": len(game["endings"]),

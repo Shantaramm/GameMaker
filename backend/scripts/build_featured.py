@@ -1,7 +1,8 @@
 """Игры подборки → backend/app/featured/*.json (проверяет test_featured_in_sync).
 
-demo — демо-игра из фикстуры; postman — игра, сгенерированная через ретранслятор
-(записанные ответы в tests/fixtures/relay_postman/ проходят через настоящий пайплайн).
+demo — демо-игра из фикстуры; postman и museum — игры, написанные через ретранслятор
+(записанные ответы в tests/fixtures/relay_*/ проходят через настоящий пайплайн).
+museum — игра без боёв с глубокими диалогами (профиль combat: none, dialogue: deep).
 """
 
 import asyncio
@@ -26,15 +27,16 @@ def demo() -> dict:
     return game.dump()
 
 
-def postman() -> dict:
-    relay = TESTS / "relay_postman"
+def from_relay(name: str, game_id: str) -> dict:
+    """Записанные ответы оператора (ретранслятор) — через настоящий пайплайн."""
+    relay = TESTS / name
     llm = ScriptedLLM(lambda step, _: (relay / f"{step.replace(':', '_')}.json").read_text(encoding="utf-8"))
     brief = (relay / "brief.md").read_text(encoding="utf-8")
-    return asyncio.run(Pipeline(llm, brief, "postman").run()).game.dump()
+    return asyncio.run(Pipeline(llm, brief, game_id).run()).game.dump()
 
 
 def build() -> dict[str, dict]:
-    return {"demo": demo(), "postman": postman()}
+    return {"demo": demo(), "postman": from_relay("relay_postman", "postman"), "museum": from_relay("relay_museum", "museum")}
 
 
 def dumps(game: dict) -> str:

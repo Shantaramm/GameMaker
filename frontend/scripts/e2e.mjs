@@ -43,7 +43,7 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   check(s.inventory.fishing_knife === 1, "нож куплен");
   check(s.gold === 5, `золото после покупки: ${s.gold}`);
 
-  await page.getByRole("button", { name: "Вещи" }).click();
+  await page.getByRole("button", { name: /^Герой/ }).click();
   await page.locator(".inv-item", { hasText: "Разделочный нож" }).click();
   await page.getByRole("button", { name: "Надеть" }).click();
   check(await page.locator(".inv-nums", { hasText: "Атака 11" }).isVisible(), "нож добавил +2 к атаке (9 → 11)");

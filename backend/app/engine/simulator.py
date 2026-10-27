@@ -19,6 +19,8 @@ from pydantic import BaseModel, computed_field
 
 from . import schema as s
 from .issues import Issue, format_path
+from . import inner
+from .balance import HEALTH_BASE, MORALE_BASE
 from .tactics import PARTY_MOVE, REST_HEAL, STYLE_RANGE, Battle, Unit, companion_stats, make_enemies, play_party_turn
 
 RUNS = 50
@@ -55,6 +57,13 @@ class HeroState:
     opened: set[str] = field(default_factory=set)
     used: set[str] = field(default_factory=set)
     visited: set[str] = field(default_factory=set)
+    # внутренние навыки (§5.10)
+    morale: int = 0
+    inner: dict[str, int] = field(default_factory=dict)
+    skill_points: int = 0
+    checks: dict[str, dict] = field(default_factory=dict)   # ключ проверки → {"ok": bool, "at": значение навыка}
+    examined: set[str] = field(default_factory=set)
+    quests_rewarded: set[str] = field(default_factory=set)
 
 
 @dataclass
@@ -63,6 +72,7 @@ class Effective:
     defense: int
     max_hp: int
     max_focus: int
+    max_morale: int = 0
 
 
 class World:
@@ -76,6 +86,7 @@ class World:
         self.shops = {sh.id: sh for sh in game.shops}
         self.locations = {loc.id: loc for loc in game.locations}
         self.endings = {e.id for e in game.endings}
+        self.no_combat = game.profile.combat == "none"
 
     def bonus(self, hero: HeroState) -> s.EquipBonus:
         total = s.EquipBonus()
@@ -83,14 +94,23 @@ class World:
             item = self.items.get(item_id or "")
             if item and item.equip:
                 b = item.equip.bonus
+                skills = dict(total.skills)
+                for k, v in b.skills.items():
+                    skills[k] = skills.get(k, 0) + v
                 total = s.EquipBonus(attack=total.attack + b.attack, defense=total.defense + b.defense,
-                                     focus=total.focus + b.focus, hp=total.hp + b.hp)
+                                     focus=total.focus + b.focus, hp=total.hp + b.hp, skills=skills)
         return total
+
+    def skill(self, hero: HeroState, key: str) -> int:
+        """Внутренний навык с бонусами вещей."""
+        return max(0, hero.inner.get(key, 0) + self.bonus(hero).skills.get(key, 0))
 
     def effective(self, hero: HeroState) -> Effective:
         b = self.bonus(hero)
+        max_hp = HEALTH_BASE + self.skill(hero, "endurance") if self.no_combat else max(1, hero.max_hp + b.hp)
         return Effective(attack=max(0, hero.attack + b.attack), defense=max(0, hero.defense + b.defense),
-                         max_hp=max(1, hero.max_hp + b.hp), max_focus=max(0, hero.max_focus + b.focus))
+                         max_hp=max(1, max_hp), max_focus=max(0, hero.max_focus + b.focus),
+                         max_morale=MORALE_BASE + self.skill(hero, "will"))
 
 
 def new_hero(game: s.Game) -> HeroState:
@@ -107,6 +127,10 @@ def new_hero(game: s.Game) -> HeroState:
         if item_id:
             hero.inventory[item_id] += 1
             hero.equipment[slot] = item_id
+    hero.inner = dict(game.hero_skills)
+    eff = World(game).effective(hero)
+    hero.hp = hero.max_hp = eff.max_hp if game.profile.combat == "none" else hero.hp
+    hero.morale = eff.max_morale
     return hero
 
 
@@ -125,10 +149,14 @@ def check(cond: s.Condition | None, hero: HeroState, world: World) -> bool:
         return hero.inventory[cond.has_item] > 0
     if isinstance(cond, s.CondDefeated):
         return cond.defeated in hero.defeated
+    if isinstance(cond, s.CondSkill):
+        value = world.skill(hero, cond.skill)
+        return value >= cond.value if cond.op == ">=" else value <= cond.value
     if isinstance(cond, (s.CondStat, s.CondGold, s.CondLevel)):
         if isinstance(cond, s.CondStat):
             eff = world.effective(hero)
-            value = {"hp": hero.hp, "focus": hero.focus, "attack": eff.attack, "defense": eff.defense}[cond.stat]
+            value = {"hp": hero.hp, "focus": hero.focus, "attack": eff.attack, "defense": eff.defense,
+                     "morale": hero.morale}[cond.stat]
             op = cond.op
         elif isinstance(cond, s.CondGold):
             value, op = hero.gold, cond.gold
@@ -171,8 +199,14 @@ def apply_hero_effect(e: s.Effect, hero: HeroState, world: World) -> None:
         hero.hp = min(eff.max_hp, hero.hp + e.heal)
     elif isinstance(e, s.EffDamage):
         hero.hp = max(1, hero.hp - e.damage)  # вне боя урон не убивает
+    elif isinstance(e, s.EffModSkill):
+        hero.inner[e.mod_skill] = max(0, min(inner.MOD_SKILL_CAP, hero.inner.get(e.mod_skill, 0) + e.delta))
+        hero.morale = min(hero.morale, world.effective(hero).max_morale)
+        hero.hp = min(hero.hp, world.effective(hero).max_hp)
     elif isinstance(e, s.EffModStat):
-        if e.mod_stat == "hp":
+        if e.mod_stat == "morale":
+            hero.morale = max(1, min(world.effective(hero).max_morale, hero.morale + e.delta))
+        elif e.mod_stat == "hp":
             hero.max_hp = max(1, hero.max_hp + e.delta)
             hero.hp = max(1, min(world.effective(hero).max_hp, hero.hp + e.delta))
         elif e.mod_stat == "focus":
@@ -199,7 +233,7 @@ def auto_equip(hero: HeroState, world: World) -> None:
 
 
 def gain_xp(hero: HeroState, xp: int, game: s.Game, world: World) -> None:
-    """Опыт и повышение уровня: прирост статов и полное восстановление HP и фокуса."""
+    """Опыт и повышение уровня: прирост статов, очко навыка и полное восстановление HP, фокуса и Духа."""
     hero.xp += xp
     prog = game.progression
     while hero.level - 1 < len(prog.xp_to_level) and hero.xp >= prog.xp_to_level[hero.level - 1]:
@@ -209,8 +243,26 @@ def gain_xp(hero: HeroState, xp: int, game: s.Game, world: World) -> None:
         hero.attack += p.attack
         hero.defense += p.defense
         hero.max_focus += p.focus
+        hero.skill_points += 1
         eff = world.effective(hero)
-        hero.hp, hero.focus = eff.max_hp, eff.max_focus
+        hero.hp, hero.focus, hero.morale = eff.max_hp, eff.max_focus, eff.max_morale
+
+
+def spend_skill_points(hero: HeroState, game: s.Game) -> None:
+    """Бот: очки — в сильные навыки (самый низкий из них), затем в самый низкий навык; предел SKILL_CAP."""
+    while hero.skill_points > 0:
+        order = [k for k in game.hero.strengths if hero.inner.get(k, 0) < inner.SKILL_CAP]
+        if not order:
+            order = sorted((k for k in s.SKILL_KEYS if hero.inner.get(k, 0) < inner.SKILL_CAP), key=lambda k: hero.inner.get(k, 0))
+        if not order:
+            return
+        key = min(order, key=lambda k: hero.inner.get(k, 0))
+        hero.inner[key] = hero.inner.get(key, 0) + 1
+        hero.skill_points -= 1
+        if key == "will":  # как spendSkillPoint в effects.ts: новый максимум Духа сразу доступен
+            hero.morale += 1
+        elif key == "endurance" and game.profile.combat == "none":
+            hero.hp += 1
 
 
 # --- Бой (тактический, §5.9; правила — tactics.py) -------------------------------
@@ -330,6 +382,8 @@ class PlaytestReport(BaseModel):
     battles: list[BattleStats]
     quests_completed: dict[str, int]
     avg_final_level: float
+    checks_attempted: int = 0   # проверки навыков за все прогоны (§5.10)
+    checks_passed: int = 0
     issues: list[Issue]
 
     @computed_field
@@ -360,6 +414,7 @@ class Run:
     battles: dict[str, BattleStats]
     hero: HeroState = field(init=False)
     steps: int = 0
+    checks_stats: list[int] = field(default_factory=lambda: [0, 0])  # попыток, успехов
 
     def __post_init__(self) -> None:
         self.hero = new_hero(self.game)
@@ -375,6 +430,8 @@ class Run:
     def run_event(self, event: s.Event) -> str | None:
         """Возвращает цель goto, если событие увело героя."""
         self.tick()
+        if not self.ok(event.condition):
+            return None
         if isinstance(event, s.Narration):
             return None
         if isinstance(event, s.Choice):
@@ -383,22 +440,60 @@ class Run:
                 raise _Over("dead_end")
             return apply_story_effects(self.rng.choice(options).effects, self.hero, self.world)
         nodes = {n.id: n for n in event.nodes}
-        node_id = event.start_node
+        node_id = start_node(event, self.hero, self.world)
         while node_id != "end":
             self.tick()
             node = nodes[node_id]
             if not node.choices:
                 node_id = node.next or "end"
                 continue
-            choices = [c for c in node.choices if self.ok(c.condition)]
+            choices = [(i, c) for i, c in enumerate(node.choices) if self.ok(c.condition) and self.check_open(event.id, node.id, i, c)]
             if not choices:
                 raise _Over("dead_end")
-            choice = self.rng.choice(choices)
+            index, choice = self.rng.choice(choices)
             jump = apply_story_effects(choice.effects, self.hero, self.world)
             if jump is not None:
                 return jump
-            node_id = choice.next
+            node_id = choice.next if choice.check is None else self.resolve_check(event.id, node.id, index, choice)
         return None
+
+    def check_open(self, dialogue_id: str, node_id: str, index: int, choice: s.DialogueChoice) -> bool:
+        if choice.check is None:
+            return True
+        record = self.hero.checks.get(inner.check_key(dialogue_id, node_id, index))
+        return inner.check_open(record, choice.check, self.world.skill(self.hero, choice.check.skill))
+
+    def resolve_check(self, dialogue_id: str, node_id: str, index: int, choice: s.DialogueChoice) -> str:
+        """Бросок 2d6 + навык; запоминает результат; при провале — урон Здоровью или Духу. Возвращает следующий узел."""
+        h, chk = self.hero, choice.check
+        key = inner.check_key(dialogue_id, node_id, index)
+        if h.checks.get(key, {}).get("ok"):
+            return choice.next  # уже пройдена — без броска
+        value = self.world.skill(h, chk.skill)
+        result = inner.roll(value, inner.check_target(chk.difficulty), self.rng)
+        h.checks[key] = {"ok": result.success, "at": value}
+        self.checks_stats[0] += 1
+        if result.success:
+            self.checks_stats[1] += 1
+            self.reward(inner.check_xp(chk.difficulty))
+            return choice.next
+        if chk.damage == "health":
+            h.hp -= inner.health_unit(self.world.effective(h).max_hp, self.world.no_combat)
+        elif chk.damage == "morale":
+            h.morale -= 1
+        if h.hp <= 0 or h.morale <= 0:
+            raise _Over("game_over")
+        return chk.failure
+
+    def reward(self, xp: int) -> None:
+        gain_xp(self.hero, xp, self.game, self.world)
+        spend_skill_points(self.hero, self.game)
+
+    def reward_quests(self) -> None:
+        for q in self.game.quests:
+            if q.id not in self.hero.quests_rewarded and quest_done(q, self.hero, self.world):
+                self.hero.quests_rewarded.add(q.id)
+                self.reward(inner.QUEST_XP)
 
     def present(self, obj: s.MapObject) -> bool:
         h = self.hero
@@ -422,7 +517,7 @@ class Run:
                 h.defeated.add(obj.id)
                 enemies = [self.world.enemies[e] for e in obj.enemies]
                 h.gold += sum(e.gold or 0 for e in enemies)
-                gain_xp(h, sum(e.xp or 0 for e in enemies), self.game, self.world)
+                self.reward(sum(e.xp or 0 for e in enemies))
                 return apply_story_effects(obj.on_win, h, self.world)
             if obj.on_lose == "game_over":
                 raise _Over("game_over")
@@ -436,6 +531,9 @@ class Run:
         if isinstance(obj, s.Thing):
             if obj.once:
                 h.used.add(obj.id)
+            if obj.id not in h.examined:
+                h.examined.add(obj.id)
+                self.reward(inner.EXAMINE_XP)
             return self.run_event(obj.event)
         return None
 
@@ -465,6 +563,7 @@ class Run:
         for obj in objects:
             if self.present(obj):
                 jump = self.interact(obj)
+                self.reward_quests()
                 if jump is not None:
                     return jump
         exits = [o for o in loc.objects if isinstance(o, s.Exit) and self.present(o) and self.ok(o.requires)]
@@ -472,6 +571,14 @@ class Run:
             raise _Over("dead_end")
         weights = [UNVISITED_EXIT_WEIGHT if e.to not in h.visited else 1 for e in exits]
         return self.rng.choices(exits, weights=weights)[0].to
+
+
+def start_node(dialogue: s.Dialogue, hero: HeroState, world: World) -> str:
+    """Первая реплика: первая подходящая entries, иначе start_node (§5.10)."""
+    for entry in dialogue.entries:
+        if check(entry.condition, hero, world):
+            return entry.node
+    return dialogue.start_node
 
 
 def quest_done(quest: s.Quest, hero: HeroState, world: World) -> bool:
@@ -493,10 +600,13 @@ def playtest(game: s.Game, runs: int = RUNS, seed: int = SEED) -> PlaytestReport
     outcomes: Counter = Counter()
     quests: Counter = Counter()
     levels: list[int] = []
+    checks = [0, 0]
     for _ in range(runs):
         run = Run(game, world, rng, battles)
         outcome = run.play()
         outcomes[outcome] += 1
+        checks[0] += run.checks_stats[0]
+        checks[1] += run.checks_stats[1]
         if outcome.startswith("ending:"):
             levels.append(run.hero.level)
             for q in game.quests:
@@ -529,5 +639,6 @@ def playtest(game: s.Game, runs: int = RUNS, seed: int = SEED) -> PlaytestReport
         runs=runs, seed=seed, outcomes=dict(outcomes), endings=endings,
         battles=list(battles.values()), quests_completed=dict(quests),
         avg_final_level=round(sum(levels) / len(levels), 2) if levels else 0.0,
+        checks_attempted=checks[0], checks_passed=checks[1],
         issues=issues,
     )

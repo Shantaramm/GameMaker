@@ -1,0 +1,20 @@
+{"intro": "Двор у служебного входа. Снег идёт так тихо, что слышно, как гудит фонарь. Грузовик фонда стоит носом к воротам — ждёт утра.",
+"on_enter": [
+ {"type": "dialogue", "id": "ira_in_yard_remark", "condition": {"flag": "ira_joined", "is": true}, "start_node": "y1", "nodes": [
+  {"id": "y1", "speaker": "ira", "emotion": "neutral", "text": "Холодно. Знаете, что самое странное? Если вы промолчите, моя копия будет висеть в зале лет пятьдесят. Дольше, чем проживу я. Я стану самой известной художницей этого города — и никто не узнает моего имени.", "next": "end"}]}
+],
+"objects": [
+ {"type": "npc", "id": "grisha_at_truck", "zone": "truck", "character": "grisha", "dialogue": {"type": "dialogue", "id": "talk_grisha", "start_node": "g1", "nodes": [
+  {"id": "g1", "speaker": "grisha", "emotion": "neutral", "text": "Утром в семь грузим. Мне что подлинник, что копия — ящик есть ящик. Сигаретки не будет?",
+   "passive": [{"skill": "perception", "difficulty": "medium", "text": "На накладной на сиденье — два ящика. А отправляют один."}],
+   "choices": [
+    {"text": "Не курю. Сколько ящиков вы везёте?", "next": "g2", "check": {"skill": "logic", "difficulty": "easy", "failure": "g3"}},
+    {"text": "Нет. Спокойной ночи.", "next": "end"}]},
+  {"id": "g2", "speaker": "grisha", "emotion": "surprised", "text": "Два. Один в фонд, второй — по адресу, который мне на словах сказали. Я вам этого не говорил. Мне детей кормить.", "next": "end"},
+  {"id": "g3", "speaker": "grisha", "emotion": "angry", "text": "Сколько скажут, столько и везу. Не моё дело — и не ваше.", "next": "end"}]}},
+ {"type": "exit", "id": "yard_to_lobby", "zone": "gate", "kind": "door", "to": "lobby"},
+ {"type": "exit", "id": "yard_call", "zone": "booth", "kind": "door", "to": "ending_truth", "requires": {"flag": "forgery_proven", "is": true}, "locked_text": "Позвонить — значит сказать, что именно не так. Сначала нужно знать наверняка."},
+ {"type": "exit", "id": "yard_return", "zone": "booth", "kind": "door", "to": "ending_return", "requires": {"all": [{"flag": "original_found", "is": true}, {"flag": "director_confessed", "is": true}]}, "locked_text": "Повесить подлинник на место можно, только если у вас он в руках и директор готов ответить сам."},
+ {"type": "exit", "id": "yard_leave", "zone": "gate", "kind": "right_edge", "to": "ending_silence"}
+],
+"enemies": []}

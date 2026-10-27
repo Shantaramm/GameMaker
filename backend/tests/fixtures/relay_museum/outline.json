@@ -1,0 +1,65 @@
+{"meta": {"title": "Последняя смена", "logline": "Ночной сторож провинциального музея замечает, что знаменитую картину подменили, — и до утра должен решить, что дороже: правда или люди, которых она оставит без работы.", "tone": "тихая философская драма с загадкой", "art_style": "пиксель-арт", "language": "ru", "est_minutes": 30},
+"profile": {"combat": "none", "dialogue": "deep"},
+"inner_skills": [
+ {"key": "logic", "name": "Логика", "description": "Сводит концы с концами и не верит совпадениям."},
+ {"key": "knowledge", "name": "Эрудиция", "description": "Сорок лет уроков истории: даты, каталоги, чужие биографии."},
+ {"key": "empathy", "name": "Чуткость", "description": "Слышит, о чём человек молчит."},
+ {"key": "will", "name": "Самообладание", "description": "Не даёт раскиснуть и согласиться из жалости. От него зависит Дух."},
+ {"key": "endurance", "name": "Старые кости", "description": "Холодный запасник, ночь без сна, больное сердце. От них зависит Здоровье."},
+ {"key": "presence", "name": "Учительский голос", "description": "Тот тон, от которого затихал класс. Остался ли он?"},
+ {"key": "perception", "name": "Глаз сторожа", "description": "Сорок лет одних и тех же залов — любая перемена режет глаз."},
+ {"key": "finesse", "name": "Тихие руки", "description": "Замки, ящики, шаги по скрипучему паркету."}
+],
+"hero": {"id": "savva", "name": "Савва Ильич", "role": "hero", "description": "Шестьдесят лет, ночной сторож. Сорок лет учил детей истории, пока школу не закрыли. Наблюдательный, начитанный, мягкий.", "strengths": ["knowledge", "empathy"], "weakness": "presence",
+ "appearance": {"head": "old", "skin": "fair", "hair": "balding", "hair_color": "gray", "eyes": "sleepy", "eye_color": "gray", "brows": "bushy", "mouth": "stern", "facial_hair": "mustache", "outfit": "work_jacket", "outfit_color": "navy", "accent_color": "brass", "accessory": ["glasses"], "bg_color": "slate"}},
+"characters": [
+ {"id": "ira", "name": "Ира", "role": "companion", "description": "Реставраторша, двадцать четыре года. Талантливая копиистка, которую попросили «освежить» картину — и она поняла, что её попросили закончить.", "joins": {"flag": "ira_joined", "is": true},
+  "appearance": {"head": "heart", "skin": "light", "hair": "bob", "hair_color": "ginger", "eyes": "big", "eye_color": "green", "brows": "thin", "mouth": "small", "outfit": "dress", "outfit_color": "teal", "accent_color": "cream", "accessory": ["earring"], "bg_color": "moss"}},
+ {"id": "nina", "name": "Нина Аркадьевна", "role": "npc", "description": "Экскурсовод, семьдесят лет. Сорок лет рассказывала детям про «Утро над Сурой». Помнит всё и всех.",
+  "appearance": {"head": "old", "skin": "porcelain", "hair": "bun", "hair_color": "white", "eyes": "narrow", "eye_color": "blue", "brows": "thin", "mouth": "thin", "outfit": "dress", "outfit_color": "plum", "accent_color": "gold", "accessory": ["pendant"], "bg_color": "violet"}},
+ {"id": "vadim", "name": "Вадим Петрович", "role": "antagonist", "description": "Директор музея. Продал подлинник, чтобы заплатить зарплаты и отремонтировать крышу. Устал, умён, по-своему честен.",
+  "appearance": {"head": "square", "skin": "beige", "hair": "side_part", "hair_color": "dark_brown", "eyes": "narrow", "eye_color": "brown", "brows": "thick", "mouth": "smirk", "outfit": "business_suit", "outfit_color": "charcoal", "accent_color": "crimson", "accessory": [], "bg_color": "brown"}},
+ {"id": "grisha", "name": "Гриша", "role": "npc", "description": "Водитель грузовика из областного фонда. Ему всё равно, что везти.",
+  "appearance": {"head": "round", "skin": "tan", "hair": "crew_cut", "hair_color": "brown", "eyes": "small", "eye_color": "hazel", "brows": "straight", "mouth": "wide", "facial_hair": "stubble", "outfit": "work_jacket", "outfit_color": "rust", "accent_color": "gray", "accessory": [], "bg_color": "gray"}}
+],
+"flags": [
+ {"id": "noticed_paint", "description": "Савва заметил свежую краску на картине"},
+ {"id": "noticed_scarf", "description": "Савва вспомнил, что у женщины на картине был платок"},
+ {"id": "forgery_proven", "description": "Подмена доказана"},
+ {"id": "nina_trusts", "description": "Нина отдала ключ от запасника"},
+ {"id": "ira_joined", "description": "Ира идёт вместе с Саввой"},
+ {"id": "original_found", "description": "Подлинник найден"},
+ {"id": "director_confronted", "description": "Разговор с директором начистоту"},
+ {"id": "director_confessed", "description": "Директор согласился признаться сам"},
+ {"id": "bench_remembered", "description": "Савва вспомнил, зачем стал учителем"}
+],
+"quests": [
+ {"id": "last_shift", "title": "Последняя смена", "main": true, "stages": [
+   {"text": "Понять, что не так с картиной", "done": {"any": [{"flag": "noticed_paint", "is": true}, {"flag": "noticed_scarf", "is": true}, {"flag": "forgery_proven", "is": true}]}},
+   {"text": "Поговорить с директором начистоту", "done": {"flag": "director_confronted", "is": true}}]},
+ {"id": "hear_ira", "title": "Выслушать Иру", "giver": "ira", "stages": [
+   {"text": "Узнать, что Ира скрывает", "done": {"flag": "ira_joined", "is": true}}]}
+],
+"locations": [
+ {"id": "lobby", "title": "Вестибюль", "theme": "office", "background": {"setting": "indoor", "time": "night", "far": "room_wall", "props": [{"id": "candelabra", "x": 25}, {"id": "bookshelf", "x": 85}, {"id": "door", "x": 135}], "ground": "planks", "overlay": "none", "mood_palette": "warm_candle"}, "size": "medium", "floors": 1,
+  "zones": [{"id": "entrance", "floor": 0, "name": "вход"}, {"id": "cloakroom", "floor": 0, "name": "гардероб"}, {"id": "stairs", "floor": 0, "name": "у лестницы"}],
+  "summary": "Начало смены. Нина Аркадьевна в гардеробе не уходит домой. Отсюда — в зал, в кабинет директора и во двор.", "links": ["gallery", "director_office", "yard"]},
+ {"id": "gallery", "title": "Зал пейзажей", "theme": "castle", "background": {"setting": "indoor", "time": "night", "far": "room_wall", "props": [{"id": "statue", "x": 30}, {"id": "window", "x": 90}, {"id": "pillar", "x": 140}], "ground": "planks", "overlay": "none", "mood_palette": "violet_dread"}, "size": "medium", "floors": 1,
+  "zones": [{"id": "hall_entry", "floor": 0, "name": "вход в зал"}, {"id": "painting", "floor": 0, "name": "у картины"}, {"id": "window_bench", "floor": 0, "name": "скамья у окна"}],
+  "summary": "Картина «Утро над Сурой» и Ира, которая «забыла папку». Скамья у окна, где Савва когда-то проверял тетради.", "links": ["lobby", "restoration"]},
+ {"id": "restoration", "title": "Мастерская реставратора", "theme": "house_interior", "background": {"setting": "indoor", "time": "night", "far": "room_wall", "props": [{"id": "table", "x": 40}, {"id": "crates", "x": 100}, {"id": "chair", "x": 140}], "ground": "planks", "overlay": "none", "mood_palette": "warm_candle"}, "size": "small", "floors": 2,
+  "zones": [{"id": "workbench", "floor": 0, "name": "рабочий стол"}, {"id": "easel", "floor": 0, "name": "мольберт"}, {"id": "cold_store", "floor": 1, "name": "холодный запасник"}],
+  "summary": "Палитра со свинцовыми белилами, фотографии картины в натуральную величину и запертый ящик с надписью «рамы» наверху, в холодном запаснике.", "links": ["gallery"]},
+ {"id": "director_office", "title": "Кабинет директора", "theme": "office", "background": {"setting": "indoor", "time": "night", "far": "room_wall", "props": [{"id": "bookshelf", "x": 30}, {"id": "table", "x": 85}, {"id": "window", "x": 135}], "ground": "planks", "overlay": "none", "mood_palette": "warm_candle"}, "size": "small", "floors": 1,
+  "zones": [{"id": "reception", "floor": 0, "name": "приёмная"}, {"id": "desk", "floor": 0, "name": "стол директора"}],
+  "summary": "Директор тоже не спит. Коньяк, документы на отправку и разговор двух взрослых людей.", "links": ["lobby"]},
+ {"id": "yard", "title": "Двор у служебного входа", "theme": "town_street", "background": {"setting": "outdoor", "time": "night", "sky": "stars", "far": "city", "props": [{"id": "lamp_post", "x": 30}, {"id": "crates", "x": 95}, {"id": "fence", "x": 135}], "ground": "cobblestone", "overlay": "snow", "mood_palette": "frost"}, "size": "small", "floors": 1,
+  "zones": [{"id": "gate", "floor": 0, "name": "ворота"}, {"id": "truck", "floor": 0, "name": "грузовик"}, {"id": "booth", "floor": 0, "name": "телефонная будка"}],
+  "summary": "Грузовик фонда ждёт утра. Отсюда — домой, к телефону в будке или обратно в зал с подлинником в руках.", "links": ["lobby", "ending_truth", "ending_return", "ending_silence"]}
+],
+"start_location": "lobby",
+"endings": [
+ {"id": "ending_truth", "title": "Правда", "text": "Вы позвонили. Через месяц музей закрыли «на реконструкцию». Подлинник вернули в фонд, где его не увидят ещё лет двадцать. Нина уехала к внуку, Ира рисует вывески. Правда победила, и стало тише. Иногда вы думаете, что это и есть её цена: тишина там, где раньше были дети.", "kind": "neutral"},
+ {"id": "ending_return", "title": "Утро над Сурой", "text": "Подлинник висит на своём месте, копия уехала в фонд. Утром директор сам позвонил в управление — и ушёл, не дожидаясь приказа. Денег на отопление нет, зато есть картина и люди, которые знают, чего она стоила. Ира подписала копию на обороте своим именем. Впервые.", "kind": "good"},
+ {"id": "ending_silence", "title": "Красивая ложь", "text": "Вы ушли домой до семи. Грузовик увёз ящик, в зале повисла прекрасная работа Иры. Зарплаты выплатили. Дети смотрят на женщину у реки и учатся видеть. Только вы знаете, на что они смотрят, — и больше не можете сидеть на скамье у окна.", "kind": "bad"}
+]}

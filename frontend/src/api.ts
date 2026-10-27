@@ -1,6 +1,9 @@
 // Обёртка над HTTP API бэкенда (SPEC §10).
 
-import type { BackgroundSpec, CreatureSpec, PortraitSpec } from "./types/game";
+import type { BackgroundSpec, CreatureSpec, GameProfile, PortraitSpec } from "./types/game";
+
+export type Profile = Required<GameProfile>;
+export const DEFAULT_PROFILE: Profile = { combat: "tactical", dialogue: "rich" };
 
 export class ApiError extends Error {}
 
@@ -58,6 +61,7 @@ export interface GameCard {
   endings: number;
   characters: { id: string; name: string; role: string; appearance: PortraitSpec }[];
   background: BackgroundSpec;
+  profile?: GameProfile;
   enemy: { id: string; name: string; appearance: PortraitSpec | CreatureSpec } | null;
   featured?: boolean;
   published_at?: number;
@@ -65,8 +69,8 @@ export interface GameCard {
 
 export const api = {
   info: () => call<{ provider: string; max_brief: number }>("GET", "/api/info"),
-  brief: (idea: string) => call<Brief>("POST", "/api/brief", { idea }),
-  create: (brief: string) => call<{ game_id: string; owner_token: string }>("POST", "/api/games", { brief }),
+  brief: (idea: string, profile: Profile) => call<Brief>("POST", "/api/brief", { idea, profile }),
+  create: (brief: string, profile: Profile) => call<{ game_id: string; owner_token: string }>("POST", "/api/games", { brief, profile }),
   status: (id: string) => call<Status>("GET", `/api/games/${encodeURIComponent(id)}/status`),
   catalog: () => call<{ featured: GameCard[]; community: GameCard[] }>("GET", "/api/catalog"),
   publish: (id: string, owner_token: string, published: boolean) =>
@@ -101,14 +105,21 @@ export const mine = {
 
 // Черновики между страницами: идея и бриф живут в sessionStorage вкладки.
 export const draft = {
-  get(key: "idea" | "brief" | "questions"): string {
+  profile(): Profile {
+    try {
+      return { ...DEFAULT_PROFILE, ...JSON.parse(draft.get("profile") || "{}") };
+    } catch {
+      return DEFAULT_PROFILE;
+    }
+  },
+  get(key: "idea" | "brief" | "questions" | "profile"): string {
     try {
       return sessionStorage.getItem(`draft:${key}`) ?? "";
     } catch {
       return "";
     }
   },
-  set(key: "idea" | "brief" | "questions", value: string): void {
+  set(key: "idea" | "brief" | "questions" | "profile", value: string): void {
     try {
       sessionStorage.setItem(`draft:${key}`, value);
     } catch {

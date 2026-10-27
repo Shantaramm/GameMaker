@@ -249,6 +249,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -262,6 +265,44 @@
           "anyOf": [
             {
               "$ref": "#/$defs/CompanionCombat"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "strengths": {
+          "items": {
+            "enum": [
+              "logic",
+              "knowledge",
+              "empathy",
+              "will",
+              "endurance",
+              "presence",
+              "perception",
+              "finesse"
+            ],
+            "type": "string"
+          },
+          "maxItems": 2,
+          "type": "array"
+        },
+        "weakness": {
+          "anyOf": [
+            {
+              "enum": [
+                "logic",
+                "knowledge",
+                "empathy",
+                "will",
+                "endurance",
+                "presence",
+                "perception",
+                "finesse"
+              ],
+              "type": "string"
             },
             {
               "type": "null"
@@ -323,6 +364,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -364,6 +408,9 @@
               },
               {
                 "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffModSkill"
               },
               {
                 "$ref": "#/$defs/EffHeal"
@@ -409,6 +456,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -463,6 +513,48 @@
           },
           "minItems": 1,
           "type": "array"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -511,6 +603,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -543,6 +638,9 @@
               },
               {
                 "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffModSkill"
               },
               {
                 "$ref": "#/$defs/EffHeal"
@@ -622,6 +720,9 @@
               },
               {
                 "$ref": "#/$defs/CondDefeated"
+              },
+              {
+                "$ref": "#/$defs/CondSkill"
               }
             ]
           },
@@ -667,6 +768,9 @@
               },
               {
                 "$ref": "#/$defs/CondDefeated"
+              },
+              {
+                "$ref": "#/$defs/CondSkill"
               }
             ]
           },
@@ -804,6 +908,9 @@
             },
             {
               "$ref": "#/$defs/CondDefeated"
+            },
+            {
+              "$ref": "#/$defs/CondSkill"
             }
           ]
         }
@@ -814,6 +921,41 @@
       "title": "CondNot",
       "type": "object"
     },
+    "CondSkill": {
+      "additionalProperties": false,
+      "properties": {
+        "skill": {
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "op": {
+          "enum": [
+            ">=",
+            "<="
+          ],
+          "type": "string"
+        },
+        "value": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "skill",
+        "op",
+        "value"
+      ],
+      "title": "CondSkill",
+      "type": "object"
+    },
     "CondStat": {
       "additionalProperties": false,
       "properties": {
@@ -822,7 +964,8 @@
             "hp",
             "attack",
             "defense",
-            "focus"
+            "focus",
+            "morale"
           ],
           "type": "string"
         },
@@ -913,6 +1056,54 @@
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
+        },
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/DialogueEntry"
+          },
+          "type": "array"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -961,6 +1152,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -995,6 +1189,9 @@
                 "$ref": "#/$defs/EffModStat"
               },
               {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
                 "$ref": "#/$defs/EffHeal"
               },
               {
@@ -1011,6 +1208,17 @@
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
+        },
+        "check": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SkillCheck"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1018,6 +1226,56 @@
         "next"
       ],
       "title": "DialogueChoice",
+      "type": "object"
+    },
+    "DialogueEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CondAll"
+            },
+            {
+              "$ref": "#/$defs/CondAny"
+            },
+            {
+              "$ref": "#/$defs/CondNot"
+            },
+            {
+              "$ref": "#/$defs/CondFlag"
+            },
+            {
+              "$ref": "#/$defs/CondItem"
+            },
+            {
+              "$ref": "#/$defs/CondStat"
+            },
+            {
+              "$ref": "#/$defs/CondGold"
+            },
+            {
+              "$ref": "#/$defs/CondLevel"
+            },
+            {
+              "$ref": "#/$defs/CondDefeated"
+            },
+            {
+              "$ref": "#/$defs/CondSkill"
+            }
+          ]
+        },
+        "node": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "condition",
+        "node"
+      ],
+      "title": "DialogueEntry",
       "type": "object"
     },
     "DialogueNode": {
@@ -1030,7 +1288,7 @@
         },
         "speaker": {
           "maxLength": 64,
-          "pattern": "^[a-z][a-z0-9_]*$",
+          "pattern": "^(skill:)?[a-z][a-z0-9_]*$",
           "type": "string"
         },
         "text": {
@@ -1055,6 +1313,13 @@
             }
           ],
           "default": null
+        },
+        "passive": {
+          "items": {
+            "$ref": "#/$defs/PassiveCheck"
+          },
+          "maxItems": 3,
+          "type": "array"
         },
         "choices": {
           "items": {
@@ -1171,6 +1436,35 @@
       "title": "EffLearnSkill",
       "type": "object"
     },
+    "EffModSkill": {
+      "additionalProperties": false,
+      "properties": {
+        "mod_skill": {
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "delta": {
+          "maximum": 2,
+          "minimum": -2,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mod_skill",
+        "delta"
+      ],
+      "title": "EffModSkill",
+      "type": "object"
+    },
     "EffModStat": {
       "additionalProperties": false,
       "properties": {
@@ -1179,7 +1473,8 @@
             "hp",
             "attack",
             "defense",
-            "focus"
+            "focus",
+            "morale"
           ],
           "type": "string"
         },
@@ -1426,6 +1721,9 @@
                 "$ref": "#/$defs/EffModStat"
               },
               {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
                 "$ref": "#/$defs/EffHeal"
               },
               {
@@ -1498,6 +1796,24 @@
         "hp": {
           "default": 0,
           "type": "integer"
+        },
+        "skills": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "logic",
+              "knowledge",
+              "empathy",
+              "will",
+              "endurance",
+              "presence",
+              "perception",
+              "finesse"
+            ]
+          },
+          "type": "object"
         }
       },
       "title": "EquipBonus",
@@ -1546,6 +1862,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -1602,6 +1921,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -1697,6 +2019,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -1745,6 +2070,9 @@
                 "$ref": "#/$defs/EffModStat"
               },
               {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
                 "$ref": "#/$defs/EffHeal"
               },
               {
@@ -1789,6 +2117,9 @@
                     "$ref": "#/$defs/EffModStat"
                   },
                   {
+                    "$ref": "#/$defs/EffModSkill"
+                  },
+                  {
                     "$ref": "#/$defs/EffHeal"
                   },
                   {
@@ -1815,6 +2146,67 @@
         "enemies"
       ],
       "title": "Foe",
+      "type": "object"
+    },
+    "GameProfile": {
+      "additionalProperties": false,
+      "description": "Какую игру хочет пользователь (§5.10): бои и глубина диалогов.",
+      "properties": {
+        "combat": {
+          "default": "tactical",
+          "enum": [
+            "tactical",
+            "light",
+            "none"
+          ],
+          "type": "string"
+        },
+        "dialogue": {
+          "default": "rich",
+          "enum": [
+            "light",
+            "rich",
+            "deep"
+          ],
+          "type": "string"
+        }
+      },
+      "title": "GameProfile",
+      "type": "object"
+    },
+    "InnerSkill": {
+      "additionalProperties": false,
+      "description": "Внутренний навык героя: ключ механики и название с голосом под мир игры.",
+      "properties": {
+        "key": {
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "name",
+        "description"
+      ],
+      "title": "InnerSkill",
       "type": "object"
     },
     "Item": {
@@ -1871,6 +2263,9 @@
               },
               {
                 "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffModSkill"
               },
               {
                 "$ref": "#/$defs/EffHeal"
@@ -2242,6 +2637,48 @@
         "text": {
           "minLength": 1,
           "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -2295,6 +2732,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -2338,6 +2778,48 @@
         "dialogue"
       ],
       "title": "Npc",
+      "type": "object"
+    },
+    "PassiveCheck": {
+      "additionalProperties": false,
+      "description": "Голос навыка вмешивается в разговор сам, без броска, если навык + 6 ≥ сложности.",
+      "properties": {
+        "skill": {
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "difficulty": {
+          "enum": [
+            "trivial",
+            "easy",
+            "medium",
+            "challenging",
+            "formidable",
+            "legendary"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill",
+        "difficulty",
+        "text"
+      ],
+      "title": "PassiveCheck",
       "type": "object"
     },
     "PortraitSpec": {
@@ -2524,6 +3006,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -2585,6 +3070,9 @@
             },
             {
               "$ref": "#/$defs/CondDefeated"
+            },
+            {
+              "$ref": "#/$defs/CondSkill"
             }
           ]
         }
@@ -2677,6 +3165,9 @@
                 "$ref": "#/$defs/EffModStat"
               },
               {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
                 "$ref": "#/$defs/EffHeal"
               },
               {
@@ -2707,6 +3198,67 @@
         "target"
       ],
       "title": "Skill",
+      "type": "object"
+    },
+    "SkillCheck": {
+      "additionalProperties": false,
+      "description": "Проверка навыка в варианте ответа (§5.10): 2d6 + навык против сложности; успех — next, провал — failure.",
+      "properties": {
+        "skill": {
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "difficulty": {
+          "enum": [
+            "trivial",
+            "easy",
+            "medium",
+            "challenging",
+            "formidable",
+            "legendary"
+          ],
+          "type": "string"
+        },
+        "red": {
+          "default": false,
+          "type": "boolean"
+        },
+        "failure": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "damage": {
+          "anyOf": [
+            {
+              "enum": [
+                "health",
+                "morale"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "skill",
+        "difficulty",
+        "failure"
+      ],
+      "title": "SkillCheck",
       "type": "object"
     },
     "StartEquipment": {
@@ -2760,7 +3312,7 @@
       "description": "Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме.",
       "properties": {
         "hp": {
-          "minimum": 1,
+          "minimum": 0,
           "type": "integer"
         },
         "attack": {
@@ -2772,6 +3324,11 @@
           "type": "integer"
         },
         "focus": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "morale": {
+          "default": 0,
           "minimum": 0,
           "type": "integer"
         }
@@ -2856,6 +3413,9 @@
                 "$ref": "#/$defs/EffModStat"
               },
               {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
                 "$ref": "#/$defs/EffHeal"
               },
               {
@@ -2910,6 +3470,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -2984,6 +3547,9 @@
                 },
                 {
                   "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
                 }
               ]
             },
@@ -3074,6 +3640,16 @@
     "meta": {
       "$ref": "#/$defs/Meta"
     },
+    "profile": {
+      "$ref": "#/$defs/GameProfile"
+    },
+    "inner_skills": {
+      "items": {
+        "$ref": "#/$defs/InnerSkill"
+      },
+      "maxItems": 8,
+      "type": "array"
+    },
     "hero": {
       "$ref": "#/$defs/Character"
     },
@@ -3116,6 +3692,24 @@
         }
       ],
       "default": null
+    },
+    "hero_skills": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "logic",
+          "knowledge",
+          "empathy",
+          "will",
+          "endurance",
+          "presence",
+          "perception",
+          "finesse"
+        ]
+      },
+      "type": "object"
     },
     "start_skills": {
       "items": {
