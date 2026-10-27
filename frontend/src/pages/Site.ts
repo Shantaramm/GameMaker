@@ -1,6 +1,8 @@
-// Главная, бриф и экран генерации (SPEC §11.1–11.3).
+// Главная, бриф, экран генерации (SPEC §11.1–11.3) и каталог готовых игр.
 
-import { api, ApiError, draft, type Status } from "../api";
+import { api, ApiError, draft, type GameCard, mine, type Status } from "../api";
+import { publishToggle } from "../ui/publish";
+import demoGame from "../data/demo_game.json";
 import { portraitCanvas } from "../pixel/sprite";
 import { FPS, walkerFrames } from "../pixel/walker";
 import { button, el, pixel } from "../ui/dom";
@@ -17,9 +19,23 @@ function go(path: string): void {
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
-function page(...children: (Node | null)[]): HTMLElement {
-  return el("main", { className: "site" }, ...children);
+function nav(): HTMLElement {
+  const here = location.pathname.replace(/\/$/, "") || "/";
+  const link = (href: string, text: string) => {
+    const a = el("a", { href, textContent: text, className: here === href ? "on" : "" });
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      go(href);
+    });
+    return a;
+  };
+  return el("nav", { className: "site-nav" }, link("/", "Создать игру"), link("/games", "Готовые игры"));
 }
+
+function page(...children: (Node | null)[]): HTMLElement {
+  return el("main", { className: "site" }, nav(), ...children);
+}
+
 
 async function demoBanner(): Promise<HTMLElement | null> {
   try {
@@ -44,7 +60,8 @@ function busyButton(b: HTMLButtonElement, text: string): () => void {
 async function startGame(brief: string, error: HTMLElement, b: HTMLButtonElement): Promise<void> {
   const done = busyButton(b, "Отправляем…");
   try {
-    const { game_id } = await api.create(brief);
+    const { game_id, owner_token } = await api.create(brief);
+    mine.add(game_id, owner_token);
     draft.set("brief", brief);
     go(`/progress/${game_id}`);
   } catch (e) {
@@ -180,7 +197,7 @@ export function mountProgress(root: HTMLElement, gameId: string): void {
     }
     if (st.status === "ready") {
       note.textContent = "";
-      actions.replaceChildren(button("Играть ▸", () => { location.href = `/play/${gameId}`; }, "btn btn-primary"));
+      actions.replaceChildren(button("Играть ▸", () => { location.href = `/play/${gameId}`; }, "btn btn-primary"), publishToggle(gameId, st.published) ?? el("span"));
     }
     if (st.status === "failed") {
       note.textContent = "";
@@ -202,4 +219,75 @@ export function mountProgress(root: HTMLElement, gameId: string): void {
   };
   void poll();
   window.addEventListener("popstate", () => timers.forEach((t) => clearTimeout(t)), { once: true });
+}
+
+// --- каталог готовых игр ---
+
+function gameCard(c: GameCard, extra: Node | null = null): HTMLElement {
+  const faces = el("div", { className: "card-faces" }, ...c.characters.map((ch) =>
+    pixel(portraitCanvas(ch.appearance, "neutral", `card:${c.id}:${ch.id}`), ch.role === "hero" ? 2 : 1)));
+  const meta = [c.est_minutes ? `≈${c.est_minutes} мин` : "", `${c.locations} локаций`, c.endings > 1 ? `${c.endings} концовки` : ""].filter(Boolean).join(" · ");
+  const play = el("a", { className: "btn btn-primary", href: `/play/${c.id}`, textContent: "Играть ▸" });
+  return el("article", { className: "game-card" }, faces,
+    el("div", { className: "game-card-body" },
+      el("h3", { textContent: c.title }),
+      el("p", { className: "logline", textContent: c.logline }),
+      el("small", { className: "muted", textContent: [c.tone, meta].filter(Boolean).join(" · ") }),
+      el("div", { className: "row" }, play, extra)));
+}
+
+/** Карточка демо-игры из бандла — каталог работает, даже если сервер недоступен. */
+function demoCard(): GameCard {
+  const g = demoGame as unknown as { meta: { title: string; logline: string; tone: string; est_minutes: number }; locations: unknown[]; endings: unknown[]; hero: GameCard["characters"][number]; characters: GameCard["characters"] };
+  const companion = g.characters.find((c) => c.role === "companion");
+  return {
+    id: "demo", title: g.meta.title, logline: g.meta.logline, tone: g.meta.tone, est_minutes: g.meta.est_minutes,
+    locations: g.locations.length, endings: g.endings.length, characters: [g.hero, ...(companion ? [companion] : [])], featured: true,
+  };
+}
+
+export async function mountCatalog(root: HTMLElement): Promise<void> {
+  document.title = "Готовые игры — Генератор RPG";
+  const featured = el("div", { className: "game-grid" });
+  const minePart = el("section", {});
+  const community = el("div", { className: "game-grid" });
+  root.replaceChildren(page(
+    el("h1", { textContent: "Готовые игры" }),
+    el("p", { className: "lead", textContent: "Сыграйте в игры из подборки или в истории, которые опубликовали другие игроки." }),
+    el("h2", { textContent: "Подборка" }), featured,
+    minePart,
+    el("h2", { textContent: "Игры игроков" }), community,
+  ));
+
+  let catalog: { featured: GameCard[]; community: GameCard[] } = { featured: [demoCard()], community: [] };
+  try {
+    catalog = await api.catalog();
+  } catch {
+    featured.before(el("p", { className: "banner warn", textContent: "Сервер недоступен: показываем только демо-игру." }));
+  }
+  featured.replaceChildren(...catalog.featured.map((c) => gameCard(c)));
+  const myIds = new Set(mine.list().map((g) => g.id));
+  community.replaceChildren(...(catalog.community.length
+    ? catalog.community.map((c) => gameCard(c, myIds.has(c.id) ? el("span", { className: "badge", textContent: "ваша" }) : null))
+    : [el("p", { className: "muted", textContent: "Пока никто не опубликовал игру. Создайте свою и нажмите «Опубликовать в каталоге» — она появится здесь." })]));
+
+  // мои игры: созданные в этом браузере; публикует и скрывает их только автор
+  const own = mine.list().slice(0, 12);
+  if (!own.length) return;
+  const rows = await Promise.all(own.map(async (g) => {
+    try {
+      return { g, st: await api.status(g.id) };
+    } catch {
+      return { g, st: null };
+    }
+  }));
+  const list = el("div", { className: "my-games" }, ...rows.filter((r) => r.st).map(({ g, st }) => {
+    const title = st!.outline?.title ?? "Без названия";
+    const state = st!.status === "ready" ? "" : st!.status === "failed" ? "не получилась" : "создаётся…";
+    const actions = st!.status === "ready"
+      ? el("div", { className: "row" }, el("a", { className: "btn", href: `/play/${g.id}`, textContent: "Играть" }), publishToggle(g.id, st!.published))
+      : el("a", { className: "btn btn-ghost", href: `/progress/${g.id}`, textContent: "Открыть" });
+    return el("div", { className: "my-game" }, el("div", {}, el("b", { textContent: title }), state ? el("small", { className: "muted", textContent: ` — ${state}` }) : null), actions);
+  }));
+  if (list.childElementCount) minePart.replaceChildren(el("h2", { textContent: "Мои игры" }), list);
 }

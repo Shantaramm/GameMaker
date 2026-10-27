@@ -18,6 +18,7 @@ npm run dev                                      # http://localhost:5173
 
 - `http://localhost:5173/` — создать игру по идее;
 - `http://localhost:5173/play/demo` — демо-игра «Погасший маяк» (работает и без бэкенда);
+- `http://localhost:5173/games` — «Готовые игры»: подборка, мои игры и опубликованные игры игроков;
 - `http://localhost:5173/lab` — PixelLab, просмотр графики (для разработки).
 
 Без ключа GigaChat сайт работает в **демо-режиме**: любая идея превращается в демо-игру, но весь путь — бриф, генерация, игра, ссылка — настоящий. Чтобы подключить GigaChat, скопируйте `.env.example` в `.env`, впишите `GIGACHAT_AUTH_KEY`, положите корневой сертификат НУЦ Минцифры в `certs/russian_trusted_root_ca.cer` и проверьте доступ: `cd backend && .venv/bin/python -m app.gigachat.client --smoke`.

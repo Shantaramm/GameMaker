@@ -1,5 +1,6 @@
 """HTTP API на демо-провайдере: бриф, генерация в фоне, статусы, лимиты."""
 
+import asyncio
 import time
 
 import pytest
@@ -93,3 +94,66 @@ def test_pixelart_library_endpoint(client):
 
 def test_info_reports_provider(client):
     assert client.get("/api/info").json() == {"provider": "demo", "max_brief": 8000}
+
+
+# --- каталог готовых игр ---
+
+
+def test_catalog_has_featured_games_and_serves_them(client):
+    body = client.get("/api/catalog").json()
+    assert [c["id"] for c in body["featured"]] == ["demo", "postman"]
+    postman = body["featured"][1]
+    assert postman["title"] == "Последнее письмо перед снегом" and postman["locations"] == 5
+    assert [c["role"] for c in postman["characters"]] == ["hero", "companion"]
+    assert body["community"] == []
+    game = client.get("/api/games/postman").json()
+    assert game["arenas"] and game["levels"] and game["meta"]["title"] == postman["title"]
+
+
+def test_publish_only_by_owner_and_only_when_ready(client):
+    r = client.post("/api/games", json={"brief": BRIEF}).json()
+    game_id, token = r["game_id"], r["owner_token"]
+    assert len(token) >= 20
+    wait_ready(client, game_id)
+    assert client.post(f"/api/games/{game_id}/publish", json={"owner_token": "чужой-секрет", "published": True}).status_code == 403
+    assert client.post("/api/games/nope/publish", json={"owner_token": token, "published": True}).status_code == 404
+    assert client.get(f"/api/games/{game_id}/status").json()["published"] is False
+
+    assert client.post(f"/api/games/{game_id}/publish", json={"owner_token": token, "published": True}).json() == {"published": True}
+    community = client.get("/api/catalog").json()["community"]
+    assert [c["id"] for c in community] == [game_id] and community[0]["published_at"]
+    assert client.get(f"/api/games/{game_id}/status").json()["published"] is True
+
+    client.post(f"/api/games/{game_id}/publish", json={"owner_token": token, "published": False})
+    assert client.get("/api/catalog").json()["community"] == []
+
+
+def test_publish_rejects_unfinished_game(tmp_path):
+    class Stuck:
+        """Генерация, которая не заканчивается, пока идёт тест."""
+
+        name = "stuck"
+
+        async def complete(self, *_args, **_kw):
+            await asyncio.sleep(60)
+
+    slow = Stuck()
+    settings = load_settings({"DATA_DIR": str(tmp_path)})
+    with TestClient(create_app(settings, llm=slow)) as c:
+        r = c.post("/api/games", json={"brief": BRIEF}).json()
+        resp = c.post(f"/api/games/{r['game_id']}/publish", json={"owner_token": r["owner_token"], "published": True})
+        assert resp.status_code == 409
+
+
+def test_old_database_is_migrated(tmp_path):
+    import sqlite3
+
+    from app.storage import SCHEMA, Storage
+
+    db = sqlite3.connect(tmp_path / "games.sqlite")
+    db.executescript(SCHEMA)
+    db.execute("INSERT INTO games (id, status, brief, created_at, updated_at) VALUES ('old', 'ready', 'b', 0, 0)")
+    db.commit()
+    db.close()
+    storage = Storage(tmp_path / "games.sqlite")
+    assert storage.get("old")["published"] == 0

@@ -1,6 +1,7 @@
 // /play/{id} — игра. demo — встроенная демо-игра; остальные id загружаются с бэкенда (этап 6).
 
 import demo from "../data/demo_game.json";
+import { publishToggle } from "../ui/publish";
 import { GameController, type GameUI } from "../engine/runtime";
 import { clearSave, load, type GameState } from "../engine/state";
 import { World } from "../engine/world";
@@ -82,7 +83,7 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
       scene.enterLocation();
       hud.update(controller.state, world);
     },
-    ending: (ending) => overlay.replaceChildren(endingScreen(ending, `${location.origin}/play/${gameId}`, restart)),
+    ending: (ending) => overlay.replaceChildren(endingScreen(ending, `${location.origin}/play/${gameId}`, restart, publishToggle(gameId))),
     gameOver: () => overlay.replaceChildren(gameOverScreen(() => location.reload(), restart)),
     refresh: () => hud.update(controller.state, world),
   };

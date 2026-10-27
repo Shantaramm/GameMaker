@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import logging
 import secrets
@@ -13,6 +14,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from .catalog import COMMUNITY_LIMIT, card, featured_cards, featured_game
 from .config import Settings, load_settings
 from .engine.art import LIBRARY_DIR
 from .generation.pipeline import GenerationFailed, Pipeline, generate_brief
@@ -32,6 +34,15 @@ class IdeaIn(BaseModel):
 
 class BriefIn(BaseModel):
     brief: str = Field(min_length=20, max_length=MAX_BRIEF)
+
+
+class PublishIn(BaseModel):
+    owner_token: str = Field(min_length=8, max_length=200)
+    published: bool
+
+
+def _hash(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 def create_app(settings: Settings | None = None, llm: LLM | None = None) -> FastAPI:
@@ -100,11 +111,29 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
         if storage.count_recent(ip, 3600) >= settings.games_per_hour_per_ip:
             raise HTTPException(429, f"Можно создать не больше {settings.games_per_hour_per_ip} игр в час. Попробуйте позже.")
         game_id = secrets.token_urlsafe(9)  # неугадываемый id: игру видит только тот, у кого ссылка
-        storage.create(game_id, body.brief, ip, settings.llm_provider)
+        owner_token = secrets.token_urlsafe(16)  # секрет автора: им публикуют игру в каталоге; в базе — только хеш
+        storage.create(game_id, body.brief, ip, settings.llm_provider, owner_hash=_hash(owner_token))
         task = asyncio.create_task(worker(game_id, body.brief))
         tasks.add(task)
         task.add_done_callback(tasks.discard)
-        return {"game_id": game_id}
+        return {"game_id": game_id, "owner_token": owner_token}
+
+    @app.post("/api/games/{game_id}/publish")
+    async def publish(game_id: str, body: PublishIn) -> dict[str, Any]:
+        row = storage.get(game_id)
+        if row is None:
+            raise HTTPException(404, "Игра не найдена.")
+        if not row["owner_hash"] or not secrets.compare_digest(row["owner_hash"], _hash(body.owner_token)):
+            raise HTTPException(403, "Опубликовать игру может только её автор.")
+        if row["status"] != "ready":
+            raise HTTPException(409, "Игра ещё не готова.")
+        storage.set_published(game_id, body.published)
+        return {"published": body.published}
+
+    @app.get("/api/catalog")
+    async def catalog() -> dict[str, Any]:
+        community = [card(r["id"], r["game"], published_at=r["published_at"]) for r in storage.list_published(COMMUNITY_LIMIT)]
+        return {"featured": featured_cards(), "community": community}
 
     @app.get("/api/games/{game_id}/status")
     async def status(game_id: str) -> dict[str, Any]:
@@ -112,6 +141,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
         if row is None:
             raise HTTPException(404, "Игра не найдена.")
         out = {k: row[k] for k in ("status", "step", "progress", "error", "provider")}
+        out["published"] = bool(row["published"])
         out["outline"] = row["preview"]
         out["detail"] = row["detail"]
         if row["status"] == "queued":
@@ -120,6 +150,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None) -> Fast
 
     @app.get("/api/games/{game_id}")
     async def get_game(game_id: str) -> dict[str, Any]:
+        if (featured := featured_game(game_id)) is not None:
+            return featured
         row = storage.get(game_id)
         if row is None:
             raise HTTPException(404, "Игра не найдена.")

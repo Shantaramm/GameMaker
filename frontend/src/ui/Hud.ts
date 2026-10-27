@@ -39,8 +39,8 @@ export class Toasts {
   }
 }
 
-function screen(...children: Node[]): HTMLElement {
-  return el("div", { className: "screen" }, el("div", { className: "screen-box" }, ...children));
+function screen(...children: (Node | null)[]): HTMLElement {
+  return el("div", { className: "screen" }, el("div", { className: "screen-box" }, ...children.filter((c): c is Node => c !== null)));
 }
 
 export function titleScreen(world: World, hasSave: boolean, onContinue: () => void, onNew: () => void): HTMLElement {
@@ -56,7 +56,7 @@ export function titleScreen(world: World, hasSave: boolean, onContinue: () => vo
   );
 }
 
-export function endingScreen(ending: Ending, shareUrl: string, onRestart: () => void): HTMLElement {
+export function endingScreen(ending: Ending, shareUrl: string, onRestart: () => void, extra: Node | null = null): HTMLElement {
   const status = el("p", { className: "muted" });
   return screen(
     el("p", { className: `ending-kind ${ending.kind}`, textContent: { good: "Хорошая концовка", neutral: "Концовка", bad: "Горькая концовка" }[ending.kind] }),
@@ -73,6 +73,7 @@ export function endingScreen(ending: Ending, shareUrl: string, onRestart: () => 
       }, "btn btn-primary"),
       button("Сыграть заново", onRestart, "btn")),
     status,
+    extra,
   );
 }
 

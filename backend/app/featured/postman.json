@@ -1,0 +1,2195 @@
+{
+ "schema_version": "2",
+ "meta": {
+  "title": "Последнее письмо перед снегом",
+  "logline": "Деревенский почтальон должен пронести прошение о лекаре через перевал, который перекрыли контрабандисты, — и выяснить, почему староста уверяет всех, что дороги нет.",
+  "tone": "тёплое горное приключение с детективной ноткой",
+  "art_style": "пиксель-арт",
+  "language": "ru",
+  "est_minutes": 25
+ },
+ "hero": {
+  "id": "miron",
+  "name": "Мирон",
+  "role": "hero",
+  "description": "Девятнадцатилетний почтальон из Кедровки. Добродушный, упрямый, честный до неловкости. Обещал матери, что прошение о лекаре дойдёт до города до снега.",
+  "appearance": {
+   "head": "round",
+   "skin": "fair",
+   "hair": "short_messy",
+   "hair_color": "ginger",
+   "eyes": "big",
+   "eye_color": "blue",
+   "brows": "straight",
+   "mouth": "wide",
+   "outfit": "work_jacket",
+   "outfit_color": "navy",
+   "accent_color": "brass",
+   "accessory": [
+    "freckles"
+   ],
+   "bg_color": "sky"
+  }
+ },
+ "characters": [
+  {
+   "id": "zlata",
+   "name": "Злата",
+   "role": "companion",
+   "description": "Охотница, знает горные тропы лучше всех. Немногословна, язвительна, давно подозревает, что «обвал» на перевале — враньё.",
+   "appearance": {
+    "head": "heart",
+    "skin": "light",
+    "hair": "ponytail",
+    "hair_color": "dark_brown",
+    "eyes": "sharp",
+    "eye_color": "green",
+    "brows": "thin",
+    "mouth": "thin",
+    "outfit": "leather_armor",
+    "outfit_color": "forest",
+    "accent_color": "tan",
+    "accessory": [
+     "headband"
+    ],
+    "bg_color": "moss"
+   },
+   "joins": {
+    "flag": "zlata_joined",
+    "is": true
+   }
+  },
+  {
+   "id": "pelageya",
+   "name": "Пелагея",
+   "role": "npc",
+   "description": "Мать Мирона, деревенская почтмейстерша. Строгая, заботливая, верит сыну больше, чем старосте.",
+   "appearance": {
+    "head": "oval",
+    "skin": "fair",
+    "hair": "bun",
+    "hair_color": "gray",
+    "eyes": "narrow",
+    "eye_color": "blue",
+    "brows": "thin",
+    "mouth": "small",
+    "outfit": "peasant_tunic",
+    "outfit_color": "cream",
+    "accent_color": "crimson",
+    "accessory": [],
+    "bg_color": "tan"
+   }
+  },
+  {
+   "id": "vera",
+   "name": "Вера",
+   "role": "npc",
+   "description": "Лавочница, болтушка и главная сплетница Кедровки. Без соли с заставы ей нечем солить грибы на зиму.",
+   "appearance": {
+    "head": "round",
+    "skin": "beige",
+    "hair": "bob",
+    "hair_color": "auburn",
+    "eyes": "round",
+    "eye_color": "hazel",
+    "brows": "arched",
+    "mouth": "full",
+    "outfit": "dress",
+    "outfit_color": "mustard",
+    "accent_color": "white",
+    "accessory": [
+     "earring"
+    ],
+    "bg_color": "orange"
+   }
+  },
+  {
+   "id": "gordey",
+   "name": "Гордей Пахомов",
+   "role": "npc",
+   "description": "Деревенский староста. Солидный, ласковый на словах, советует всем переждать зиму. В доле у контрабандистов.",
+   "appearance": {
+    "head": "square",
+    "skin": "tan",
+    "hair": "balding",
+    "hair_color": "gray",
+    "eyes": "small",
+    "eye_color": "brown",
+    "brows": "bushy",
+    "mouth": "smirk",
+    "facial_hair": "full_beard",
+    "outfit": "noble_coat",
+    "outfit_color": "brown",
+    "accent_color": "gold",
+    "accessory": [],
+    "bg_color": "plum"
+   }
+  },
+  {
+   "id": "yakov",
+   "name": "Яков Кривой",
+   "role": "antagonist",
+   "description": "Главарь контрабандистов. Перекрыл перевал баррикадой, чтобы без пошлин вывозить кедр и меха. Насмешлив и опасен.",
+   "appearance": {
+    "head": "thin",
+    "skin": "olive",
+    "hair": "side_part",
+    "hair_color": "black",
+    "eyes": "sharp",
+    "eye_color": "gray",
+    "brows": "thick",
+    "mouth": "smirk",
+    "facial_hair": "stubble",
+    "outfit": "leather_armor",
+    "outfit_color": "charcoal",
+    "accent_color": "rust",
+    "accessory": [
+     "eyepatch",
+     "scar"
+    ],
+    "bg_color": "crimson"
+   }
+  }
+ ],
+ "stats_template": {
+  "hp": 60,
+  "attack": 9,
+  "defense": 4,
+  "focus": 6
+ },
+ "progression": {
+  "xp_to_level": [
+   25,
+   60,
+   110,
+   180,
+   270,
+   380
+  ],
+  "per_level": {
+   "hp": 8,
+   "attack": 2,
+   "defense": 1,
+   "focus": 1
+  }
+ },
+ "start_gold": 15,
+ "start_skills": [
+  "steady_breath"
+ ],
+ "start_items": [],
+ "start_equipment": {
+  "hand": "walking_stick",
+  "trinket": "postman_badge"
+ },
+ "skills": [
+  {
+   "id": "steady_breath",
+   "name": "Второе дыхание",
+   "description": "Отдышаться и собраться, как на крутом подъёме.",
+   "cost_focus": 2,
+   "effect": [
+    {
+     "heal": 10
+    }
+   ],
+   "target": "self"
+  },
+  {
+   "id": "precise_throw",
+   "name": "Меткий бросок",
+   "description": "Камень в нос, как учила Злата.",
+   "cost_focus": 3,
+   "effect": [
+    {
+     "damage": 12
+    }
+   ],
+   "target": "enemy"
+  }
+ ],
+ "items": [
+  {
+   "id": "petition_letter",
+   "name": "Прошение о лекаре",
+   "description": "Конверт с подписями всей Кедровки. Последняя почта перед зимой.",
+   "icon": "letter",
+   "kind": "misc",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "herb_tonic",
+   "name": "Мамин отвар",
+   "description": "Горький отвар из чабреца и шиповника. Согревает и ставит на ноги.",
+   "icon": "potion",
+   "kind": "consumable",
+   "effect": [
+    {
+     "heal": 18
+    }
+   ],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "dried_bread",
+   "name": "Ржаные сухари",
+   "description": "Сухари с тмином. В горах — лучшая еда.",
+   "icon": "bread",
+   "kind": "consumable",
+   "effect": [
+    {
+     "heal": 10
+    }
+   ],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "pine_resin",
+   "name": "Смоляная бомбочка",
+   "description": "Горшочек с горящей смолой. Волки и люди одинаково не любят огонь.",
+   "icon": "bomb",
+   "kind": "consumable",
+   "effect": [
+    {
+     "damage": 14
+    }
+   ],
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "gordey_key",
+   "name": "Ключ от чердака",
+   "description": "Медный ключ старосты, оставленный у Веры «на хранение».",
+   "icon": "key",
+   "kind": "key",
+   "effect": [],
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "salt_crate",
+   "name": "Ящик соли",
+   "description": "Ящик с синей печатью лавки Веры. Тяжёлый.",
+   "icon": "pouch",
+   "kind": "misc",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "smuggler_ledger",
+   "name": "Долговая книга банды",
+   "description": "Записи о каждом обозе через перевал и о доле старосты Гордея — его же почерком.",
+   "icon": "book",
+   "kind": "misc",
+   "effect": [],
+   "value_tier": 3,
+   "price": 40
+  },
+  {
+   "id": "walking_stick",
+   "name": "Почтальонская палка",
+   "description": "Крепкая ореховая палка. Отгонять собак, опираться на подъёме.",
+   "icon": "staff",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 1,
+     "defense": 0,
+     "focus": 0,
+     "hp": 0
+    },
+    "range": 1
+   },
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "smuggler_cudgel",
+   "name": "Дубинка часового",
+   "description": "Окованная железом дубинка. Тяжеловата, но убедительна.",
+   "icon": "mace",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 3,
+     "defense": 0,
+     "focus": 0,
+     "hp": 0
+    },
+    "range": 1
+   },
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "hunting_knife",
+   "name": "Охотничий нож",
+   "description": "Широкий нож работы деревенского кузнеца.",
+   "icon": "knife",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 2,
+     "defense": 0,
+     "focus": 0,
+     "hp": 0
+    },
+    "range": 1
+   },
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "sheepskin_coat",
+   "name": "Овчинный тулуп",
+   "description": "Тёплый, тяжёлый, пахнет овцой. Удар держит не хуже кольчуги.",
+   "icon": "coat",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "body",
+    "bonus": {
+     "attack": 0,
+     "defense": 2,
+     "focus": 0,
+     "hp": 5
+    },
+    "range": 1
+   },
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "fur_mittens",
+   "name": "Меховые рукавицы",
+   "description": "Охотничьи рукавицы Златы из запасного тайника. Пальцы не мёрзнут, хватка крепче.",
+   "icon": "gloves",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "trinket",
+    "bonus": {
+     "attack": 0,
+     "defense": 1,
+     "focus": 1,
+     "hp": 0
+    },
+    "range": 1
+   },
+   "value_tier": 2,
+   "price": 22
+  },
+  {
+   "id": "postman_badge",
+   "name": "Почтовая бляха",
+   "description": "Латунная бляха почтальона. Напоминает, зачем идёшь.",
+   "icon": "badge",
+   "kind": "equipment",
+   "effect": [],
+   "equip": {
+    "slot": "trinket",
+    "bonus": {
+     "attack": 0,
+     "defense": 0,
+     "focus": 1,
+     "hp": 0
+    },
+    "range": 1
+   },
+   "value_tier": 1,
+   "price": 10
+  }
+ ],
+ "enemies": [
+  {
+   "id": "mountain_wolf",
+   "name": "Горный волк",
+   "description": "Поджарый серый волк, оголодавший к зиме.",
+   "tier": 1,
+   "appearance": {
+    "body": "wolf",
+    "color": "gray",
+    "accent_color": "white",
+    "features": [
+     "fangs"
+    ],
+    "size": "medium"
+   },
+   "abilities": [],
+   "range": 1,
+   "hp": 16,
+   "attack": 6,
+   "defense": 1,
+   "xp": 12,
+   "gold": 6
+  },
+  {
+   "id": "pack_leader",
+   "name": "Вожак стаи",
+   "description": "Матёрый волк со шрамом через морду, ведёт стаю к деревне.",
+   "tier": 2,
+   "appearance": {
+    "body": "wolf",
+    "color": "charcoal",
+    "accent_color": "bone",
+    "features": [
+     "fangs",
+     "back_spikes"
+    ],
+    "size": "large"
+   },
+   "abilities": [
+    {
+     "name": "Вой",
+     "effect": [
+      {
+       "heal": 4
+      }
+     ],
+     "every_n_turns": 3
+    }
+   ],
+   "range": 1,
+   "hp": 22,
+   "attack": 7,
+   "defense": 2,
+   "xp": 20,
+   "gold": 10
+  },
+  {
+   "id": "smuggler_guard",
+   "name": "Часовой банды",
+   "description": "Небритый детина в тулупе, с дубинкой и ленивой ухмылкой.",
+   "tier": 2,
+   "appearance": {
+    "head": "square",
+    "skin": "tan",
+    "hair": "crew_cut",
+    "hair_color": "brown",
+    "eyes": "small",
+    "eye_color": "brown",
+    "brows": "thick",
+    "mouth": "stern",
+    "facial_hair": "stubble",
+    "outfit": "peasant_tunic",
+    "outfit_color": "brown",
+    "accent_color": "rust",
+    "accessory": [],
+    "bg_color": "charcoal"
+   },
+   "abilities": [],
+   "range": 1,
+   "hp": 25,
+   "attack": 7,
+   "defense": 2,
+   "xp": 20,
+   "gold": 10
+  },
+  {
+   "id": "yakov_boss",
+   "name": "Яков Кривой",
+   "description": "Главарь контрабандистов с кистенём и единственным, но очень внимательным глазом.",
+   "tier": 3,
+   "appearance": {
+    "head": "thin",
+    "skin": "olive",
+    "hair": "side_part",
+    "hair_color": "black",
+    "eyes": "sharp",
+    "eye_color": "gray",
+    "brows": "thick",
+    "mouth": "smirk",
+    "facial_hair": "stubble",
+    "outfit": "leather_armor",
+    "outfit_color": "charcoal",
+    "accent_color": "rust",
+    "accessory": [
+     "eyepatch",
+     "scar"
+    ],
+    "bg_color": "crimson"
+   },
+   "abilities": [
+    {
+     "name": "Подлый удар",
+     "effect": [
+      {
+       "damage": 6
+      }
+     ],
+     "every_n_turns": 3
+    }
+   ],
+   "range": 1,
+   "hp": 40,
+   "attack": 10,
+   "defense": 4,
+   "xp": 32,
+   "gold": 16
+  }
+ ],
+ "shops": [
+  {
+   "id": "vera_shop",
+   "name": "Лавка Веры",
+   "items": [
+    "herb_tonic",
+    "dried_bread",
+    "pine_resin",
+    "hunting_knife",
+    "sheepskin_coat"
+   ],
+   "buys": true
+  }
+ ],
+ "tactics": [
+  {
+   "id": "base_focus",
+   "name": "Сосредоточиться",
+   "description": "Атака бойца +3 до конца следующего хода врагов.",
+   "icon": "dagger",
+   "currency": "points",
+   "tier": 1,
+   "target": "unit",
+   "effect": [
+    {
+     "mod_stat": "attack",
+     "delta": 3
+    }
+   ],
+   "duration": 1,
+   "move_bonus": 0,
+   "cost": 2
+  },
+  {
+   "id": "base_dash",
+   "name": "Рывок",
+   "description": "Боец пройдёт на 2 клетки дальше в этот ход.",
+   "icon": "boots",
+   "currency": "points",
+   "tier": 1,
+   "target": "unit",
+   "effect": [],
+   "duration": 1,
+   "move_bonus": 2,
+   "cost": 2
+  },
+  {
+   "id": "base_guard",
+   "name": "Сомкнуть ряды",
+   "description": "Защита всего отряда +2 до следующего хода.",
+   "icon": "shield",
+   "currency": "points",
+   "tier": 2,
+   "target": "party",
+   "effect": [
+    {
+     "mod_stat": "defense",
+     "delta": 2
+    }
+   ],
+   "duration": 1,
+   "move_bonus": 0,
+   "cost": 4
+  },
+  {
+   "id": "base_second_wind",
+   "name": "Второе дыхание",
+   "description": "Боец восстанавливает 12 здоровья.",
+   "icon": "herb",
+   "currency": "points",
+   "tier": 2,
+   "target": "unit",
+   "effect": [
+    {
+     "heal": 12
+    }
+   ],
+   "duration": 1,
+   "move_bonus": 0,
+   "cost": 4
+  }
+ ],
+ "quests": [
+  {
+   "id": "deliver_letter",
+   "title": "Последнее письмо",
+   "main": true,
+   "giver": "pelageya",
+   "stages": [
+    {
+     "text": "Пройти заставу контрабандистов на тропе",
+     "done": {
+      "defeated": "outpost_guards"
+     }
+    },
+    {
+     "text": "Прорваться через баррикаду на перевале",
+     "done": {
+      "defeated": "yakov_band"
+     }
+    }
+   ]
+  },
+  {
+   "id": "wolf_hunt",
+   "title": "Волки у дороги",
+   "main": false,
+   "giver": "zlata",
+   "stages": [
+    {
+     "text": "Прогнать волчью стаю с горной тропы",
+     "done": {
+      "defeated": "wolf_pack"
+     }
+    }
+   ]
+  },
+  {
+   "id": "vera_salt",
+   "title": "Соль для Веры",
+   "main": false,
+   "giver": "vera",
+   "stages": [
+    {
+     "text": "Найти ящик соли на заставе",
+     "done": {
+      "any": [
+       {
+        "has_item": "salt_crate"
+       },
+       {
+        "flag": "salt_returned",
+        "is": true
+       }
+      ]
+     }
+    },
+    {
+     "text": "Вернуть соль Вере",
+     "done": {
+      "flag": "salt_returned",
+      "is": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "headman_secret",
+   "title": "Тайна старосты",
+   "main": false,
+   "stages": [
+    {
+     "text": "Найти доказательство сговора старосты с бандой",
+     "done": {
+      "has_item": "smuggler_ledger"
+     }
+    }
+   ]
+  }
+ ],
+ "flags": [
+  {
+   "id": "zlata_joined",
+   "description": "Злата идёт вместе с Мироном"
+  },
+  {
+   "id": "salt_returned",
+   "description": "Ящик соли возвращён Вере"
+  },
+  {
+   "id": "headman_exposed",
+   "description": "Сговор старосты с контрабандистами раскрыт"
+  }
+ ],
+ "locations": [
+  {
+   "id": "village",
+   "title": "Кедровка",
+   "intro": "Кедровка. Над крышами уже тянет снегом, а до перевала — полдня пути. Сегодня уходит последняя почта перед зимой.",
+   "theme": "town_street",
+   "background": {
+    "setting": "outdoor",
+    "time": "day",
+    "sky": "clouds",
+    "far": "mountains",
+    "props": [
+     {
+      "id": "well",
+      "x": 30
+     },
+     {
+      "id": "fence",
+      "x": 90
+     },
+     {
+      "id": "pine",
+      "x": 140
+     }
+    ],
+    "ground": "dirt",
+    "overlay": "none",
+    "mood_palette": "frost"
+   },
+   "size": "medium",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "post_office",
+     "floor": 0,
+     "name": "у почтового сруба"
+    },
+    {
+     "id": "square",
+     "floor": 0,
+     "name": "площадь"
+    },
+    {
+     "id": "shop",
+     "floor": 0,
+     "name": "лавка Веры"
+    },
+    {
+     "id": "outskirts",
+     "floor": 0,
+     "name": "околица"
+    }
+   ],
+   "objects": [
+    {
+     "id": "mother_at_post",
+     "zone": "post_office",
+     "type": "npc",
+     "character": "pelageya",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_mother",
+      "nodes": [
+       {
+        "id": "m1",
+        "speaker": "pelageya",
+        "text": "Мирон, вот оно. Прошение о лекаре, с подписями всей деревни. Если до снега не дойдёт — до весны у нас никого не будет, а у Сидоровых малой кашляет.",
+        "emotion": "neutral",
+        "choices": [
+         {
+          "text": "Давай, мама. Донесу.",
+          "condition": {
+           "not": {
+            "has_item": "petition_letter"
+           }
+          },
+          "effects": [
+           {
+            "give_item": "petition_letter"
+           },
+           {
+            "give_gold": 10
+           },
+           {
+            "give_item": "herb_tonic"
+           }
+          ],
+          "next": "m2"
+         },
+         {
+          "text": "Староста говорит, перевал завален.",
+          "effects": [],
+          "next": "m3"
+         },
+         {
+          "text": "Я помню. Уже иду.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "m2",
+        "speaker": "pelageya",
+        "text": "Тут ещё десять монет на дорогу и мой отвар от простуды. И не геройствуй, слышишь? Письмо важнее гордости.",
+        "emotion": "happy",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "m3",
+        "speaker": "pelageya",
+        "text": "Гордей много чего говорит. Только почему-то обозы из-за перевала к нему всё ездят, а к нам — нет. Будь осторожен, сынок.",
+        "emotion": "sad",
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "m1"
+     }
+    },
+    {
+     "id": "notice_board",
+     "zone": "square",
+     "type": "thing",
+     "look": "signpost",
+     "name": "Доска объявлений",
+     "event": {
+      "type": "narration",
+      "id": "read_notice",
+      "text": "«Перевал закрыт по причине обвала. Ходить запрещается. Староста Г. Пахомов». Бумага свежая, а чернила — дорогие, городские."
+     },
+     "once": false
+    },
+    {
+     "id": "gordey_on_square",
+     "zone": "square",
+     "type": "npc",
+     "character": "gordey",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_gordey",
+      "nodes": [
+       {
+        "id": "g1",
+        "speaker": "gordey",
+        "text": "А, наш почтальон! Куда собрался, голубчик? Там обвал, камни с дом. Переждал бы ты до весны, а письмо — что письмо, полежит.",
+        "emotion": "happy",
+        "choices": [
+         {
+          "text": "Прошение не может ждать. Я пойду.",
+          "effects": [],
+          "next": "g2"
+         },
+         {
+          "text": "А вы сами видели этот обвал?",
+          "effects": [],
+          "next": "g3"
+         }
+        ]
+       },
+       {
+        "id": "g2",
+        "speaker": "gordey",
+        "text": "Упрямый, весь в отца. Ну иди, иди. Только не говори потом, что тебя не предупреждали.",
+        "emotion": "angry",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "g3",
+        "speaker": "gordey",
+        "text": "Я?.. Мне люди сказали. Надёжные люди. И вообще, староста тут я, и мне виднее, кому куда ходить.",
+        "emotion": "surprised",
+        "choices": [],
+        "next": "g2"
+       }
+      ],
+      "start_node": "g1"
+     }
+    },
+    {
+     "id": "village_to_house",
+     "zone": "square",
+     "type": "exit",
+     "kind": "door",
+     "to": "headman_house"
+    },
+    {
+     "id": "vera_at_shop",
+     "zone": "shop",
+     "type": "npc",
+     "character": "vera",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_vera",
+      "nodes": [
+       {
+        "id": "v1",
+        "speaker": "vera",
+        "text": "Мироша! Тёплые варежки, сухари, отвар — всё для дороги. А ещё у меня беда: ящик соли с заставы так и не привезли. Говорят, «обвал». Ага, обвал, как же.",
+        "emotion": "happy",
+        "choices": [
+         {
+          "text": "Вот твоя соль, Вера. Нашёл на заставе.",
+          "condition": {
+           "has_item": "salt_crate"
+          },
+          "effects": [
+           {
+            "take_item": "salt_crate"
+           },
+           {
+            "set_flag": "salt_returned",
+            "value": true
+           },
+           {
+            "give_gold": 15
+           },
+           {
+            "give_item": "gordey_key"
+           }
+          ],
+          "next": "v3"
+         },
+         {
+          "text": "Я посмотрю, что там с солью.",
+          "effects": [],
+          "next": "v2"
+         },
+         {
+          "text": "Покажи товар.",
+          "effects": [],
+          "next": "end"
+         }
+        ]
+       },
+       {
+        "id": "v2",
+        "speaker": "vera",
+        "text": "Ящик с синей печатью, не перепутаешь. Вернёшь — отблагодарю. Чем-нибудь поинтереснее монет.",
+        "emotion": "neutral",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "v3",
+        "speaker": "vera",
+        "text": "Моя соль! С заставы, значит… Вот что, держи ключ. Гордей оставил мне на хранение — от чердака. Сказал, «чтоб жена не нашла». Я-то думала, там наливка. А теперь думаю — не наливка.",
+        "emotion": "surprised",
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "v1"
+     },
+     "shop": "vera_shop"
+    },
+    {
+     "id": "woodpile",
+     "zone": "outskirts",
+     "type": "chest",
+     "look": "crates",
+     "contents": [
+      {
+       "give_item": "herb_tonic"
+      },
+      {
+       "give_gold": 5
+      }
+     ]
+    },
+    {
+     "id": "village_to_trail",
+     "zone": "outskirts",
+     "type": "exit",
+     "kind": "right_edge",
+     "to": "trail"
+    }
+   ],
+   "on_enter": []
+  },
+  {
+   "id": "headman_house",
+   "title": "Дом старосты",
+   "intro": "В доме старосты натоплено и пахнет воском. Хозяин на площади — и, кажется, не спешит домой.",
+   "theme": "house_interior",
+   "background": {
+    "setting": "indoor",
+    "time": "dusk",
+    "far": "room_wall",
+    "props": [
+     {
+      "id": "window",
+      "x": 40
+     },
+     {
+      "id": "table",
+      "x": 80
+     },
+     {
+      "id": "candelabra",
+      "x": 120
+     }
+    ],
+    "ground": "planks",
+    "overlay": "none",
+    "mood_palette": "warm_candle"
+   },
+   "size": "small",
+   "floors": 2,
+   "zones": [
+    {
+     "id": "porch",
+     "floor": 0,
+     "name": "сени"
+    },
+    {
+     "id": "parlor",
+     "floor": 0,
+     "name": "горница"
+    },
+    {
+     "id": "attic",
+     "floor": 1,
+     "name": "чердак"
+    }
+   ],
+   "objects": [
+    {
+     "id": "house_to_village",
+     "zone": "porch",
+     "type": "exit",
+     "kind": "door",
+     "to": "village"
+    },
+    {
+     "id": "fur_pile",
+     "zone": "porch",
+     "type": "thing",
+     "look": "crates",
+     "name": "Тюки с мехами",
+     "event": {
+      "type": "narration",
+      "id": "look_furs",
+      "text": "Куньи и соболиные шкурки, перевязанные бечёвкой. Столько не набьёт вся деревня за три зимы. На бечёвке — сургуч с кривой буквой «Я»."
+     },
+     "once": true
+    },
+    {
+     "id": "headman_desk",
+     "zone": "parlor",
+     "type": "thing",
+     "look": "table",
+     "name": "Стол старосты",
+     "event": {
+      "type": "narration",
+      "id": "read_note",
+      "text": "Под чернильницей записка: «Гордей, до снега ещё три обоза. Держи людей в деревне. Твоя доля — как условились. Я.»"
+     },
+     "once": true
+    },
+    {
+     "id": "attic_chest",
+     "zone": "attic",
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "smuggler_ledger"
+      },
+      {
+       "give_gold": 20
+      }
+     ],
+     "requires": {
+      "has_item": "gordey_key"
+     },
+     "locked_text": "Тяжёлый сундук на замке. Ключ староста наверняка держит не дома."
+    }
+   ],
+   "on_enter": []
+  },
+  {
+   "id": "trail",
+   "title": "Горная тропа",
+   "intro": "Тропа петляет между елями, на камнях — первая изморозь. В снегу отпечатки лап, слишком крупные для собак.",
+   "theme": "forest",
+   "background": {
+    "setting": "outdoor",
+    "time": "day",
+    "sky": "clouds",
+    "far": "mountains",
+    "props": [
+     {
+      "id": "pine",
+      "x": 20
+     },
+     {
+      "id": "boulder",
+      "x": 70
+     },
+     {
+      "id": "pine",
+      "x": 130
+     }
+    ],
+    "ground": "dirt",
+    "overlay": "snow",
+    "mood_palette": "frost"
+   },
+   "size": "medium",
+   "floors": 2,
+   "zones": [
+    {
+     "id": "foot",
+     "floor": 0,
+     "name": "подножие"
+    },
+    {
+     "id": "den",
+     "floor": 0,
+     "name": "волчье логово"
+    },
+    {
+     "id": "ledge",
+     "floor": 1,
+     "name": "уступ"
+    },
+    {
+     "id": "upper_path",
+     "floor": 1,
+     "name": "верхняя тропа"
+    }
+   ],
+   "objects": [
+    {
+     "id": "trail_to_village",
+     "zone": "foot",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "village"
+    },
+    {
+     "id": "torn_bag",
+     "zone": "foot",
+     "type": "thing",
+     "look": "boulder",
+     "name": "Разорванная сумка",
+     "event": {
+      "type": "narration",
+      "id": "look_bag",
+      "text": "Чья-то котомка, растерзанная зубами. Внутри — пустая фляга и квитанция на соль «для лавки В.». Волки здесь хозяйничают не первый день."
+     },
+     "once": true
+    },
+    {
+     "id": "wolf_pack",
+     "zone": "den",
+     "type": "enemy",
+     "enemies": [
+      "mountain_wolf",
+      "pack_leader"
+     ],
+     "on_win": [],
+     "on_lose": "game_over",
+     "can_flee": true
+    },
+    {
+     "id": "zlata_on_ledge",
+     "zone": "ledge",
+     "type": "npc",
+     "character": "zlata",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_zlata",
+      "nodes": [
+       {
+        "id": "z1",
+        "speaker": "zlata",
+        "text": "Тише ты, почтальон. Стая внизу, у логова. Я их третий день веду, а одной вожака не взять.",
+        "emotion": "neutral",
+        "choices": [
+         {
+          "text": "Пойдём вместе. Мне всё равно туда.",
+          "condition": {
+           "flag": "zlata_joined",
+           "is": false
+          },
+          "effects": [
+           {
+            "set_flag": "zlata_joined",
+            "value": true
+           },
+           {
+            "learn_skill": "precise_throw"
+           }
+          ],
+          "next": "z2"
+         },
+         {
+          "text": "Волков больше нет. Что дальше?",
+          "condition": {
+           "defeated": "wolf_pack"
+          },
+          "effects": [],
+          "next": "z3"
+         },
+         {
+          "text": "Я, пожалуй, сам.",
+          "effects": [],
+          "next": "z4"
+         }
+        ]
+       },
+       {
+        "id": "z2",
+        "speaker": "zlata",
+        "text": "Вот это разговор. Держи камень покрепче и бей в нос, когда я скажу. А потом — на заставу. Я давно хочу посмотреть на этот их «обвал».",
+        "emotion": "happy",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "z3",
+        "speaker": "zlata",
+        "text": "Дальше — вверх. Только застава там не пустая: дымом пахнет с утра.",
+        "emotion": "happy",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "z4",
+        "speaker": "zlata",
+        "text": "Сам так сам. Только вожак тебя «сам» и съест.",
+        "emotion": "angry",
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "z1"
+     }
+    },
+    {
+     "id": "hunter_cache",
+     "zone": "ledge",
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "fur_mittens"
+      },
+      {
+       "give_item": "herb_tonic"
+      }
+     ]
+    },
+    {
+     "id": "trail_to_outpost",
+     "zone": "upper_path",
+     "type": "exit",
+     "kind": "right_edge",
+     "to": "outpost"
+    }
+   ],
+   "on_enter": []
+  },
+  {
+   "id": "outpost",
+   "title": "Застава",
+   "intro": "За поворотом — костёр, палатки и бочки под рогожей. Никакого обвала: только люди с дубинками и запах ворованного кедра.",
+   "theme": "forest",
+   "background": {
+    "setting": "outdoor",
+    "time": "dusk",
+    "sky": "clouds",
+    "far": "forest",
+    "props": [
+     {
+      "id": "campfire",
+      "x": 50
+     },
+     {
+      "id": "barrel",
+      "x": 95
+     },
+     {
+      "id": "crates",
+      "x": 130
+     }
+    ],
+    "ground": "dirt",
+    "overlay": "snow",
+    "mood_palette": "frost"
+   },
+   "size": "medium",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "approach",
+     "floor": 0,
+     "name": "подход"
+    },
+    {
+     "id": "tents",
+     "floor": 0,
+     "name": "палатки"
+    },
+    {
+     "id": "stores",
+     "floor": 0,
+     "name": "склад"
+    }
+   ],
+   "objects": [
+    {
+     "id": "outpost_to_trail",
+     "zone": "approach",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "trail"
+    },
+    {
+     "id": "cedar_barrels",
+     "zone": "approach",
+     "type": "thing",
+     "look": "barrel",
+     "name": "Бочки с кедровым орехом",
+     "event": {
+      "type": "narration",
+      "id": "look_barrels",
+      "text": "На бочках клеймо кедровской артели. Той самой, что «закрылась из-за обвала» месяц назад."
+     },
+     "once": true
+    },
+    {
+     "id": "outpost_guards",
+     "zone": "tents",
+     "type": "enemy",
+     "enemies": [
+      "smuggler_guard",
+      "smuggler_guard"
+     ],
+     "on_win": [],
+     "on_lose": "game_over",
+     "can_flee": true
+    },
+    {
+     "id": "salt_crate_pile",
+     "zone": "stores",
+     "type": "chest",
+     "look": "crates",
+     "contents": [
+      {
+       "give_item": "salt_crate"
+      },
+      {
+       "give_gold": 12
+      }
+     ]
+    },
+    {
+     "id": "guard_tent_chest",
+     "zone": "tents",
+     "condition": {
+      "defeated": "outpost_guards"
+     },
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "smuggler_cudgel"
+      }
+     ]
+    },
+    {
+     "id": "outpost_to_pass",
+     "zone": "stores",
+     "type": "exit",
+     "kind": "right_edge",
+     "to": "pass"
+    }
+   ],
+   "on_enter": []
+  },
+  {
+   "id": "pass",
+   "title": "Перевал",
+   "intro": "Перевал. Ветер несёт снежную крупу. Поперёк дороги — не камни, а свежесрубленные брёвна, и над ними чадит факел.",
+   "theme": "forest",
+   "background": {
+    "setting": "outdoor",
+    "time": "night",
+    "sky": "storm",
+    "far": "mountains",
+    "props": [
+     {
+      "id": "boulder",
+      "x": 25
+     },
+     {
+      "id": "crates",
+      "x": 75
+     },
+     {
+      "id": "banner",
+      "x": 120
+     }
+    ],
+    "ground": "rock",
+    "overlay": "snow",
+    "mood_palette": "frost"
+   },
+   "size": "medium",
+   "floors": 1,
+   "zones": [
+    {
+     "id": "slope",
+     "floor": 0,
+     "name": "склон"
+    },
+    {
+     "id": "barricade",
+     "floor": 0,
+     "name": "баррикада"
+    },
+    {
+     "id": "road_down",
+     "floor": 0,
+     "name": "дорога в город"
+    }
+   ],
+   "objects": [
+    {
+     "id": "pass_to_outpost",
+     "zone": "slope",
+     "type": "exit",
+     "kind": "left_edge",
+     "to": "outpost"
+    },
+    {
+     "id": "fake_rockfall",
+     "zone": "slope",
+     "type": "thing",
+     "look": "boulder",
+     "name": "«Обвал»",
+     "event": {
+      "type": "narration",
+      "id": "look_rockfall",
+      "text": "Пара валунов, присыпанных щебнем для вида. За ними — аккуратная баррикада из брёвен с воротами на засове."
+     },
+     "once": true
+    },
+    {
+     "id": "yakov_band",
+     "zone": "barricade",
+     "type": "enemy",
+     "enemies": [
+      "yakov_boss",
+      "smuggler_guard"
+     ],
+     "on_win": [],
+     "on_lose": "game_over",
+     "can_flee": true
+    },
+    {
+     "id": "yakov_beaten",
+     "zone": "road_down",
+     "condition": {
+      "defeated": "yakov_band"
+     },
+     "type": "npc",
+     "character": "yakov",
+     "dialogue": {
+      "type": "dialogue",
+      "id": "talk_yakov",
+      "nodes": [
+       {
+        "id": "y1",
+        "speaker": "yakov",
+        "text": "Ну, почтальон… Удивил. Иди, неси свою бумажку. Всё равно в городе тебе никто не поверит: староста скажет, что ты врёшь, — и все кивнут.",
+        "emotion": "angry",
+        "choices": [
+         {
+          "text": "Поверят. У меня долговая книга Гордея.",
+          "condition": {
+           "has_item": "smuggler_ledger"
+          },
+          "effects": [
+           {
+            "set_flag": "headman_exposed",
+            "value": true
+           }
+          ],
+          "next": "y2"
+         },
+         {
+          "text": "Мне хватит того, что письмо дойдёт.",
+          "effects": [],
+          "next": "y3"
+         }
+        ]
+       },
+       {
+        "id": "y2",
+        "speaker": "yakov",
+        "text": "Книга?.. Вот же старый дурак, держал её дома! Ладно, ладно. Ворота открыты. Только я в город с тобой не пойду — горы большие.",
+        "emotion": "scared",
+        "choices": [],
+        "next": "end"
+       },
+       {
+        "id": "y3",
+        "speaker": "yakov",
+        "text": "Скромный какой. Ну иди, иди. До весны, почтальон.",
+        "emotion": "happy",
+        "choices": [],
+        "next": "end"
+       }
+      ],
+      "start_node": "y1"
+     }
+    },
+    {
+     "id": "pass_to_city_witness",
+     "zone": "road_down",
+     "type": "exit",
+     "kind": "door",
+     "to": "ending_open",
+     "requires": {
+      "flag": "headman_exposed",
+      "is": true
+     },
+     "locked_text": "Ворота заставы для пристава. Без доказательств тут нечего показать."
+    },
+    {
+     "id": "pass_to_city",
+     "zone": "road_down",
+     "type": "exit",
+     "kind": "right_edge",
+     "to": "ending_letter",
+     "requires": {
+      "defeated": "yakov_band"
+     },
+     "locked_text": "Дорогу перегораживает баррикада."
+    }
+   ],
+   "on_enter": []
+  }
+ ],
+ "start_location": "village",
+ "endings": [
+  {
+   "id": "ending_open",
+   "title": "Дорога открыта",
+   "text": "Долговая книга легла на стол городского пристава. Банда Якова разбежалась по ущельям, старосту Гордея увезли в город под конвоем. Лекарь поднялся в Кедровку за день до первого снега, а Мирон до весны носил письма с гордо поднятой головой.",
+   "kind": "good"
+  },
+  {
+   "id": "ending_letter",
+   "title": "Письмо дошло",
+   "text": "Прошение легло на стол в городской управе, и лекарь пообещал прийти. Но доказательств не было: Гордей встретил Мирона на площади с ласковой улыбкой, и снег закрыл перевал вместе со всеми его тайнами. Зима в Кедровке будет долгой.",
+   "kind": "neutral"
+  }
+ ],
+ "levels": {
+  "village": {
+   "width": 36,
+   "height": 8,
+   "tiles": [
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "village_to_trail",
+     "floor": 0,
+     "x": 34
+    },
+    {
+     "id": "mother_at_post",
+     "floor": 0,
+     "x": 6
+    },
+    {
+     "id": "notice_board",
+     "floor": 0,
+     "x": 12
+    },
+    {
+     "id": "gordey_on_square",
+     "floor": 0,
+     "x": 14
+    },
+    {
+     "id": "village_to_house",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "id": "vera_at_shop",
+     "floor": 0,
+     "x": 21
+    },
+    {
+     "id": "woodpile",
+     "floor": 0,
+     "x": 28
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "headman_house",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "from": "trail",
+     "floor": 0,
+     "x": 33
+    }
+   ]
+  },
+  "headman_house": {
+   "width": 24,
+   "height": 14,
+   "tiles": [
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|......................|",
+    "|===================H==|",
+    "|...................H..|",
+    "|...................H..|",
+    "|...................H..|",
+    "|...................H..|",
+    "|...................H..|",
+    "########################",
+    "########################"
+   ],
+   "floors": [
+    {
+     "y": 11,
+     "x0": 1,
+     "x1": 22
+    },
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 22
+    }
+   ],
+   "links": [
+    {
+     "kind": "ladder",
+     "a": [
+      0,
+      20
+     ],
+     "b": [
+      1,
+      20
+     ]
+    }
+   ],
+   "objects": [
+    {
+     "id": "house_to_village",
+     "floor": 0,
+     "x": 6
+    },
+    {
+     "id": "fur_pile",
+     "floor": 0,
+     "x": 8
+    },
+    {
+     "id": "headman_desk",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "id": "attic_chest",
+     "floor": 1,
+     "x": 11
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "village",
+     "floor": 0,
+     "x": 6
+    }
+   ]
+  },
+  "trail": {
+   "width": 36,
+   "height": 14,
+   "tiles": [
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    "|...................................",
+    ".===============================H==|",
+    "................................H..|",
+    "................................H..|",
+    "................................H..|",
+    "................................H..|",
+    "................................H..|",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 11,
+     "x0": 1,
+     "x1": 34
+    },
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [
+    {
+     "kind": "ladder",
+     "a": [
+      0,
+      32
+     ],
+     "b": [
+      1,
+      32
+     ]
+    }
+   ],
+   "objects": [
+    {
+     "id": "trail_to_village",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "trail_to_outpost",
+     "floor": 1,
+     "x": 34
+    },
+    {
+     "id": "torn_bag",
+     "floor": 0,
+     "x": 10
+    },
+    {
+     "id": "wolf_pack",
+     "floor": 0,
+     "x": 25
+    },
+    {
+     "id": "zlata_on_ledge",
+     "floor": 1,
+     "x": 8
+    },
+    {
+     "id": "hunter_cache",
+     "floor": 1,
+     "x": 12
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "village",
+     "floor": 0,
+     "x": 2
+    },
+    {
+     "from": "outpost",
+     "floor": 1,
+     "x": 33
+    }
+   ]
+  },
+  "outpost": {
+   "width": 36,
+   "height": 8,
+   "tiles": [
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "outpost_to_trail",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "outpost_to_pass",
+     "floor": 0,
+     "x": 34
+    },
+    {
+     "id": "cedar_barrels",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "outpost_guards",
+     "floor": 0,
+     "x": 16
+    },
+    {
+     "id": "guard_tent_chest",
+     "floor": 0,
+     "x": 19
+    },
+    {
+     "id": "salt_crate_pile",
+     "floor": 0,
+     "x": 27
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "trail",
+     "floor": 0,
+     "x": 2
+    },
+    {
+     "from": "pass",
+     "floor": 0,
+     "x": 33
+    }
+   ]
+  },
+  "pass": {
+   "width": 36,
+   "height": 8,
+   "tiles": [
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "....................................",
+    "####################################",
+    "####################################"
+   ],
+   "floors": [
+    {
+     "y": 5,
+     "x0": 1,
+     "x1": 34
+    }
+   ],
+   "links": [],
+   "objects": [
+    {
+     "id": "pass_to_outpost",
+     "floor": 0,
+     "x": 1
+    },
+    {
+     "id": "pass_to_city",
+     "floor": 0,
+     "x": 34
+    },
+    {
+     "id": "fake_rockfall",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "yakov_band",
+     "floor": 0,
+     "x": 17
+    },
+    {
+     "id": "yakov_beaten",
+     "floor": 0,
+     "x": 26
+    },
+    {
+     "id": "pass_to_city_witness",
+     "floor": 0,
+     "x": 29
+    }
+   ],
+   "spawns": [
+    {
+     "from": "default",
+     "floor": 0,
+     "x": 3
+    },
+    {
+     "from": "outpost",
+     "floor": 0,
+     "x": 2
+    },
+    {
+     "from": "ending_open",
+     "floor": 0,
+     "x": 29
+    },
+    {
+     "from": "ending_letter",
+     "floor": 0,
+     "x": 33
+    }
+   ]
+  }
+ },
+ "arenas": {
+  "wolf_pack": {
+   "width": 7,
+   "height": 7,
+   "cells": [
+    "0#0#000",
+    "0012100",
+    "0##1000",
+    "0000000",
+    "0000000",
+    "0010000",
+    "0121000"
+   ],
+   "props": [
+    {
+     "x": 1,
+     "y": 2,
+     "id": "tree"
+    },
+    {
+     "x": 1,
+     "y": 0,
+     "id": "pine"
+    },
+    {
+     "x": 2,
+     "y": 2,
+     "id": "boulder"
+    },
+    {
+     "x": 3,
+     "y": 0,
+     "id": "tree"
+    }
+   ],
+   "party": [
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     3
+    ]
+   ],
+   "enemies": [
+    [
+     6,
+     3
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     5,
+     3
+    ]
+   ]
+  },
+  "outpost_guards": {
+   "width": 7,
+   "height": 7,
+   "cells": [
+    "0#01210",
+    "00#0100",
+    "0#00000",
+    "0000000",
+    "0001000",
+    "00121#0",
+    "0001000"
+   ],
+   "props": [
+    {
+     "x": 5,
+     "y": 5,
+     "id": "pine"
+    },
+    {
+     "x": 1,
+     "y": 2,
+     "id": "boulder"
+    },
+    {
+     "x": 1,
+     "y": 0,
+     "id": "boulder"
+    },
+    {
+     "x": 2,
+     "y": 1,
+     "id": "bush"
+    }
+   ],
+   "party": [
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     3
+    ]
+   ],
+   "enemies": [
+    [
+     6,
+     3
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     5,
+     3
+    ]
+   ]
+  },
+  "yakov_band": {
+   "width": 7,
+   "height": 7,
+   "cells": [
+    "0000000",
+    "0000000",
+    "0011000",
+    "0022100",
+    "00#1#00",
+    "0#00000",
+    "0000#00"
+   ],
+   "props": [
+    {
+     "x": 2,
+     "y": 4,
+     "id": "pine"
+    },
+    {
+     "x": 1,
+     "y": 5,
+     "id": "tree"
+    },
+    {
+     "x": 4,
+     "y": 4,
+     "id": "boulder"
+    },
+    {
+     "x": 4,
+     "y": 6,
+     "id": "boulder"
+    }
+   ],
+   "party": [
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     3
+    ]
+   ],
+   "enemies": [
+    [
+     6,
+     3
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     5,
+     3
+    ]
+   ]
+  }
+ }
+}

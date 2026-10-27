@@ -88,6 +88,22 @@ try {
   const link = await page.evaluate(() => navigator.clipboard.readText());
   check(link === `${BASE}/play/${gameId}`, `ссылка: ${link}`);
 
+  // автор публикует игру прямо с экрана концовки → она в каталоге «Готовые игры»
+  await page.getByRole("button", { name: "Опубликовать в каталоге" }).click();
+  await page.waitForSelector("text=Игра в каталоге «Готовые игры».");
+  await page.goto(`${BASE}/games`);
+  await page.waitForSelector(".game-card");
+  const featured = await page.locator(".game-grid").first().locator(".game-card h3").allTextContents();
+  check(featured.join("|") === "Погасший маяк|Последнее письмо перед снегом", `подборка: ${featured}`);
+  const community = page.locator(".game-grid").nth(1).locator(".game-card");
+  check(await community.count() === 1 && (await community.locator(".badge").textContent()) === "ваша", "игра автора среди игр игроков");
+  check(await page.locator(".my-game", { hasText: "Погасший маяк" }).getByRole("button", { name: "Скрыть из каталога" }).isVisible(), "в «Моих играх» можно скрыть");
+  await shot(page, "4-catalog");
+  await page.locator(".game-card", { hasText: "Последнее письмо перед снегом" }).getByRole("link", { name: "Играть ▸" }).click();
+  await page.waitForURL("**/play/postman");
+  await page.waitForSelector(".screen h1");
+  check((await page.locator(".screen h1").textContent()) === "Последнее письмо перед снегом", "игра из подборки открылась");
+
   // ссылка в другом браузере: игра с начала, без чужого сохранения
   const other = await browser.newContext({ viewport: { width: 375, height: 667 } });
   const page2 = await other.newPage();
@@ -98,6 +114,11 @@ try {
   await page2.getByRole("button", { name: "Начать" }).click();
   await page2.waitForSelector(".dlg:not(.hidden)");
   check((await page2.evaluate(() => window.__rpg.controller.state.location)) === "pier", "игра началась с первой локации");
+  await page2.goto(`${BASE}/games`);
+  await page2.waitForSelector(".game-card");
+  check(await page2.locator(".game-grid").nth(1).locator(".game-card").count() === 1, "чужой браузер видит опубликованную игру");
+  check(!(await page2.locator(".my-games").isVisible()) && !(await page2.locator(".badge").isVisible()), "но не может её скрыть");
+  await page2.screenshot(shotsDir ? { path: `${shotsDir}site-5-catalog-phone.png`, fullPage: true } : {});
 
   check(errors.length === 0, `ошибки в консоли:\n${errors.join("\n")}`);
   console.log(`✓ идея → бриф → генерация → игра → концовка → ссылка (${((Date.now() - started) / 1000).toFixed(1)} с)`);

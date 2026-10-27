@@ -73,8 +73,33 @@
 .site .hero-card figcaption { display: flex; flex-direction: column; text-align: left; align-self: center; }
 .site .hero-card small { color: var(--muted); }
 
+.site-nav { display: flex; gap: 18px; margin: -12px 0 8px; font-size: 15px; }
+.site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+.site-nav a:hover { color: var(--text); }
+.site-nav a.on { color: var(--gold); border-bottom-color: var(--gold); }
+.site h2 { margin-top: 16px; font-size: 20px; }
+.game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.game-card { display: flex; gap: 12px; padding: 12px; background: var(--panel); border: 2px solid var(--line); }
+.game-card:hover { border-color: #6a5a40; }
+.card-faces { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; flex: none; }
+.card-faces canvas { image-rendering: pixelated; border: 2px solid var(--line); }
+.game-card-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.game-card-body h3 { margin: 0; font-size: 18px; color: var(--text); text-transform: none; letter-spacing: 0; }
+.game-card-body .logline { margin: 0; font-size: 14px; line-height: 1.4; color: var(--text); }
+.game-card-body small { font-size: 13px; }
+.game-card-body .row { margin-top: auto; }
+.game-card .btn { text-decoration: none; }
+.badge { font-size: 12px; padding: 2px 8px; border: 1px solid var(--gold); color: var(--gold); }
+.my-games { display: flex; flex-direction: column; gap: 6px; }
+.my-game { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); }
+.my-game .btn { text-decoration: none; }
+.publish { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.publish small { font-size: 13px; }
+
 @media (max-width: 480px) {
   .site { padding-top: 20px; font-size: 16px; }
   .site h1 { font-size: 28px; }
   .site .row .btn { flex: 1 1 auto; }
+  .game-grid { grid-template-columns: 1fr; }
+  .site-nav { margin-top: -6px; }
 }

@@ -30,6 +30,13 @@ CREATE TABLE IF NOT EXISTS games (
 CREATE INDEX IF NOT EXISTS games_ip_created ON games (ip, created_at);
 """
 
+# Колонки, добавленные после первой версии базы: старые базы догоняются ALTER TABLE.
+MIGRATIONS = {
+    "owner_hash": "ALTER TABLE games ADD COLUMN owner_hash TEXT",
+    "published": "ALTER TABLE games ADD COLUMN published INTEGER NOT NULL DEFAULT 0",
+    "published_at": "ALTER TABLE games ADD COLUMN published_at REAL",
+}
+
 ACTIVE = ("queued", "outline", "locations", "items", "validate", "fix", "balance", "levels", "playtest")
 
 
@@ -41,14 +48,34 @@ class Storage:
         self._lock = threading.Lock()
         with self._lock:
             self._db.executescript(SCHEMA)
+            have = {r[1] for r in self._db.execute("PRAGMA table_info(games)")}
+            for col, sql in MIGRATIONS.items():
+                if col not in have:
+                    self._db.execute(sql)
+            self._db.execute("CREATE INDEX IF NOT EXISTS games_published ON games (published, published_at)")
+            self._db.commit()
 
-    def create(self, game_id: str, brief: str, ip: str, provider: str) -> None:
+    def create(self, game_id: str, brief: str, ip: str, provider: str, owner_hash: str | None = None) -> None:
         now = time.time()
         with self._lock, self._db:
             self._db.execute(
-                "INSERT INTO games (id, status, brief, ip, provider, created_at, updated_at) VALUES (?, 'queued', ?, ?, ?, ?, ?)",
-                (game_id, brief, ip, provider, now, now),
+                "INSERT INTO games (id, status, brief, ip, provider, owner_hash, created_at, updated_at) VALUES (?, 'queued', ?, ?, ?, ?, ?, ?)",
+                (game_id, brief, ip, provider, owner_hash, now, now),
             )
+
+    def set_published(self, game_id: str, published: bool) -> None:
+        with self._lock, self._db:
+            self._db.execute("UPDATE games SET published = ?, published_at = ? WHERE id = ?",
+                             (int(published), time.time() if published else None, game_id))
+
+    def list_published(self, limit: int) -> list[dict[str, Any]]:
+        """Опубликованные авторами готовые игры, новые первыми."""
+        with self._lock:
+            rows = self._db.execute(
+                "SELECT id, game, published_at FROM games WHERE published = 1 AND status = 'ready' ORDER BY published_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+        return [{"id": r["id"], "game": json.loads(r["game"]), "published_at": r["published_at"]} for r in rows]
 
     def update(self, game_id: str, **fields: Any) -> None:
         for key in ("preview", "game", "report", "warnings", "detail"):
