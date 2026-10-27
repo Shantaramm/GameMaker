@@ -1,6 +1,6 @@
 // Обёртка над HTTP API бэкенда (SPEC §10).
 
-import type { PortraitSpec } from "./types/game";
+import type { BackgroundSpec, CreatureSpec, PortraitSpec } from "./types/game";
 
 export class ApiError extends Error {}
 
@@ -57,6 +57,8 @@ export interface GameCard {
   locations: number;
   endings: number;
   characters: { id: string; name: string; role: string; appearance: PortraitSpec }[];
+  background: BackgroundSpec;
+  enemy: { id: string; name: string; appearance: PortraitSpec | CreatureSpec } | null;
   featured?: boolean;
   published_at?: number;
 }

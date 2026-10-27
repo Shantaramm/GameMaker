@@ -3,7 +3,10 @@
 import { api, ApiError, draft, type GameCard, mine, type Status } from "../api";
 import { publishToggle } from "../ui/publish";
 import demoGame from "../data/demo_game.json";
-import { portraitCanvas } from "../pixel/sprite";
+import { backgroundSeed, renderBackground } from "../pixel/background";
+import { library } from "../pixel/library";
+import { creatureMapFrames, portraitCanvas } from "../pixel/sprite";
+import type { Game } from "../types/game";
 import { FPS, walkerFrames } from "../pixel/walker";
 import { button, el, pixel } from "../ui/dom";
 import "../site.css";
@@ -223,26 +226,73 @@ export function mountProgress(root: HTMLElement, gameId: string): void {
 
 // --- каталог готовых игр ---
 
+const COVER_FRAME_MS = 520;
+
+/** Обложка игры: фон стартовой локации, герой с компаньоном и главный враг напротив. Кадр стойки — frame. */
+function drawCover(canvas: HTMLCanvasElement, c: GameCard, frame: number): void {
+  const ctx = canvas.getContext("2d")!;
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(renderBackgroundCached(c), 0, 0);
+  const { ref } = library.layout.walker;
+  const feet = 87;
+  const put = (img: HTMLCanvasElement, anchor: [number, number], x: number, flip: boolean) => {
+    const left = Math.round(x - (flip ? img.width - anchor[0] : anchor[0]));
+    const top = feet - anchor[1];
+    ctx.save();
+    if (flip) {
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, -left - img.width, top);
+    } else ctx.drawImage(img, left, top);
+    ctx.restore();
+  };
+  const [hero, companion] = c.characters;
+  if (companion) put(walkerFrames(companion.appearance, `cover:${c.id}:${companion.id}`).idle[(frame + 1) % 2], ref, 28, false);
+  put(walkerFrames(hero.appearance, `cover:${c.id}:${hero.id}`).idle[frame % 2], ref, 48, false);
+  if (c.enemy) {
+    const a = c.enemy.appearance;
+    if ("body" in a) {
+      const frames = creatureMapFrames(a, `cover:${c.id}:${c.enemy.id}`);
+      put(frames[frame % frames.length], [16, 31], 122, true);
+    } else put(walkerFrames(a, `cover:${c.id}:${c.enemy.id}`).idle[frame % 2], ref, 122, true);
+  }
+}
+
+const backgrounds = new Map<string, HTMLCanvasElement>();
+function renderBackgroundCached(c: GameCard): HTMLCanvasElement {
+  let bg = backgrounds.get(c.id);
+  if (!bg) backgrounds.set(c.id, (bg = renderBackground(c.background, backgroundSeed(c.id, "cover")).toCanvas()));
+  return bg;
+}
+
 function gameCard(c: GameCard, extra: Node | null = null): HTMLElement {
-  const faces = el("div", { className: "card-faces" }, ...c.characters.map((ch) =>
-    pixel(portraitCanvas(ch.appearance, "neutral", `card:${c.id}:${ch.id}`), ch.role === "hero" ? 2 : 1)));
+  const { w, h } = library.layout.background;
+  const canvas = el("canvas", { className: "cover-art", width: w, height: h });
+  let frame = 0;
+  drawCover(canvas, c, frame);
+  const timer = window.setInterval(() => {
+    if (!canvas.isConnected && frame > 0) return window.clearInterval(timer);
+    drawCover(canvas, c, ++frame);
+  }, COVER_FRAME_MS);
   const meta = [c.est_minutes ? `≈${c.est_minutes} мин` : "", `${c.locations} локаций`, c.endings > 1 ? `${c.endings} концовки` : ""].filter(Boolean).join(" · ");
-  const play = el("a", { className: "btn btn-primary", href: `/play/${c.id}`, textContent: "Играть ▸" });
-  return el("article", { className: "game-card" }, faces,
+  const cover = el("a", { className: "cover", href: `/play/${c.id}` }, canvas,
+    el("div", { className: "cover-title" }, el("h3", { textContent: c.title }), c.tone ? el("small", { textContent: c.tone }) : null));
+  return el("article", { className: "game-card" }, cover,
     el("div", { className: "game-card-body" },
-      el("h3", { textContent: c.title }),
       el("p", { className: "logline", textContent: c.logline }),
-      el("small", { className: "muted", textContent: [c.tone, meta].filter(Boolean).join(" · ") }),
-      el("div", { className: "row" }, play, extra)));
+      el("small", { className: "muted", textContent: meta }),
+      el("div", { className: "row" }, el("a", { className: "btn btn-primary", href: `/play/${c.id}`, textContent: "Играть ▸" }), extra)));
 }
 
 /** Карточка демо-игры из бандла — каталог работает, даже если сервер недоступен. */
 function demoCard(): GameCard {
-  const g = demoGame as unknown as { meta: { title: string; logline: string; tone: string; est_minutes: number }; locations: unknown[]; endings: unknown[]; hero: GameCard["characters"][number]; characters: GameCard["characters"] };
-  const companion = g.characters.find((c) => c.role === "companion");
+  const g = demoGame as unknown as Game;
+  const companion = (g.characters ?? []).find((c) => c.role === "companion");
+  const boss = [...(g.enemies ?? [])].sort((a, b) => b.tier - a.tier)[0];
   return {
     id: "demo", title: g.meta.title, logline: g.meta.logline, tone: g.meta.tone, est_minutes: g.meta.est_minutes,
-    locations: g.locations.length, endings: g.endings.length, characters: [g.hero, ...(companion ? [companion] : [])], featured: true,
+    locations: g.locations.length, endings: g.endings.length, characters: [g.hero, ...(companion ? [companion] : [])],
+    background: g.locations.find((l) => l.id === g.start_location)!.background,
+    enemy: boss ? { id: boss.id, name: boss.name, appearance: boss.appearance } : null, featured: true,
   };
 }
 

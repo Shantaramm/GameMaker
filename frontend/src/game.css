@@ -49,7 +49,7 @@ canvas.map { display: block; image-rendering: pixelated; touch-action: none; cur
 .bar-hp .bar-fill { background: var(--hp); }
 .bar-focus .bar-fill { background: var(--focus); }
 .bar-xp .bar-fill { background: var(--xp); }
-.bar-text { position: absolute; inset: -2px 0 0; font-family: var(--font-pixel); font-size: 11px; line-height: 14px; text-align: center; text-shadow: 1px 1px 0 #000; }
+.bar-text { position: absolute; inset: -2px 0 0; font-family: var(--font-text); font-weight: 600; font-size: 11px; line-height: 14px; text-align: center; text-shadow: 1px 1px 0 #000; }
 
 /* HUD */
 .hud {

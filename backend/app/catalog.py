@@ -24,11 +24,16 @@ def featured_game(game_id: str) -> dict[str, Any] | None:
 
 
 def card(game_id: str, game: dict[str, Any], **extra: Any) -> dict[str, Any]:
-    """Что нужно карточке: название, логлайн, длительность, герой и компаньон с внешностью."""
+    """Что нужно карточке: название, логлайн, длительность, герой и компаньон, фон стартовой локации, главный враг."""
     meta = game["meta"]
     companion = next((c for c in game.get("characters", []) if c["role"] == "companion"), None)
     people = [game["hero"], *([companion] if companion else [])]
+    start = next(loc for loc in game["locations"] if loc["id"] == game["start_location"])
+    # обложка: герои на фоне стартовой локации лицом к самому сильному врагу игры
+    boss = max(game.get("enemies", []), key=lambda e: e["tier"], default=None)
     return {
+        "background": start["background"],
+        "enemy": {"id": boss["id"], "name": boss["name"], "appearance": boss["appearance"]} if boss else None,
         "id": game_id, "title": meta["title"], "logline": meta.get("logline", ""), "tone": meta.get("tone", ""),
         "est_minutes": meta.get("est_minutes"), "locations": len(game["locations"]), "endings": len(game["endings"]),
         "characters": [{"id": c["id"], "name": c["name"], "role": c["role"], "appearance": c["appearance"]} for c in people],

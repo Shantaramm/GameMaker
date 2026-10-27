@@ -105,6 +105,7 @@ def test_catalog_has_featured_games_and_serves_them(client):
     postman = body["featured"][1]
     assert postman["title"] == "Последнее письмо перед снегом" and postman["locations"] == 5
     assert [c["role"] for c in postman["characters"]] == ["hero", "companion"]
+    assert postman["background"]["far"] == "mountains" and postman["enemy"]["id"] == "yakov_boss"
     assert body["community"] == []
     game = client.get("/api/games/postman").json()
     assert game["arenas"] and game["levels"] and game["meta"]["title"] == postman["title"]
