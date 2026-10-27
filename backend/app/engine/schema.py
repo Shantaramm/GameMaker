@@ -252,6 +252,13 @@ class Meta(Strict):
     est_minutes: int = Field(ge=1, le=120)
 
 
+class CompanionCombat(Strict):
+    """Как компаньон сражается в тактическом бою (§5.9); статы считает код от статов героя."""
+
+    style: Literal["melee", "ranged", "support"] = "melee"
+    skills: list[Id] = Field(default_factory=list, max_length=3)
+
+
 class Character(Strict):
     id: Id
     name: str = Field(min_length=1, max_length=60)
@@ -260,6 +267,7 @@ class Character(Strict):
     appearance: PortraitSpec
     # Только для компаньона: с какого момента он следует за героем; None — с начала игры.
     joins: Condition | None = None
+    combat: CompanionCombat | None = None
 
 
 class Stats(Strict):
@@ -293,6 +301,7 @@ class EquipBonus(Strict):
 class Equip(Strict):
     slot: Slot
     bonus: EquipBonus
+    range: int = Field(default=1, ge=1, le=4)  # только hand: дальность атаки в бою
 
 
 class Item(Strict):
@@ -320,6 +329,7 @@ class Enemy(Strict):
     tier: int = Field(ge=1, le=5)
     appearance: EnemyAppearance
     abilities: list[EnemyAbility] = Field(default_factory=list, max_length=2)
+    range: int = Field(default=1, ge=1, le=4)  # дальность атаки в бою
     # Заполняет balance.py, не LLM.
     hp: int | None = Field(default=None, ge=1)
     attack: int | None = Field(default=None, ge=0)
@@ -347,6 +357,24 @@ class Quest(Strict):
     giver: Id | None = None
     start: Condition | None = None  # когда квест появляется в журнале; None — с начала игры
     stages: list[QuestStage] = Field(min_length=1)
+
+
+class Tactic(Strict):
+    """Тактический приём, который покупается прямо в бою за кураж или золото (§5.9)."""
+
+    id: Id
+    name: str = Field(min_length=1, max_length=60)
+    description: str = Field(max_length=300)
+    icon: Id
+    currency: Literal["points", "gold"] = "points"
+    tier: int = Field(default=1, ge=1, le=3)
+    target: Literal["unit", "party", "enemies"] = "unit"
+    effect: list[Effect] = Field(default_factory=list)
+    duration: int = Field(default=1, ge=1, le=3)
+    move_bonus: int = Field(default=0, ge=0, le=3)
+    unlock: Condition | None = None
+    # Заполняет balance.py.
+    cost: int | None = Field(default=None, ge=0)
 
 
 class FlagDef(Strict):
@@ -546,6 +574,23 @@ class LevelSpawn(Strict):
     x: int
 
 
+class ArenaProp(Strict):
+    x: int = Field(ge=0)
+    y: int = Field(ge=0)
+    id: Id
+
+
+class Arena(Strict):
+    """Поле тактического боя (§5.9). Строит arenas.py, не LLM."""
+
+    width: int = Field(ge=3, le=12)
+    height: int = Field(ge=3, le=12)
+    cells: list[str]  # "0".."2" — высота клетки, "#" — препятствие
+    props: list[ArenaProp] = Field(default_factory=list)
+    party: list[tuple[int, int]]
+    enemies: list[tuple[int, int]]
+
+
 class Level(Strict):
     width: int
     height: int
@@ -579,6 +624,7 @@ class Game(Strict):
     items: list[Item] = Field(default_factory=list)
     enemies: list[Enemy] = Field(default_factory=list)
     shops: list[Shop] = Field(default_factory=list)
+    tactics: list[Tactic] = Field(default_factory=list)
     quests: list[Quest] = Field(default_factory=list)
     flags: list[FlagDef] = Field(default_factory=list)
     locations: list[Location] = Field(min_length=1)
@@ -586,6 +632,8 @@ class Game(Strict):
     endings: list[Ending] = Field(min_length=1)
     # Заполняет levels.py.
     levels: dict[str, Level] = Field(default_factory=dict)
+    # Заполняет arenas.py: поле боя для каждого врага на карте (ключ — id объекта enemy).
+    arenas: dict[str, Arena] = Field(default_factory=dict)
 
     def dump(self) -> dict[str, Any]:
         return self.model_dump(mode="json", by_alias=True, exclude_none=True)
@@ -594,7 +642,7 @@ class Game(Strict):
         return next(loc for loc in self.locations if loc.id == location_id)
 
 
-for _model in (CondAll, CondAny, CondNot, Character):
+for _model in (CondAll, CondAny, CondNot, Character, Tactic):
     _model.model_rebuild()
 
 

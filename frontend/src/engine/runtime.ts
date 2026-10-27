@@ -2,7 +2,7 @@
 // С интерфейсом общается через GameUI: каждое окно — промис, который разрешается, когда игрок его закрыл.
 
 import type { Ending, Shop } from "../types/game";
-import { Battle } from "./battle";
+import { type Battle, pyRound, REST_HEAL, rewards, startBattle } from "./tactics";
 import { check, describe } from "./conditions";
 import { applyStoryEffects, gainXp } from "./effects";
 import { spawnFor } from "./pathfinding";
@@ -214,12 +214,15 @@ export class GameController {
 
   /** Бой; возвращает цель goto, "fled" или "over" (поражение / конец). */
   private async fight(obj: Extract<MapObject, { type: "enemy" }>): Promise<string | null | "fled" | "over"> {
-    const battle = new Battle(obj, this.state, this.world, this.random);
+    const battle = startBattle(obj, this.state, this.world, this.random);
     const result = await this.ui.battle(battle);
+    const hero = battle.hero();
+    this.state.hp = Math.max(result === "lose" ? 0 : 1, hero.hp);
+    if (result === "win") this.state.hp = Math.min(hero.maxHp, this.state.hp + pyRound(hero.maxHp * REST_HEAL));
     if (result === "fled") return "fled";
     if (result === "win") {
       this.state.defeated.push(obj.id);
-      const { xp, gold } = battle.rewards();
+      const { xp, gold } = rewards(obj, this.world);
       this.state.gold += gold;
       const levels = gainXp(this.state, xp, this.world);
       const res = applyStoryEffects(obj.on_win as Effect[], this.state, this.world);

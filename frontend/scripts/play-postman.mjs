@@ -54,7 +54,7 @@ const fight = async (foe) => {
   await g.idle();
 };
 try {
-  await page.goto(`${BASE}/play/${id}`);
+  await page.goto(`${BASE}/play/${id}?seed=${process.env.SEED ?? "postman"}`);
   await page.waitForSelector(".screen h1");
   check((await page.locator(".screen h1").textContent()) === "Последнее письмо перед снегом", "титул");
   await g.shot("title");

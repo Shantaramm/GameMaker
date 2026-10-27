@@ -74,6 +74,8 @@ try {
   await shot(page, "3-progress");
   await page.getByRole("button", { name: "Играть ▸" }).click({ timeout: 60000 });
   await page.waitForURL(`**/play/${gameId}`);
+  // та же игра с фиксированным сидом: бои детерминированы, а ссылка «Поделиться» query не содержит
+  await page.goto(`${BASE}/play/${gameId}?seed=site`);
 
   // игра → концовка
   await page.getByRole("button", { name: "Начать" }).click();

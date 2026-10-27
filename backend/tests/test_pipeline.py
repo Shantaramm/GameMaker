@@ -192,7 +192,7 @@ def test_relay_transcript_replays_with_targeted_fix():
     assert steps == ["outline", "location:village", "location:headman_house", "location:trail",
                      "location:outpost", "location:pass", "items", "fix:outline"]
     assert "quests[2].stages[0].done" in llm.calls[-1][1][-1]["content"]
-    assert result.report.passed and set(result.report.endings) == {"ending_open", "ending_letter"}
+    assert result.report.passed and "ending_letter" in result.report.endings
     assert result.report.quests_completed["vera_salt"] > 0
     assert split_brief((RELAY_DIR / "brief.md").read_text(encoding="utf-8"))[1]
 

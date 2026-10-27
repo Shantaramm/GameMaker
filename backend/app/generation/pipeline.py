@@ -120,9 +120,9 @@ class Pipeline:
         await self.status("locations", 0.7, done=len(plans), total=len(plans))
 
         await self.status("items", 0.75)
-        refs = referenced_ids(self.contents)
+        refs = referenced_ids(self.contents, self.outline)
         system = render("items", brief=self.brief, referenced=_json(refs), catalog=self.catalog, schema=_json(fragment_schema(ItemsContent)))
-        self.items = await self.fragment("items", ItemsContent, system, "Опиши предметы, навыки и магазины.", quality="fast")
+        self.items = await self.fragment("items", ItemsContent, system, "Опиши предметы, навыки, магазины и тактики.", quality="fast")
 
         return await self.check_and_playtest()
 
@@ -222,7 +222,7 @@ class Pipeline:
             for loc_id, content in self.contents.items():
                 if any(e.id == enemy_id for e in content.enemies):
                     return [f"location:{loc_id}"]
-        if re.match(r"(items|skills|shops|start_)", path):
+        if re.match(r"(items|skills|shops|tactics|start_)", path):
             return ["items"]
         return ["outline"]
 

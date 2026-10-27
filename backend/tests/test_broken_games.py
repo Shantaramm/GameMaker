@@ -273,3 +273,23 @@ def test_quest_stage_on_item_that_is_taken_away(demo):
     obj(demo, "alley", "net_crates")["contents"].append({"take_item": "ledger"})
     msg = error_paths(demo)["quests[0].stages[0].done"]
     assert "'ledger'" in msg and "take_item" in msg
+
+
+def test_tactic_and_companion_combat_refs(demo):
+    demo["tactics"] = [{"id": "t_bad", "name": "Сигнал", "description": "", "icon": "no_such_icon", "target": "enemies",
+                        "effect": [{"heal": 5}], "unlock": {"flag": "nope", "is": True}}]
+    tim = next(c for c in demo["characters"] if c["role"] == "companion")
+    tim["combat"] = {"style": "ranged", "skills": ["no_skill"]}
+    errors = error_paths(demo)
+    assert "tactics[0].effect[0]" in errors
+    assert "tactics[0].unlock.flag" in errors
+    assert "tactics[0].icon" in errors
+    ti = next(i for i, c in enumerate(demo["characters"]) if c["role"] == "companion")
+    assert f"characters[{ti}].combat.skills[0]" in errors
+
+
+def test_range_only_on_hand_items(demo):
+    item = next(i for i in demo["items"] if i.get("equip", {}).get("slot") == "body")
+    item["equip"]["range"] = 3
+    idx = demo["items"].index(item)
+    assert f"items[{idx}].equip.range" in error_paths(demo)

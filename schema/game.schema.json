@@ -1,5 +1,99 @@
 {
   "$defs": {
+    "Arena": {
+      "additionalProperties": false,
+      "description": "Поле тактического боя (§5.9). Строит arenas.py, не LLM.",
+      "properties": {
+        "width": {
+          "maximum": 12,
+          "minimum": 3,
+          "type": "integer"
+        },
+        "height": {
+          "maximum": 12,
+          "minimum": 3,
+          "type": "integer"
+        },
+        "cells": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "props": {
+          "items": {
+            "$ref": "#/$defs/ArenaProp"
+          },
+          "type": "array"
+        },
+        "party": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "enemies": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "cells",
+        "party",
+        "enemies"
+      ],
+      "title": "Arena",
+      "type": "object"
+    },
+    "ArenaProp": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "y": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "id"
+      ],
+      "title": "ArenaProp",
+      "type": "object"
+    },
     "BackgroundProp": {
       "additionalProperties": false,
       "properties": {
@@ -157,6 +251,17 @@
                   "$ref": "#/$defs/CondDefeated"
                 }
               ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "combat": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompanionCombat"
             },
             {
               "type": "null"
@@ -457,6 +562,32 @@
         "text"
       ],
       "title": "ChoiceOption",
+      "type": "object"
+    },
+    "CompanionCombat": {
+      "additionalProperties": false,
+      "description": "Как компаньон сражается в тактическом бою (§5.9); статы считает код от статов героя.",
+      "properties": {
+        "style": {
+          "default": "melee",
+          "enum": [
+            "melee",
+            "ranged",
+            "support"
+          ],
+          "type": "string"
+        },
+        "skills": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "type": "array"
+        }
+      },
+      "title": "CompanionCombat",
       "type": "object"
     },
     "CondAll": {
@@ -1185,6 +1316,12 @@
           "maxItems": 2,
           "type": "array"
         },
+        "range": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "type": "integer"
+        },
         "hp": {
           "anyOf": [
             {
@@ -1328,6 +1465,12 @@
         },
         "bonus": {
           "$ref": "#/$defs/EquipBonus"
+        },
+        "range": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "type": "integer"
         }
       },
       "required": [
@@ -2642,6 +2785,162 @@
       "title": "Stats",
       "type": "object"
     },
+    "Tactic": {
+      "additionalProperties": false,
+      "description": "Тактический приём, который покупается прямо в бою за кураж или золото (§5.9).",
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "type": "string"
+        },
+        "icon": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "currency": {
+          "default": "points",
+          "enum": [
+            "points",
+            "gold"
+          ],
+          "type": "string"
+        },
+        "tier": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "target": {
+          "default": "unit",
+          "enum": [
+            "unit",
+            "party",
+            "enemies"
+          ],
+          "type": "string"
+        },
+        "effect": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "duration": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "move_bonus": {
+          "default": 0,
+          "maximum": 3,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unlock": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "icon"
+      ],
+      "title": "Tactic",
+      "type": "object"
+    },
     "Thing": {
       "additionalProperties": false,
       "properties": {
@@ -2861,6 +3160,12 @@
       },
       "type": "array"
     },
+    "tactics": {
+      "items": {
+        "$ref": "#/$defs/Tactic"
+      },
+      "type": "array"
+    },
     "quests": {
       "items": {
         "$ref": "#/$defs/Quest"
@@ -2895,6 +3200,12 @@
     "levels": {
       "additionalProperties": {
         "$ref": "#/$defs/Level"
+      },
+      "type": "object"
+    },
+    "arenas": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Arena"
       },
       "type": "object"
     }

@@ -14,13 +14,15 @@ from .world import location_depth
 HERO_STATS = s.Stats(hp=60, attack=9, defense=4, focus=6)
 START_GOLD = 15
 
-# tier → (hp, attack, defense)
+# tier → (hp, attack, defense). В тактическом бою (§5.9) отряд сильнее одиночного героя
+# (компаньоны, фланги, кураж), поэтому HP ×1.5 и атака ×1.05 к версии 2: бой длится 4–6 раундов,
+# а герой без компаньона, идущий напролом, проходит демо-игру, если играет с умом.
 ENEMY_TIER_STATS: dict[int, tuple[int, int, int]] = {
-    1: (16, 7, 1),
-    2: (22, 8, 2),
-    3: (32, 10, 3),
-    4: (44, 12, 5),
-    5: (60, 14, 7),
+    1: (24, 7, 1),
+    2: (33, 8, 2),
+    3: (48, 10, 3),
+    4: (66, 13, 5),
+    5: (90, 15, 7),
 }
 XP_BY_TIER = {1: 12, 2: 20, 3: 32, 4: 48, 5: 70}
 GOLD_BY_TIER = {1: 6, 2: 10, 3: 16, 4: 24, 5: 34}
@@ -45,6 +47,21 @@ PROGRESSION = s.Progression(
 
 PRICE_BY_TIER = {1: 10, 2: 22, 3: 40, 4: 65, 5: 100}
 SELL_RATE = 0.5
+
+# Тактики в бою (§5.9): цена по tier в кураже или золоте.
+TACTIC_POINTS_BY_TIER = {1: 2, 2: 4, 3: 6}
+TACTIC_GOLD_BY_TIER = {1: 8, 2: 16, 3: 28}
+# Базовые тактики есть в каждой игре; тактики игры их дополняют.
+BASE_TACTICS = [
+    s.Tactic(id="base_focus", name="Сосредоточиться", description="Атака бойца +3 до конца следующего хода врагов.",
+             icon="dagger", tier=1, target="unit", effect=[s.EffModStat(mod_stat="attack", delta=3)], duration=1),
+    s.Tactic(id="base_dash", name="Рывок", description="Боец пройдёт на 2 клетки дальше в этот ход.",
+             icon="boots", tier=1, target="unit", move_bonus=2),
+    s.Tactic(id="base_guard", name="Сомкнуть ряды", description="Защита всего отряда +2 до следующего хода.",
+             icon="shield", tier=2, target="party", effect=[s.EffModStat(mod_stat="defense", delta=2)], duration=1),
+    s.Tactic(id="base_second_wind", name="Второе дыхание", description="Боец восстанавливает 12 здоровья.",
+             icon="herb", tier=2, target="unit", effect=[s.EffHeal(heal=12)]),
+]
 
 
 def equip_cap(tier: int) -> s.EquipBonus:
@@ -97,6 +114,12 @@ def apply_balance(game: s.Game) -> s.Game:
                 s.EffDamage(damage=min(e.damage, cap)) if isinstance(e, s.EffDamage) else e
                 for e in ability.effect
             ]
+
+    have = {t.id for t in game.tactics}
+    game.tactics = [t.model_copy(deep=True) for t in BASE_TACTICS if t.id not in have] + game.tactics
+    for tactic in game.tactics:
+        table = TACTIC_POINTS_BY_TIER if tactic.currency == "points" else TACTIC_GOLD_BY_TIER
+        tactic.cost = table[tactic.tier]
 
     for item in game.items:
         item.price = PRICE_BY_TIER[item.value_tier]

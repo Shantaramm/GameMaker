@@ -36,6 +36,9 @@ EFFECTS_BY_CONTEXT: dict[str, set[type]] = {
     "skill_self": {s.EffHeal, s.EffModStat},
     "item": {s.EffHeal, s.EffDamage, s.EffModStat},
     "ability": {s.EffDamage, s.EffHeal, s.EffModStat},
+    "tactic_unit": {s.EffHeal, s.EffModStat},
+    "tactic_party": {s.EffHeal, s.EffModStat},
+    "tactic_enemies": {s.EffDamage, s.EffModStat},
 }
 BATTLE_ONLY_STATS = {"attack", "defense"}  # mod_stat в навыках и способностях врага
 
@@ -139,6 +142,7 @@ class _Checker:
             ("предметов", [(format_path("items", i), x.id) for i, x in enumerate(g.items)]),
             ("врагов", [(format_path("enemies", i), x.id) for i, x in enumerate(g.enemies)]),
             ("магазинов", [(format_path("shops", i), x.id) for i, x in enumerate(g.shops)]),
+            ("тактик", [(format_path("tactics", i), x.id) for i, x in enumerate(g.tactics)]),
             ("квестов", [(format_path("quests", i), x.id) for i, x in enumerate(g.quests)]),
             ("флагов", [(format_path("flags", i), x.id) for i, x in enumerate(g.flags)]),
             ("локаций и концовок", [(format_path("locations", i), x.id) for i, x in enumerate(g.locations)]
@@ -243,6 +247,11 @@ class _Checker:
             if c.joins is not None and c.role != "companion":
                 self.error(format_path(path, "joins"), "joins задаётся только компаньону")
             self.check_condition(c.joins, format_path(path, "joins"))
+            if c.combat is not None:
+                if c.role != "companion":
+                    self.error(format_path(path, "combat"), "combat задаётся только компаньону")
+                for j, k in enumerate(c.combat.skills):
+                    self.ref(k, self.skills, format_path(path, "combat", "skills", j), "навык")
         companions = [i for i, c in enumerate(g.characters) if c.role == "companion"]
         for i in companions[1:]:
             self.error(format_path("characters", i, "role"), "компаньон может быть только один")
@@ -286,9 +295,17 @@ class _Checker:
                 self.error(format_path(path, "effect"), "у расходуемого предмета (consumable) должен быть effect")
             if item.kind in ("key", "misc", "equipment") and item.effect:
                 self.error(format_path(path, "effect"), f"у предмета kind={item.kind} не бывает effect: его нельзя «использовать»")
+            if item.equip is not None and item.equip.slot != "hand" and item.equip.range != 1:
+                self.error(format_path(path, "equip", "range"), "дальность (range) бывает только у предмета в руке (slot: hand)")
         for i, enemy in enumerate(g.enemies):
             for j, ability in enumerate(enemy.abilities):
                 self.check_effects(ability.effect, format_path("enemies", i, "abilities", j, "effect"), "ability")
+        for i, t in enumerate(g.tactics):
+            path = format_path("tactics", i)
+            self.check_effects(t.effect, format_path(path, "effect"), f"tactic_{t.target}")
+            self.check_condition(t.unlock, format_path(path, "unlock"))
+            if not t.effect and not t.move_bonus:
+                self.error(format_path(path, "effect"), "тактика ничего не делает: нужен effect или move_bonus")
 
     def check_shops_and_quests(self) -> None:
         g = self.game

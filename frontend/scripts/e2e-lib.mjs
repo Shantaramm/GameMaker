@@ -93,55 +93,103 @@ export function helpers(page, name, base, shotsDir = null) {
       }
       throw new Error(`не удалось дотянуться до ${objectId}`);
     },
-    /** Бой как у бота симулятора: лечение при HP < 30%, иначе навык, иначе атака. */
+    /**
+     * Тактический бой через интерфейс: за каждого бойца — выбрать его, подойти (спина → фланг → ближе, как бот
+     * симулятора), при кураже купить «Сосредоточиться», ударить; лечиться при HP < 30%; затем «Конец хода».
+     */
     async fight() {
       await page.waitForSelector(".battle:not(.hidden)", { timeout: 20000 });
+      await page.waitForFunction(() => window.__battle, null, { timeout: 20000 });
       await g.shot("battle");
-      const deadline = Date.now() + 180_000; // анимация хода тоже идёт в зачёт, поэтому лимит по времени, а не по ходам
+      const ready = () => page.waitForFunction(() => window.__battle && !window.__battle.busy(), null, { timeout: 60000 });
+      const btn = (text) => page.locator(".battle-actions .btn", { hasText: text });
+      const plan = () => page.evaluate(() => {
+        const { battle: b, pointFor } = window.__battle;
+        const u = b.aliveParty().find((p) => b.canAct(p));
+        if (!u) return null;
+        const dist = (f) => b.field.pathDist(u.pos, f.pos) ?? 1000 + Math.abs(u.pos[0] - f.pos[0]) + Math.abs(u.pos[1] - f.pos[1]);
+        const foes = b.aliveEnemies().sort((a, c) => dist(a) - dist(c) || a.hp - c.hp);
+        const target = foes[0];
+        // навык — если хватает фокуса и он сильнее обычной атаки (как play_party_turn в simulator)
+        const skills = window.__rpg.controller.world.skills;
+        const dmgOf = (k) => (k.effect ?? []).reduce((s, e) => s + (e.damage ?? 0), 0);
+        const strikes = u.skills.map((id) => skills.get(id)).filter((k) => k && k.target === "enemy" && dmgOf(k) > 0 && k.cost_focus <= u.focus);
+        const best = strikes.sort((a, c) => dmgOf(c) - dmgOf(a))[0];
+        const plain = Math.max(1, u.attack - Math.floor(target.defense / 2));
+        const skill = best && dmgOf(best) > plain ? best.name : null;
+        const reach = skill ? 3 : u.range;
+        const cell = u.moved ? u.pos : b.bestCell(u, target, reach);
+        const near = Math.abs(cell[0] - target.pos[0]) + Math.abs(cell[1] - target.pos[1]) <= reach;
+        const focus = b.tactics.find((t) => t.id === "base_focus");
+        return {
+          id: u.id, index: b.party.indexOf(u), low: u.hp < u.maxHp * 0.3, near, skill,
+          unit: pointFor(u.pos), move: cell[0] !== u.pos[0] || cell[1] !== u.pos[1] ? pointFor(cell) : null,
+          target: target.id, tactic: !!focus && near && b.tacticOk(u, focus),
+        };
+      });
+      const targetPoint = (id) => page.evaluate((id) => {
+        const { battle: b, pointFor } = window.__battle;
+        const t = b.enemies.find((e) => e.id === id);
+        return t && t.hp > 0 ? pointFor(t.pos) : null;
+      }, id);
+      const deadline = Date.now() + 300_000;
       while (Date.now() < deadline) {
-        const cont = page.getByRole("button", { name: "Продолжить" });
-        if (await cont.isVisible()) {
+        await ready();
+        if (await page.evaluate(() => window.__battle.finished())) {
           const won = await visible(".battle-result.win");
-          await cont.click();
+          if (process.env.E2E_BATTLE_LOG) console.log((await page.evaluate(() => window.__battle.battle.log.filter((e) => e.text).map((e) => e.text))).join("\n"));
+          await page.getByRole("button", { name: "Продолжить" }).click();
           return won;
         }
-        const attack = page.locator(".battle-actions .btn", { hasText: "Атака" });
-        if (!(await attack.isVisible()) || (await attack.isDisabled())) {
-          await page.waitForTimeout(120);
+        const p = await plan();
+        if (!p) {
+          await btn("Конец хода").click();
           continue;
         }
-        const low = await page.evaluate(() => {
-          const c = window.__rpg.controller;
-          return c.state.hp < 0.3 * (c.state.maxHp + 5);
-        });
-        const btn = (text) => page.locator(".battle-actions .btn", { hasText: text });
-        const firstEnabled = async () => {
-          for (const b of await page.locator(".battle-actions .btn:not(.btn-ghost)").all()) if (await b.isEnabled()) return b;
-          return null;
-        };
-        try {
-          // бой мог закончиться между проверкой и кликом — тогда подменю не появится, начинаем заново
-          // лечение: первый предмет в сумке (в бою доступны только расходники); иначе первый доступный навык; иначе атака
-          const items = btn("Предмет");
-          if (low && (await items.isEnabled())) {
-            await items.click({ timeout: 1500 });
-            const it = await firstEnabled();
-            if (it) await it.click({ timeout: 1500 });
-          } else if (await btn("Навык").isEnabled()) {
-            await btn("Навык").click({ timeout: 1500 });
-            const sk = await firstEnabled();
-            if (sk) await sk.click({ timeout: 1500 });
-            else {
-              await btn("Назад").click({ timeout: 1500 });
-              await btn("Атака").click({ timeout: 1500 });
-            }
-          } else {
-            await btn("Атака").click({ timeout: 1500 });
-          }
-        } catch {
-          // окно боя сменилось — следующая итерация разберётся
+        if (p.unit) await page.mouse.click(p.unit.x, p.unit.y);
+        await ready();
+        if ((await page.evaluate(() => window.__battle.selected())) !== p.id) {
+          // фигуру закрыл холм или сосед — выбираем бойца кнопкой в шапке, как сделал бы игрок
+          await page.locator(".party-chips .chip").nth(p.index).click();
+          await ready();
         }
-        await page.waitForTimeout(150);
+        if (p.low && (await btn("Предмет").isEnabled())) {
+          await btn("Предмет").click();
+          const heal = page.locator(".battle-actions .btn:not(.btn-ghost)").first();
+          await heal.click();
+          await ready();
+          if (await page.locator(".battle-actions .hint").isVisible()) await btn("Назад").click(); // это бомба, а не лечение
+          else continue;
+        }
+        if (p.move) {
+          await page.mouse.click(p.move.x, p.move.y);
+          await ready();
+        }
+        if (p.tactic && (await btn("Тактика").isEnabled())) {
+          await btn("Тактика").click();
+          const focus = page.locator(".tactic", { hasText: "Сосредоточиться" });
+          if (await focus.isEnabled()) await focus.click();
+          else await btn("Назад").click();
+          await ready();
+        }
+        const t = await targetPoint(p.target);
+        const acted = await page.evaluate((id) => !window.__battle.battle.party.find((u) => u.id === id).acted, p.id);
+        if (t && acted && p.near) {
+          if (p.skill && (await btn("Навык").isEnabled())) {
+            await btn("Навык").click();
+            const skill = page.locator(".battle-actions .btn", { hasText: p.skill });
+            if (await skill.isEnabled()) await skill.click();
+            else await btn("Назад").click();
+          }
+          await page.mouse.click(t.x, t.y);
+          await ready();
+        }
+        const still = await page.evaluate((id) => window.__battle && window.__battle.battle.canAct(window.__battle.battle.party.find((u) => u.id === id)), p.id);
+        if (process.env.E2E_DEBUG) console.log("plan", JSON.stringify({ ...p, unit: undefined, move: !!p.move }), "selected", await page.evaluate(() => window.__battle?.selected()), "still", still);
+        if (still) {
+          if (await page.locator(".tactics").isVisible()) await btn("Назад").click();
+          await btn("Защита").click();
+        }
       }
       throw new Error("бой не закончился");
     },

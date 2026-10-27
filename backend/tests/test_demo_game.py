@@ -21,9 +21,9 @@ def test_demo_passes_playtest(demo):
 
     assert report.passed, [str(i) for i in report.issues]
     assert set(report.endings) == {"ending_dawn", "ending_fog"}
-    assert report.ending_rate == 1.0
-    assert all(b.fights == report.runs and b.win_rate >= 0.7 for b in report.battles)
-    assert report.quests_completed["light_the_lamp"] == report.runs
+    assert report.ending_rate >= 0.7  # бои тактические: поражения возможны, но каждый бой выигрывается в ≥70%
+    assert all(b.fights and b.win_rate >= 0.7 for b in report.battles)
+    assert report.quests_completed["light_the_lamp"] == report.outcomes.get("ending:ending_fog", 0) + report.outcomes.get("ending:ending_dawn", 0)
     assert report.quests_completed.get("marfa_nets", 0) > 0
     assert report.avg_final_level > 1
 

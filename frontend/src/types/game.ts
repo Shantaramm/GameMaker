@@ -20,6 +20,7 @@ export interface Game {
   items?: Item[];
   enemies?: Enemy[];
   shops?: Shop[];
+  tactics?: Tactic[];
   quests?: Quest[];
   flags?: FlagDef[];
   /**
@@ -33,6 +34,9 @@ export interface Game {
   endings: [Ending, ...Ending[]];
   levels?: {
     [k: string]: Level;
+  };
+  arenas?: {
+    [k: string]: Arena;
   };
 }
 /**
@@ -58,6 +62,7 @@ export interface Character {
   description: string;
   appearance: PortraitSpec;
   joins?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  combat?: CompanionCombat | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -161,6 +166,19 @@ export interface CondLevel {
  */
 export interface CondDefeated {
   defeated: string;
+}
+/**
+ * Как компаньон сражается в тактическом бою (§5.9); статы считает код от статов героя.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CompanionCombat".
+ */
+export interface CompanionCombat {
+  style?: "melee" | "ranged" | "support";
+  /**
+   * @maxItems 3
+   */
+  skills?: string[];
 }
 /**
  * Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме.
@@ -338,6 +356,7 @@ export interface Item {
 export interface Equip {
   slot: "hand" | "body" | "trinket";
   bonus: EquipBonus;
+  range?: number;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -363,6 +382,7 @@ export interface Enemy {
    * @maxItems 2
    */
   abilities?: EnemyAbility[];
+  range?: number;
   hp?: number | null;
   attack?: number | null;
   defense?: number | null;
@@ -432,6 +452,37 @@ export interface Shop {
    */
   items: [string, ...string[]];
   buys?: boolean;
+}
+/**
+ * Тактический приём, который покупается прямо в бою за кураж или золото (§5.9).
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Tactic".
+ */
+export interface Tactic {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  currency?: "points" | "gold";
+  tier?: number;
+  target?: "unit" | "party" | "enemies";
+  effect?: (
+    | EffSetFlag
+    | EffGiveItem
+    | EffTakeItem
+    | EffGiveGold
+    | EffTakeGold
+    | EffLearnSkill
+    | EffModStat
+    | EffHeal
+    | EffDamage
+    | EffGoto
+  )[];
+  duration?: number;
+  move_bonus?: number;
+  unlock?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  cost?: number | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -805,4 +856,27 @@ export interface LevelSpawn {
   from: string;
   floor: number;
   x: number;
+}
+/**
+ * Поле тактического боя (§5.9). Строит arenas.py, не LLM.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Arena".
+ */
+export interface Arena {
+  width: number;
+  height: number;
+  cells: string[];
+  props?: ArenaProp[];
+  party: [unknown, unknown][];
+  enemies: [unknown, unknown][];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "ArenaProp".
+ */
+export interface ArenaProp {
+  x: number;
+  y: number;
+  id: string;
 }

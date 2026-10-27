@@ -68,7 +68,7 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
 
   const ui: GameUI = {
     dialogue: (runner) => dialogue.open(runner),
-    battle: (b) => battle.open(b, controller.location.background, controller.location.id),
+    battle: (b) => battle.open(b, controller.location, controller.state),
     shop: (shop) => new Promise<void>((resolve) => {
       const view = (): Node[] => shopView(shop, controller.state, world, () => { sheet.replace(view()); hud.update(controller.state, world); });
       scene.paused = true;

@@ -22,7 +22,8 @@
       "role": "companion",
       "description": "Ученик смотрителя маяка, друг детства Арины. Пугливый, но верный; знает каждый закоулок порта.",
       "appearance": {"head": "round", "skin": "tan", "hair": "short_messy", "hair_color": "ginger", "eyes": "round", "eye_color": "brown", "brows": "thick", "mouth": "wide", "outfit": "work_jacket", "outfit_color": "moss", "accent_color": "rust", "bg_color": "teal"},
-      "joins": {"flag": "tim_joined", "is": true}
+      "joins": {"flag": "tim_joined", "is": true},
+      "combat": {"style": "ranged", "skills": []}
     },
     {
       "id": "marfa",
@@ -60,7 +61,8 @@
     {"id": "ledger", "name": "Журнал Олеандра", "description": "Записи о «подношениях морю» с датами исчезновений.", "icon": "book", "kind": "misc", "value_tier": 2},
     {"id": "city_coat", "name": "Столичное пальто", "description": "Добротное, но для портовой сырости тонковато.", "icon": "coat", "kind": "equipment", "equip": {"slot": "body", "bonus": {"defense": 1}}, "value_tier": 1},
     {"id": "oilskin_coat", "name": "Рыбацкий плащ", "description": "Промасленная кожа: не промокает и держит удар.", "icon": "coat", "kind": "equipment", "equip": {"slot": "body", "bonus": {"defense": 3, "hp": 5}}, "value_tier": 2},
-    {"id": "fishing_knife", "name": "Разделочный нож", "description": "Острый, как язык Марфы.", "icon": "knife", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 2}}, "value_tier": 1},
+    {"id": "fishing_knife", "name": "Разделочный нож", "description": "Острый, как язык Марфы.", "icon": "knife", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 2}, "range": 1}, "value_tier": 1},
+    {"id": "harpoon", "name": "Старый гарпун", "description": "Тяжёлый, зато достаёт врага за две клетки.", "icon": "spear", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 2}, "range": 2}, "value_tier": 2},
     {"id": "harbor_badge", "name": "Жетон портовой стражи", "description": "Старый жетон. Когда держишь его, страх отступает.", "icon": "badge", "kind": "equipment", "equip": {"slot": "trinket", "bonus": {"defense": 1, "focus": 1}}, "value_tier": 2}
   ],
   "enemies": [
@@ -71,7 +73,7 @@
       "abilities": [{"name": "Укус", "effect": [{"damage": 8}], "every_n_turns": 3}]
     },
     {
-      "id": "cultist", "name": "Служитель тумана", "tier": 2,
+      "id": "cultist", "name": "Служитель тумана", "tier": 2, "range": 3,
       "description": "Бывший рыбак в мокром балахоне, говорит голосом Олеандра.",
       "appearance": {"head": "square", "skin": "olive", "hair": "hood", "hair_color": "black", "eyes": "small", "eye_color": "pale_cyan", "brows": "straight", "mouth": "stern", "outfit": "rags", "outfit_color": "ash", "accent_color": "pale_cyan", "bg_color": "navy"},
       "abilities": []
@@ -84,7 +86,12 @@
     }
   ],
   "shops": [
-    {"id": "marfa_stall", "name": "Прилавок Марфы", "items": ["tonic", "salt_pouch", "fishing_knife", "oilskin_coat"], "buys": true}
+    {"id": "marfa_stall", "name": "Прилавок Марфы", "items": ["tonic", "salt_pouch", "fishing_knife", "oilskin_coat", "harpoon"], "buys": true}
+  ],
+  "tactics": [
+    {"id": "tim_whistle", "name": "Свисток Тимофея", "description": "Тим свистит по-рыбацки — враги теряют строй: защита −2 на два хода.", "icon": "feather", "currency": "points", "tier": 2, "target": "enemies", "effect": [{"mod_stat": "defense", "delta": -2}], "duration": 2, "unlock": {"flag": "tim_joined", "is": true}},
+    {"id": "marfa_salt", "name": "Горсть Марфиной соли", "description": "Соль в глаза тварям тумана: атака врагов −2 на два хода.", "icon": "pouch", "currency": "gold", "tier": 1, "target": "enemies", "effect": [{"mod_stat": "attack", "delta": -2}], "duration": 2, "unlock": {"flag": "talked_marfa", "is": true}},
+    {"id": "oleander_notes", "name": "Записи Олеандра", "description": "Вы знаете, куда бить: атака отряда +3 на ход.", "icon": "book", "currency": "points", "tier": 3, "target": "party", "effect": [{"mod_stat": "attack", "delta": 3}], "duration": 1, "unlock": {"has_item": "ledger"}}
   ],
   "quests": [
     {

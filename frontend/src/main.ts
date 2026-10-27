@@ -1,3 +1,4 @@
+import "./fonts.css";
 import "./styles.css";
 import { mountPixelLab } from "./pages/PixelLab";
 import { mountPlay } from "./pages/Play";

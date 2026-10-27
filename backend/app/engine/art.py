@@ -135,6 +135,8 @@ def iter_art_refs(game: s.Game) -> Iterator[ArtRef]:
             yield from _portrait_refs(e.appearance, path)
     for i, item in enumerate(game.items):
         yield ArtRef(format_path("items", i, "icon"), "part", "icon", item.icon, _attr_setter(item, "icon"))
+    for i, t in enumerate(game.tactics):
+        yield ArtRef(format_path("tactics", i, "icon"), "part", "icon", t.icon, _attr_setter(t, "icon"))
     for i, loc in enumerate(game.locations):
         path = format_path("locations", i)
         yield ArtRef(format_path(path, "theme"), "part", "tileset", loc.theme, _attr_setter(loc, "theme"))

@@ -19,16 +19,13 @@ from pydantic import BaseModel, computed_field
 
 from . import schema as s
 from .issues import Issue, format_path
+from .tactics import PARTY_MOVE, REST_HEAL, STYLE_RANGE, Battle, Unit, companion_stats, make_enemies, play_party_turn
 
 RUNS = 50
 SEED = 1337
 STEP_LIMIT = 5000
-BATTLE_TURN_LIMIT = 100
 MIN_BATTLE_WIN_RATE = 0.7
 LOW_HP_RATIO = 0.3
-FLEE_CHANCE = 0.5
-DAMAGE_SPREAD = 0.2
-FOCUS_REGEN_PER_TURN = 1
 UNVISITED_EXIT_WEIGHT = 3   # во сколько раз бот охотнее идёт в непосещённую локацию
 HEAL_STOCK = 2              # сколько лечебных предметов бот держит про запас
 SLOTS = ("hand", "body", "trinket")
@@ -216,119 +213,69 @@ def gain_xp(hero: HeroState, xp: int, game: s.Game, world: World) -> None:
         hero.hp, hero.focus = eff.max_hp, eff.max_focus
 
 
-def roll_damage(attack: int, defense: int, rng: random.Random) -> int:
-    base = max(1, attack - defense // 2)
-    return max(1, round(base * rng.uniform(1 - DAMAGE_SPREAD, 1 + DAMAGE_SPREAD)))
-
-
-# --- Бой --------------------------------------------------------------------
-
-
-@dataclass
-class Fighter:
-    id: str
-    hp: int
-    attack: int
-    defense: int
-    abilities: list[s.EnemyAbility]
-    max_hp: int = 0
-    turn: int = 0
-
-    @property
-    def alive(self) -> bool:
-        return self.hp > 0
+# --- Бой (тактический, §5.9; правила — tactics.py) -------------------------------
 
 
 def _heal_amount(effects: list[s.Effect]) -> int:
     return sum(e.heal for e in effects if isinstance(e, s.EffHeal))
 
 
-def _damage_amount(effects: list[s.Effect]) -> int:
-    return sum(e.damage for e in effects if isinstance(e, s.EffDamage))
+def party_units(hero: HeroState, world: World, arena: s.Arena) -> list[Unit]:
+    """Герой (статы с экипировкой) и компаньоны, которые сейчас с ним (статы от базовых статов героя)."""
+    eff = world.effective(hero)
+    weapon = world.items.get(hero.equipment.get("hand") or "")
+    x, y = arena.party[0]
+    g = world.game
+    units = [Unit(id="hero", name=g.hero.name, side="party", kind="hero", hp=hero.hp, max_hp=eff.max_hp,
+                  attack=eff.attack, defense=eff.defense, focus=eff.max_focus, max_focus=eff.max_focus,
+                  move=PARTY_MOVE, range=weapon.equip.range if weapon and weapon.equip else 1,
+                  pos=(x, y), facing=(1, 0), skills=sorted(hero.skills))]
+    for c in g.characters:
+        if c.role != "companion" or not check(c.joins, hero, world) or len(units) >= len(arena.party):
+            continue
+        hp, atk, dfn, foc = companion_stats(hero.max_hp, hero.attack, hero.defense, hero.max_focus)
+        combat = c.combat or s.CompanionCombat()
+        x, y = arena.party[len(units)]
+        units.append(Unit(id=c.id, name=c.name, side="party", kind="companion", hp=hp, max_hp=hp, attack=atk,
+                          defense=dfn, focus=foc, max_focus=foc, move=PARTY_MOVE, range=STYLE_RANGE[combat.style],
+                          pos=(x, y), facing=(1, 0), skills=list(combat.skills)))
+    return units
+
+
+def available_tactics(hero: HeroState, world: World) -> list[s.Tactic]:
+    return [t for t in world.game.tactics if check(t.unlock, hero, world)]
+
+
+def start_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) -> Battle:
+    arena = world.game.arenas.get(foe.id)
+    if arena is None:
+        raise ValueError(f"нет поля боя для '{foe.id}': игра не подготовлена (prepare)")
+
+    def wallet(delta: int | None) -> int:
+        if delta is not None:
+            hero.gold += delta
+        return hero.gold
+
+    return Battle(arena, party_units(hero, world, arena), make_enemies(foe, world.enemies, arena),
+                  available_tactics(hero, world), foe.can_flee, rng, wallet)
 
 
 def run_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) -> bool:
-    """Бой бота: лечится при HP < 30%, иначе сильнейший доступный навык, иначе атака.
+    """Бой бота (§7.2). HP героя переносится между боями (после победы +30% — передышка); фокус в начале боя полный."""
+    b = start_battle(foe, hero, world, rng)
 
-    HP героя переносится между боями, фокус в начале боя восполняется.
-    Бафы навыков (mod_stat) действуют до конца боя.
-    """
-    foes = [
-        Fighter(e.id, e.hp, e.attack, e.defense, e.abilities, max_hp=e.hp)
-        for e in (world.enemies[i] for i in foe.enemies)
-    ]
-    eff = world.effective(hero)
-    hero.focus = eff.max_focus
-    buff = Counter()
+    def take(item_id: str) -> bool:
+        if hero.inventory[item_id] <= 0:
+            return False
+        hero.inventory[item_id] -= 1
+        return True
 
-    def hit(target: Fighter, effects: list[s.Effect]) -> None:
-        for e in effects:
-            if isinstance(e, s.EffDamage):
-                target.hp -= e.damage
-            elif isinstance(e, s.EffModStat) and e.mod_stat in ("attack", "defense"):
-                setattr(target, e.mod_stat, max(0, getattr(target, e.mod_stat) + e.delta))
-
-    for _ in range(BATTLE_TURN_LIMIT):
-        eff = world.effective(hero)
-        target = min((f for f in foes if f.alive), key=lambda f: f.hp)
-        known = [world.skills[k] for k in sorted(hero.skills) if k in world.skills]
-        affordable = [k for k in known if k.cost_focus <= hero.focus]
-        low_hp = hero.hp < eff.max_hp * LOW_HP_RATIO
-
-        heal_items = [
-            world.items[i] for i, n in sorted(hero.inventory.items())
-            if n > 0 and i in world.items and world.items[i].kind == "consumable"
-            and _heal_amount(world.items[i].effect) > 0
-        ]
-        heal_skills = [k for k in affordable if k.target == "self" and _heal_amount(k.effect) > 0]
-        attack_skills = [k for k in affordable if k.target == "enemy" and _damage_amount(k.effect) > 0]
-
-        if low_hp and heal_items:
-            item = max(heal_items, key=lambda i: _heal_amount(i.effect))
-            hero.inventory[item.id] -= 1
-            for e in item.effect:
-                if isinstance(e, s.EffDamage):
-                    target.hp -= e.damage
-                else:
-                    apply_hero_effect(e, hero, world)
-        elif low_hp and heal_skills:
-            skill = max(heal_skills, key=lambda k: _heal_amount(k.effect))
-            hero.focus -= skill.cost_focus
-            for e in skill.effect:
-                if isinstance(e, s.EffModStat):
-                    buff[e.mod_stat] += e.delta
-                else:
-                    apply_hero_effect(e, hero, world)
-        elif attack_skills:
-            skill = max(attack_skills, key=lambda k: _damage_amount(k.effect))
-            hero.focus -= skill.cost_focus
-            hit(target, skill.effect)
-        else:
-            target.hp -= roll_damage(eff.attack + buff["attack"], target.defense, rng)
-
-        if not any(f.alive for f in foes):
-            return True
-
-        for f in foes:
-            if not f.alive:
-                continue
-            f.turn += 1
-            ability = next((a for a in f.abilities if f.turn % a.every_n_turns == 0), None)
-            if ability:
-                for e in ability.effect:
-                    if isinstance(e, s.EffDamage):
-                        hero.hp -= e.damage
-                    elif isinstance(e, s.EffHeal):
-                        f.hp = min(f.max_hp, f.hp + e.heal)
-                    elif isinstance(e, s.EffModStat) and e.mod_stat in ("attack", "defense"):
-                        setattr(f, e.mod_stat, max(0, getattr(f, e.mod_stat) + e.delta))
-            else:
-                hero.hp -= roll_damage(f.attack, eff.defense + buff["defense"], rng)
-            if hero.hp <= 0:
-                return False
-
-        hero.focus = min(eff.max_focus, hero.focus + FOCUS_REGEN_PER_TURN)
-    return False
+    while b.result is None:
+        play_party_turn(b, world.skills, world.items, hero.inventory, take)
+    hero.hp = max(0, b.hero().hp)
+    if b.result == "win":
+        hero.hp = min(b.hero().max_hp, hero.hp + round(b.hero().max_hp * REST_HEAL))
+    return b.result == "win"
 
 
 # --- Торговля ----------------------------------------------------------------

@@ -51,6 +51,7 @@ class ItemsContent(s.Strict):
     items: list[s.Item] = Field(default_factory=list)
     skills: list[s.Skill] = Field(default_factory=list)
     shops: list[s.Shop] = Field(default_factory=list)
+    tactics: list[s.Tactic] = Field(default_factory=list, max_length=6)
     start_skills: list[s.Id] = Field(default_factory=list)
     start_items: list[s.Id] = Field(default_factory=list)
     start_equipment: s.StartEquipment = Field(default_factory=s.StartEquipment)
@@ -87,7 +88,7 @@ def assemble(outline: Outline, contents: dict[str, LocationContent], items: Item
         "start_skills": i.get("start_skills", []), "start_items": i.get("start_items", []),
         "start_equipment": i.get("start_equipment", {}),
         "skills": i.get("skills", []), "items": i.get("items", []), "enemies": list(enemies.values()),
-        "shops": i.get("shops", []), "quests": o["quests"], "flags": o.get("flags", []),
+        "shops": i.get("shops", []), "tactics": i.get("tactics", []), "quests": o["quests"], "flags": o.get("flags", []),
         "locations": locations, "start_location": o["start_location"], "endings": o["endings"],
     }
 
@@ -117,13 +118,14 @@ def split_game(game: s.Game) -> tuple[Outline, dict[str, LocationContent], Items
                                            enemies=enemies_by_loc.get(loc.id, []))
     outline = Outline(meta=game.meta, hero=game.hero, characters=game.characters, flags=game.flags, quests=game.quests,
                       locations=plans, start_location=game.start_location, endings=game.endings)
-    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops,
+    tactics = [t.model_copy(update={"cost": None}) for t in game.tactics if not t.id.startswith("base_")]
+    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics,
                          start_skills=game.start_skills, start_items=game.start_items, start_equipment=game.start_equipment)
     return outline, contents, items
 
 
-def referenced_ids(contents: dict[str, LocationContent]) -> dict[str, list[str]]:
-    """Какие предметы, навыки и магазины упомянуты в локациях — их опишет шаг «предметы»."""
+def referenced_ids(contents: dict[str, LocationContent], outline: Outline | None = None) -> dict[str, list[str]]:
+    """Какие предметы, навыки и магазины упомянуты в локациях (и навыки компаньона в каркасе) — их опишет шаг «предметы»."""
     items: set[str] = set()
     skills: set[str] = set()
     shops: set[str] = set()
@@ -145,4 +147,7 @@ def referenced_ids(contents: dict[str, LocationContent]) -> dict[str, list[str]]
 
     for content in contents.values():
         walk(dump(content))
+    for c in outline.characters if outline else []:
+        if c.combat:
+            skills.update(c.combat.skills)
     return {"items": sorted(items), "skills": sorted(skills), "shops": sorted(shops)}
