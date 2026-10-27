@@ -133,8 +133,15 @@ def iter_art_refs(game: s.Game) -> Iterator[ArtRef]:
             yield from _creature_refs(e.appearance, path)
         else:
             yield from _portrait_refs(e.appearance, path)
-    for i, scene in enumerate(game.scenes):
-        yield from _background_refs(scene.background, format_path("scenes", i, "background"))
+    for i, item in enumerate(game.items):
+        yield ArtRef(format_path("items", i, "icon"), "part", "icon", item.icon, _attr_setter(item, "icon"))
+    for i, loc in enumerate(game.locations):
+        path = format_path("locations", i)
+        yield ArtRef(format_path(path, "theme"), "part", "tileset", loc.theme, _attr_setter(loc, "theme"))
+        yield from _background_refs(loc.background, format_path(path, "background"))
+        for j, obj in enumerate(loc.objects):
+            if isinstance(obj, (s.Chest, s.Thing)):
+                yield ArtRef(format_path(path, "objects", j, "look"), "part", "prop", obj.look, _attr_setter(obj, "look"))
 
 
 # --- проверка и подстановка ----------------------------------------------------
@@ -147,25 +154,26 @@ def _choices(lib: ArtLibrary, ref: ArtRef) -> list[str]:
     return list(lib.parts.get(ref.key, {}) if ref.kind == "part" else lib.palettes.get(ref.key, {}))
 
 
+def _checked(lib: ArtLibrary, ref: ArtRef) -> bool:
+    """Слоты, которых ещё нет в библиотеке (тайлсеты и иконки до этапа 2в), не проверяются."""
+    return ref.key in (lib.parts if ref.kind == "part" else lib.palettes)
+
+
 def check_art(game: s.Game, lib: ArtLibrary) -> list[Issue]:
     issues: list[Issue] = []
     for ref in iter_art_refs(game):
-        if not _known(lib, ref):
+        if _checked(lib, ref) and not _known(lib, ref):
             what = f"деталь слота {ref.key}" if ref.kind == "part" else f"цвет из палитры {ref.key}"
             issues.append(Issue(path=ref.path, message=f"неизвестная {what}: '{ref.value}'. Допустимо: {', '.join(_choices(lib, ref))}"))
 
-    for i, scene in enumerate(game.scenes):
-        bg = scene.background
-        path = format_path("scenes", i, "background")
+    for i, loc in enumerate(game.locations):
+        bg = loc.background
+        path = format_path("locations", i, "background")
         if bg.setting == "indoor" and bg.sky is not None:
             issues.append(Issue(path=format_path(path, "sky"), message="небо не рисуется в помещении (setting: indoor)", severity="warning"))
         far = lib.parts.get("far", {}).get(bg.far)
         if far and far.setting and far.setting != bg.setting:
-            issues.append(Issue(path=format_path(path, "far"), message=f"дальний план '{bg.far}' рассчитан на {far.setting}, а сцена — {bg.setting}", severity="warning"))
-        for j, prop in enumerate(bg.props):
-            info = lib.parts.get("prop", {}).get(prop.id)
-            if info and info.setting not in (None, "any", bg.setting):
-                issues.append(Issue(path=format_path(path, "props", j, "id"), message=f"предмет '{prop.id}' рассчитан на {info.setting}, а сцена — {bg.setting}", severity="warning"))
+            issues.append(Issue(path=format_path(path, "far"), message=f"дальний план '{bg.far}' рассчитан на {far.setting}, а локация — {bg.setting}", severity="warning"))
     return issues
 
 
@@ -173,7 +181,7 @@ def repair_art(game: s.Game, lib: ArtLibrary) -> list[Issue]:
     """Последний шаг после неудачной автопочинки (§6.7): неизвестное → деталь или цвет по умолчанию."""
     warnings = []
     for ref in iter_art_refs(game):
-        if _known(lib, ref):
+        if not _checked(lib, ref) or _known(lib, ref):
             continue
         default = lib.default_part(ref.key) if ref.kind == "part" else lib.default_color(ref.key)
         ref.replace(default)

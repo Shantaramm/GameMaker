@@ -206,11 +206,11 @@ function gameTab(root: HTMLElement, game: Game, gameId: string): void {
       : scaled(portraitCanvas(e.appearance, "angry", e.id), 2);
     return el("figure", { className: "dark" }, art, el("figcaption", { textContent: `${e.name} · tier ${e.tier}` }));
   })));
-  root.append(el("h2", { textContent: "Сцены" }));
-  for (const scene of game.scenes) {
+  root.append(el("h2", { textContent: "Локации" }));
+  for (const loc of game.locations) {
     root.append(el("figure", { className: "scene" },
-      backgroundNode(scene.background, backgroundSeed(gameId, scene.id), Math.min(root.clientWidth || 360, 640)),
-      el("figcaption", { textContent: `${scene.id} — ${scene.title}` })));
+      backgroundNode(loc.background, backgroundSeed(gameId, loc.id), Math.min(root.clientWidth || 360, 640)),
+      el("figcaption", { textContent: `${loc.id} — ${loc.title} · ${loc.theme}, этажей: ${loc.floors}, объектов: ${loc.objects?.length ?? 0}` })));
   }
 }
 
@@ -238,7 +238,7 @@ export function mountPixelLab(root: HTMLElement): void {
   const tabs: [string, (body: HTMLElement) => void][] = [
     ["Портрет", (b) => portraitTab(b, game.hero.appearance)],
     ["Существо", (b) => creatureTab(b, randomCreature(nextSeed()))],
-    ["Фон", (b) => backgroundTab(b, game.scenes[0].background)],
+    ["Фон", (b) => backgroundTab(b, game.locations[0].background)],
     ["Демо-игра", (b) => gameTab(b, game, "demo")],
   ];
   const body = el("main", { className: "lab-body" });

@@ -6,26 +6,34 @@
  */
 
 export interface Game {
-  schema_version?: "1";
+  schema_version?: "2";
   meta: Meta;
   hero: Character;
   characters?: Character[];
   stats_template?: Stats | null;
+  progression?: Progression | null;
+  start_gold?: number | null;
   start_skills?: string[];
   start_items?: string[];
+  start_equipment?: StartEquipment;
   skills?: Skill[];
   items?: Item[];
   enemies?: Enemy[];
+  shops?: Shop[];
+  quests?: Quest[];
   flags?: FlagDef[];
   /**
    * @minItems 1
    */
-  scenes: [Scene, ...Scene[]];
-  start_scene: string;
+  locations: [Location, ...Location[]];
+  start_location: string;
   /**
    * @minItems 1
    */
   endings: [Ending, ...Ending[]];
+  levels?: {
+    [k: string]: Level;
+  };
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -49,6 +57,7 @@ export interface Character {
   role: "hero" | "companion" | "npc" | "antagonist";
   description: string;
   appearance: PortraitSpec;
+  joins?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -74,6 +83,86 @@ export interface PortraitSpec {
   bg_color: string;
 }
 /**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondAll".
+ */
+export interface CondAll {
+  /**
+   * @minItems 1
+   */
+  all: [
+    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated,
+    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated)[]
+  ];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondAny".
+ */
+export interface CondAny {
+  /**
+   * @minItems 1
+   */
+  any: [
+    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated,
+    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated)[]
+  ];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondNot".
+ */
+export interface CondNot {
+  not: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondFlag".
+ */
+export interface CondFlag {
+  flag: string;
+  is: boolean;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondItem".
+ */
+export interface CondItem {
+  has_item: string;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondStat".
+ */
+export interface CondStat {
+  stat: "hp" | "attack" | "defense" | "focus";
+  op: ">=" | "<=";
+  value: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondGold".
+ */
+export interface CondGold {
+  gold: ">=" | "<=";
+  value: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondLevel".
+ */
+export interface CondLevel {
+  level: ">=" | "<=";
+  value: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "CondDefeated".
+ */
+export interface CondDefeated {
+  defeated: string;
+}
+/**
  * Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме.
  *
  * This interface was referenced by `Game`'s JSON-Schema
@@ -84,6 +173,25 @@ export interface Stats {
   attack: number;
   defense: number;
   focus: number;
+}
+/**
+ * Кривая опыта и прирост статов за уровень. Заполняет balance.py.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Progression".
+ */
+export interface Progression {
+  xp_to_level: number[];
+  per_level: Stats;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "StartEquipment".
+ */
+export interface StartEquipment {
+  hand?: string | null;
+  body?: string | null;
+  trinket?: string | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -98,8 +206,30 @@ export interface Skill {
    * @minItems 1
    */
   effect: [
-    EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto,
-    ...(EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[]
+    (
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    ),
+    ...(
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    )[]
   ];
   target: "enemy" | "self";
 }
@@ -124,6 +254,20 @@ export interface EffGiveItem {
  */
 export interface EffTakeItem {
   take_item: string;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "EffGiveGold".
+ */
+export interface EffGiveGold {
+  give_gold: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "EffTakeGold".
+ */
+export interface EffTakeGold {
+  take_gold: number;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -169,8 +313,41 @@ export interface Item {
   id: string;
   name: string;
   description: string;
-  consumable: boolean;
-  effect?: (EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[];
+  icon: string;
+  kind: "consumable" | "equipment" | "key" | "misc";
+  effect?: (
+    | EffSetFlag
+    | EffGiveItem
+    | EffTakeItem
+    | EffGiveGold
+    | EffTakeGold
+    | EffLearnSkill
+    | EffModStat
+    | EffHeal
+    | EffDamage
+    | EffGoto
+  )[];
+  equip?: Equip | null;
+  value_tier: number;
+  price?: number | null;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Equip".
+ */
+export interface Equip {
+  slot: "hand" | "body" | "trinket";
+  bonus: EquipBonus;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "EquipBonus".
+ */
+export interface EquipBonus {
+  attack?: number;
+  defense?: number;
+  focus?: number;
+  hp?: number;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -182,13 +359,15 @@ export interface Enemy {
   description: string;
   tier: number;
   appearance: PortraitSpec | CreatureSpec;
-  hp?: number | null;
-  attack?: number | null;
-  defense?: number | null;
   /**
    * @maxItems 2
    */
   abilities?: EnemyAbility[];
+  hp?: number | null;
+  attack?: number | null;
+  defense?: number | null;
+  xp?: number | null;
+  gold?: number | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -214,10 +393,68 @@ export interface EnemyAbility {
    * @minItems 1
    */
   effect: [
-    EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto,
-    ...(EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[]
+    (
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    ),
+    ...(
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    )[]
   ];
   every_n_turns: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Shop".
+ */
+export interface Shop {
+  id: string;
+  name: string;
+  /**
+   * @minItems 1
+   */
+  items: [string, ...string[]];
+  buys?: boolean;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Quest".
+ */
+export interface Quest {
+  id: string;
+  title: string;
+  main?: boolean;
+  giver?: string | null;
+  start?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  /**
+   * @minItems 1
+   */
+  stages: [QuestStage, ...QuestStage[]];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "QuestStage".
+ */
+export interface QuestStage {
+  text: string;
+  done: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -229,20 +466,22 @@ export interface FlagDef {
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "Scene".
+ * via the `definition` "Location".
  */
-export interface Scene {
+export interface Location {
   id: string;
   title: string;
-  background: BackgroundSpec;
   intro: string;
+  theme: string;
+  background: BackgroundSpec;
+  size: "small" | "medium" | "large";
+  floors: number;
   /**
    * @minItems 1
    */
-  events: [
-    Dialogue | Battle | Choice | Narration | Transition,
-    ...(Dialogue | Battle | Choice | Narration | Transition)[]
-  ];
+  zones: [Zone, ...Zone[]];
+  objects?: (Npc | Foe | Chest | Thing | Exit)[];
+  on_enter?: (Dialogue | Choice | Narration)[];
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -268,6 +507,29 @@ export interface BackgroundSpec {
 export interface BackgroundProp {
   id: string;
   x: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Zone".
+ */
+export interface Zone {
+  id: string;
+  floor: number;
+  name: string;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Npc".
+ */
+export interface Npc {
+  id: string;
+  zone: string;
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  type: "npc";
+  character: string;
+  dialogue: Dialogue;
+  shop?: string | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -300,84 +562,123 @@ export interface DialogueNode {
  */
 export interface DialogueChoice {
   text: string;
-  condition?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat) | null;
-  effects?: (EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[];
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  effects?: (
+    | EffSetFlag
+    | EffGiveItem
+    | EffTakeItem
+    | EffGiveGold
+    | EffTakeGold
+    | EffLearnSkill
+    | EffModStat
+    | EffHeal
+    | EffDamage
+    | EffGoto
+  )[];
   next: string;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondAll".
+ * via the `definition` "Foe".
  */
-export interface CondAll {
-  /**
-   * @minItems 1
-   */
-  all: [
-    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat,
-    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat)[]
-  ];
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondAny".
- */
-export interface CondAny {
-  /**
-   * @minItems 1
-   */
-  any: [
-    CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat,
-    ...(CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat)[]
-  ];
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondNot".
- */
-export interface CondNot {
-  not: CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat;
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondFlag".
- */
-export interface CondFlag {
-  flag: string;
-  is: boolean;
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondItem".
- */
-export interface CondItem {
-  has_item: string;
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "CondStat".
- */
-export interface CondStat {
-  stat: "hp" | "attack" | "defense" | "focus";
-  op: ">=" | "<=";
-  value: number;
-}
-/**
- * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "Battle".
- */
-export interface Battle {
-  type: "battle";
+export interface Foe {
   id: string;
+  zone: string;
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  type: "enemy";
   /**
    * @minItems 1
    * @maxItems 3
    */
   enemies: [string, ...string[]];
-  on_win?: (EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[];
+  on_win?: (
+    | EffSetFlag
+    | EffGiveItem
+    | EffTakeItem
+    | EffGiveGold
+    | EffTakeGold
+    | EffLearnSkill
+    | EffModStat
+    | EffHeal
+    | EffDamage
+    | EffGoto
+  )[];
   on_lose?:
     | "game_over"
-    | (EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[];
+    | (
+        | EffSetFlag
+        | EffGiveItem
+        | EffTakeItem
+        | EffGiveGold
+        | EffTakeGold
+        | EffLearnSkill
+        | EffModStat
+        | EffHeal
+        | EffDamage
+        | EffGoto
+      )[];
   can_flee?: boolean;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Chest".
+ */
+export interface Chest {
+  id: string;
+  zone: string;
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  type: "chest";
+  look: string;
+  /**
+   * @minItems 1
+   */
+  contents: [
+    (
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    ),
+    ...(
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    )[]
+  ];
+  requires?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  locked_text?: string | null;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Thing".
+ */
+export interface Thing {
+  id: string;
+  zone: string;
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  type: "thing";
+  look: string;
+  name: string;
+  event: Dialogue | Choice | Narration;
+  once?: boolean;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -398,8 +699,20 @@ export interface Choice {
  */
 export interface ChoiceOption {
   text: string;
-  condition?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat) | null;
-  effects?: (EffSetFlag | EffGiveItem | EffTakeItem | EffLearnSkill | EffModStat | EffHeal | EffDamage | EffGoto)[];
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  effects?: (
+    | EffSetFlag
+    | EffGiveItem
+    | EffTakeItem
+    | EffGiveGold
+    | EffTakeGold
+    | EffLearnSkill
+    | EffModStat
+    | EffHeal
+    | EffDamage
+    | EffGoto
+  )[];
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -412,12 +725,19 @@ export interface Narration {
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
- * via the `definition` "Transition".
+ * via the `definition` "Exit".
  */
-export interface Transition {
-  type: "goto";
+export interface Exit {
+  id: string;
+  zone: string;
+  condition?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  type: "exit";
+  kind: "door" | "left_edge" | "right_edge";
   to: string;
-  condition?: (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat) | null;
+  requires?:
+    (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated) | null;
+  locked_text?: string | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -428,4 +748,61 @@ export interface Ending {
   title: string;
   text: string;
   kind: "good" | "neutral" | "bad";
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Level".
+ */
+export interface Level {
+  width: number;
+  height: number;
+  tiles: string[];
+  floors: LevelFloor[];
+  links: LevelLink[];
+  objects: LevelObject[];
+  spawns: LevelSpawn[];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "LevelFloor".
+ */
+export interface LevelFloor {
+  y: number;
+  x0: number;
+  x1: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "LevelLink".
+ */
+export interface LevelLink {
+  kind: "stairs" | "ladder";
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  a: [unknown, unknown];
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  b: [unknown, unknown];
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "LevelObject".
+ */
+export interface LevelObject {
+  id: string;
+  floor: number;
+  x: number;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "LevelSpawn".
+ */
+export interface LevelSpawn {
+  from: string;
+  floor: number;
+  x: number;
 }

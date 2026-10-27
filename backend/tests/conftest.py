@@ -14,9 +14,19 @@ def demo() -> dict:
     return copy.deepcopy(_DEMO)
 
 
-def scene(game: dict, scene_id: str) -> dict:
-    return next(sc for sc in game["scenes"] if sc["id"] == scene_id)
+def location(game: dict, location_id: str) -> dict:
+    return next(loc for loc in game["locations"] if loc["id"] == location_id)
 
 
-def event(game: dict, scene_id: str, event_id: str) -> dict:
-    return next(e for e in scene(game, scene_id)["events"] if e.get("id") == event_id)
+def obj(game: dict, location_id: str, object_id: str) -> dict:
+    return next(o for o in location(game, location_id)["objects"] if o["id"] == object_id)
+
+
+def loc_index(game: dict, location_id: str) -> int:
+    return next(i for i, loc in enumerate(game["locations"]) if loc["id"] == location_id)
+
+
+def obj_path(game: dict, location_id: str, object_id: str) -> str:
+    li = loc_index(game, location_id)
+    oi = next(i for i, o in enumerate(game["locations"][li]["objects"]) if o["id"] == object_id)
+    return f"locations[{li}].objects[{oi}]"

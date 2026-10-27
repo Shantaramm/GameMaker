@@ -96,112 +96,6 @@
       "title": "BackgroundSpec",
       "type": "object"
     },
-    "Battle": {
-      "additionalProperties": false,
-      "properties": {
-        "type": {
-          "const": "battle",
-          "type": "string"
-        },
-        "id": {
-          "maxLength": 64,
-          "pattern": "^[a-z][a-z0-9_]*$",
-          "type": "string"
-        },
-        "enemies": {
-          "items": {
-            "maxLength": 64,
-            "pattern": "^[a-z][a-z0-9_]*$",
-            "type": "string"
-          },
-          "maxItems": 3,
-          "minItems": 1,
-          "type": "array"
-        },
-        "on_win": {
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/EffSetFlag"
-              },
-              {
-                "$ref": "#/$defs/EffGiveItem"
-              },
-              {
-                "$ref": "#/$defs/EffTakeItem"
-              },
-              {
-                "$ref": "#/$defs/EffLearnSkill"
-              },
-              {
-                "$ref": "#/$defs/EffModStat"
-              },
-              {
-                "$ref": "#/$defs/EffHeal"
-              },
-              {
-                "$ref": "#/$defs/EffDamage"
-              },
-              {
-                "$ref": "#/$defs/EffGoto"
-              }
-            ]
-          },
-          "type": "array"
-        },
-        "on_lose": {
-          "default": "game_over",
-          "oneOf": [
-            {
-              "const": "game_over",
-              "type": "string"
-            },
-            {
-              "items": {
-                "oneOf": [
-                  {
-                    "$ref": "#/$defs/EffSetFlag"
-                  },
-                  {
-                    "$ref": "#/$defs/EffGiveItem"
-                  },
-                  {
-                    "$ref": "#/$defs/EffTakeItem"
-                  },
-                  {
-                    "$ref": "#/$defs/EffLearnSkill"
-                  },
-                  {
-                    "$ref": "#/$defs/EffModStat"
-                  },
-                  {
-                    "$ref": "#/$defs/EffHeal"
-                  },
-                  {
-                    "$ref": "#/$defs/EffDamage"
-                  },
-                  {
-                    "$ref": "#/$defs/EffGoto"
-                  }
-                ]
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "can_flee": {
-          "default": false,
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "type",
-        "id",
-        "enemies"
-      ],
-      "title": "Battle",
-      "type": "object"
-    },
     "Character": {
       "additionalProperties": false,
       "properties": {
@@ -230,6 +124,45 @@
         },
         "appearance": {
           "$ref": "#/$defs/PortraitSpec"
+        },
+        "joins": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -240,6 +173,167 @@
         "appearance"
       ],
       "title": "Character",
+      "type": "object"
+    },
+    "Chest": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "chest",
+          "type": "string"
+        },
+        "look": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "contents": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "requires": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "locked_text": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "look",
+        "contents"
+      ],
+      "title": "Chest",
       "type": "object"
     },
     "Choice": {
@@ -303,6 +397,15 @@
                 },
                 {
                   "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
                 }
               ]
             },
@@ -323,6 +426,12 @@
               },
               {
                 "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
               },
               {
                 "$ref": "#/$defs/EffLearnSkill"
@@ -373,6 +482,15 @@
               },
               {
                 "$ref": "#/$defs/CondStat"
+              },
+              {
+                "$ref": "#/$defs/CondGold"
+              },
+              {
+                "$ref": "#/$defs/CondLevel"
+              },
+              {
+                "$ref": "#/$defs/CondDefeated"
               }
             ]
           },
@@ -409,6 +527,15 @@
               },
               {
                 "$ref": "#/$defs/CondStat"
+              },
+              {
+                "$ref": "#/$defs/CondGold"
+              },
+              {
+                "$ref": "#/$defs/CondLevel"
+              },
+              {
+                "$ref": "#/$defs/CondDefeated"
               }
             ]
           },
@@ -420,6 +547,21 @@
         "any"
       ],
       "title": "CondAny",
+      "type": "object"
+    },
+    "CondDefeated": {
+      "additionalProperties": false,
+      "properties": {
+        "defeated": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "defeated"
+      ],
+      "title": "CondDefeated",
       "type": "object"
     },
     "CondFlag": {
@@ -441,6 +583,28 @@
       "title": "CondFlag",
       "type": "object"
     },
+    "CondGold": {
+      "additionalProperties": false,
+      "properties": {
+        "gold": {
+          "enum": [
+            ">=",
+            "<="
+          ],
+          "type": "string"
+        },
+        "value": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "gold",
+        "value"
+      ],
+      "title": "CondGold",
+      "type": "object"
+    },
     "CondItem": {
       "additionalProperties": false,
       "properties": {
@@ -454,6 +618,28 @@
         "has_item"
       ],
       "title": "CondItem",
+      "type": "object"
+    },
+    "CondLevel": {
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "enum": [
+            ">=",
+            "<="
+          ],
+          "type": "string"
+        },
+        "value": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "level",
+        "value"
+      ],
+      "title": "CondLevel",
       "type": "object"
     },
     "CondNot": {
@@ -478,6 +664,15 @@
             },
             {
               "$ref": "#/$defs/CondStat"
+            },
+            {
+              "$ref": "#/$defs/CondGold"
+            },
+            {
+              "$ref": "#/$defs/CondLevel"
+            },
+            {
+              "$ref": "#/$defs/CondDefeated"
             }
           ]
         }
@@ -626,6 +821,15 @@
                 },
                 {
                   "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
                 }
               ]
             },
@@ -646,6 +850,12 @@
               },
               {
                 "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
               },
               {
                 "$ref": "#/$defs/EffLearnSkill"
@@ -757,6 +967,20 @@
       "title": "EffDamage",
       "type": "object"
     },
+    "EffGiveGold": {
+      "additionalProperties": false,
+      "properties": {
+        "give_gold": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "give_gold"
+      ],
+      "title": "EffGiveGold",
+      "type": "object"
+    },
     "EffGiveItem": {
       "additionalProperties": false,
       "properties": {
@@ -858,6 +1082,20 @@
       "title": "EffSetFlag",
       "type": "object"
     },
+    "EffTakeGold": {
+      "additionalProperties": false,
+      "properties": {
+        "take_gold": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "take_gold"
+      ],
+      "title": "EffTakeGold",
+      "type": "object"
+    },
     "EffTakeItem": {
       "additionalProperties": false,
       "properties": {
@@ -940,6 +1178,13 @@
             }
           ]
         },
+        "abilities": {
+          "items": {
+            "$ref": "#/$defs/EnemyAbility"
+          },
+          "maxItems": 2,
+          "type": "array"
+        },
         "hp": {
           "anyOf": [
             {
@@ -976,12 +1221,29 @@
           ],
           "default": null
         },
-        "abilities": {
-          "items": {
-            "$ref": "#/$defs/EnemyAbility"
-          },
-          "maxItems": 2,
-          "type": "array"
+        "xp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gold": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1013,6 +1275,12 @@
               },
               {
                 "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
               },
               {
                 "$ref": "#/$defs/EffLearnSkill"
@@ -1047,6 +1315,182 @@
       "title": "EnemyAbility",
       "type": "object"
     },
+    "Equip": {
+      "additionalProperties": false,
+      "properties": {
+        "slot": {
+          "enum": [
+            "hand",
+            "body",
+            "trinket"
+          ],
+          "type": "string"
+        },
+        "bonus": {
+          "$ref": "#/$defs/EquipBonus"
+        }
+      },
+      "required": [
+        "slot",
+        "bonus"
+      ],
+      "title": "Equip",
+      "type": "object"
+    },
+    "EquipBonus": {
+      "additionalProperties": false,
+      "properties": {
+        "attack": {
+          "default": 0,
+          "type": "integer"
+        },
+        "defense": {
+          "default": 0,
+          "type": "integer"
+        },
+        "focus": {
+          "default": 0,
+          "type": "integer"
+        },
+        "hp": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "title": "EquipBonus",
+      "type": "object"
+    },
+    "Exit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "exit",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "door",
+            "left_edge",
+            "right_edge"
+          ],
+          "type": "string"
+        },
+        "to": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "requires": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "locked_text": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "kind",
+        "to"
+      ],
+      "title": "Exit",
+      "type": "object"
+    },
     "FlagDef": {
       "additionalProperties": false,
       "properties": {
@@ -1067,7 +1511,7 @@
       "title": "FlagDef",
       "type": "object"
     },
-    "Item": {
+    "Foe": {
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -1075,19 +1519,65 @@
           "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
         },
-        "name": {
-          "maxLength": 60,
-          "minLength": 1,
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
         },
-        "description": {
-          "maxLength": 300,
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "enemy",
           "type": "string"
         },
-        "consumable": {
-          "type": "boolean"
+        "enemies": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "type": "array"
         },
-        "effect": {
+        "on_win": {
           "items": {
             "oneOf": [
               {
@@ -1098,6 +1588,12 @@
               },
               {
                 "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
               },
               {
                 "$ref": "#/$defs/EffLearnSkill"
@@ -1117,15 +1613,434 @@
             ]
           },
           "type": "array"
+        },
+        "on_lose": {
+          "default": "game_over",
+          "oneOf": [
+            {
+              "const": "game_over",
+              "type": "string"
+            },
+            {
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/EffSetFlag"
+                  },
+                  {
+                    "$ref": "#/$defs/EffGiveItem"
+                  },
+                  {
+                    "$ref": "#/$defs/EffTakeItem"
+                  },
+                  {
+                    "$ref": "#/$defs/EffGiveGold"
+                  },
+                  {
+                    "$ref": "#/$defs/EffTakeGold"
+                  },
+                  {
+                    "$ref": "#/$defs/EffLearnSkill"
+                  },
+                  {
+                    "$ref": "#/$defs/EffModStat"
+                  },
+                  {
+                    "$ref": "#/$defs/EffHeal"
+                  },
+                  {
+                    "$ref": "#/$defs/EffDamage"
+                  },
+                  {
+                    "$ref": "#/$defs/EffGoto"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "can_flee": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "enemies"
+      ],
+      "title": "Foe",
+      "type": "object"
+    },
+    "Item": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "type": "string"
+        },
+        "icon": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "consumable",
+            "equipment",
+            "key",
+            "misc"
+          ],
+          "type": "string"
+        },
+        "effect": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "equip": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Equip"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value_tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "id",
         "name",
         "description",
-        "consumable"
+        "icon",
+        "kind",
+        "value_tier"
       ],
       "title": "Item",
+      "type": "object"
+    },
+    "Level": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "tiles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "floors": {
+          "items": {
+            "$ref": "#/$defs/LevelFloor"
+          },
+          "type": "array"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/LevelLink"
+          },
+          "type": "array"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/LevelObject"
+          },
+          "type": "array"
+        },
+        "spawns": {
+          "items": {
+            "$ref": "#/$defs/LevelSpawn"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "tiles",
+        "floors",
+        "links",
+        "objects",
+        "spawns"
+      ],
+      "title": "Level",
+      "type": "object"
+    },
+    "LevelFloor": {
+      "additionalProperties": false,
+      "properties": {
+        "y": {
+          "type": "integer"
+        },
+        "x0": {
+          "type": "integer"
+        },
+        "x1": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "y",
+        "x0",
+        "x1"
+      ],
+      "title": "LevelFloor",
+      "type": "object"
+    },
+    "LevelLink": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "stairs",
+            "ladder"
+          ],
+          "type": "string"
+        },
+        "a": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        },
+        "b": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "a",
+        "b"
+      ],
+      "title": "LevelLink",
+      "type": "object"
+    },
+    "LevelObject": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "floor": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "floor",
+        "x"
+      ],
+      "title": "LevelObject",
+      "type": "object"
+    },
+    "LevelSpawn": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "floor": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "from",
+        "floor",
+        "x"
+      ],
+      "title": "LevelSpawn",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        "intro": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "theme": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "background": {
+          "$ref": "#/$defs/BackgroundSpec"
+        },
+        "size": {
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "type": "string"
+        },
+        "floors": {
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "zones": {
+          "items": {
+            "$ref": "#/$defs/Zone"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "objects": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Npc"
+              },
+              {
+                "$ref": "#/$defs/Foe"
+              },
+              {
+                "$ref": "#/$defs/Chest"
+              },
+              {
+                "$ref": "#/$defs/Thing"
+              },
+              {
+                "$ref": "#/$defs/Exit"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "on_enter": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Dialogue"
+              },
+              {
+                "$ref": "#/$defs/Choice"
+              },
+              {
+                "$ref": "#/$defs/Narration"
+              }
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "intro",
+        "theme",
+        "background",
+        "size",
+        "floors",
+        "zones"
+      ],
+      "title": "Location",
       "type": "object"
     },
     "Meta": {
@@ -1192,6 +2107,94 @@
         "text"
       ],
       "title": "Narration",
+      "type": "object"
+    },
+    "Npc": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "npc",
+          "type": "string"
+        },
+        "character": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "dialogue": {
+          "$ref": "#/$defs/Dialogue"
+        },
+        "shop": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "character",
+        "dialogue"
+      ],
+      "title": "Npc",
       "type": "object"
     },
     "PortraitSpec": {
@@ -1297,7 +2300,28 @@
       "title": "PortraitSpec",
       "type": "object"
     },
-    "Scene": {
+    "Progression": {
+      "additionalProperties": false,
+      "description": "Кривая опыта и прирост статов за уровень. Заполняет balance.py.",
+      "properties": {
+        "xp_to_level": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "per_level": {
+          "$ref": "#/$defs/Stats"
+        }
+      },
+      "required": [
+        "xp_to_level",
+        "per_level"
+      ],
+      "title": "Progression",
+      "type": "object"
+    },
+    "Quest": {
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -1310,32 +2334,65 @@
           "minLength": 1,
           "type": "string"
         },
-        "background": {
-          "$ref": "#/$defs/BackgroundSpec"
+        "main": {
+          "default": false,
+          "type": "boolean"
         },
-        "intro": {
-          "minLength": 1,
-          "type": "string"
+        "giver": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
-        "events": {
+        "start": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stages": {
           "items": {
-            "oneOf": [
-              {
-                "$ref": "#/$defs/Dialogue"
-              },
-              {
-                "$ref": "#/$defs/Battle"
-              },
-              {
-                "$ref": "#/$defs/Choice"
-              },
-              {
-                "$ref": "#/$defs/Narration"
-              },
-              {
-                "$ref": "#/$defs/Transition"
-              }
-            ]
+            "$ref": "#/$defs/QuestStage"
           },
           "minItems": 1,
           "type": "array"
@@ -1344,11 +2401,91 @@
       "required": [
         "id",
         "title",
-        "background",
-        "intro",
-        "events"
+        "stages"
       ],
-      "title": "Scene",
+      "title": "Quest",
+      "type": "object"
+    },
+    "QuestStage": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        },
+        "done": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CondAll"
+            },
+            {
+              "$ref": "#/$defs/CondAny"
+            },
+            {
+              "$ref": "#/$defs/CondNot"
+            },
+            {
+              "$ref": "#/$defs/CondFlag"
+            },
+            {
+              "$ref": "#/$defs/CondItem"
+            },
+            {
+              "$ref": "#/$defs/CondStat"
+            },
+            {
+              "$ref": "#/$defs/CondGold"
+            },
+            {
+              "$ref": "#/$defs/CondLevel"
+            },
+            {
+              "$ref": "#/$defs/CondDefeated"
+            }
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "done"
+      ],
+      "title": "QuestStage",
+      "type": "object"
+    },
+    "Shop": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "buys": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "items"
+      ],
+      "title": "Shop",
       "type": "object"
     },
     "Skill": {
@@ -1383,6 +2520,12 @@
               },
               {
                 "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
               },
               {
                 "$ref": "#/$defs/EffLearnSkill"
@@ -1423,6 +2566,52 @@
       "title": "Skill",
       "type": "object"
     },
+    "StartEquipment": {
+      "additionalProperties": false,
+      "properties": {
+        "hand": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trinket": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "StartEquipment",
+      "type": "object"
+    },
     "Stats": {
       "additionalProperties": false,
       "description": "Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме.",
@@ -1453,14 +2642,15 @@
       "title": "Stats",
       "type": "object"
     },
-    "Transition": {
+    "Thing": {
       "additionalProperties": false,
       "properties": {
-        "type": {
-          "const": "goto",
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
         },
-        "to": {
+        "zone": {
           "maxLength": 64,
           "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
@@ -1486,6 +2676,15 @@
                 },
                 {
                   "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
                 }
               ]
             },
@@ -1494,21 +2693,83 @@
             }
           ],
           "default": null
+        },
+        "type": {
+          "const": "thing",
+          "type": "string"
+        },
+        "look": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "event": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Dialogue"
+            },
+            {
+              "$ref": "#/$defs/Choice"
+            },
+            {
+              "$ref": "#/$defs/Narration"
+            }
+          ]
+        },
+        "once": {
+          "default": true,
+          "type": "boolean"
         }
       },
       "required": [
+        "id",
+        "zone",
         "type",
-        "to"
+        "look",
+        "name",
+        "event"
       ],
-      "title": "Transition",
+      "title": "Thing",
+      "type": "object"
+    },
+    "Zone": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "floor": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "floor",
+        "name"
+      ],
+      "title": "Zone",
       "type": "object"
     }
   },
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "1",
-      "default": "1",
+      "const": "2",
+      "default": "2",
       "type": "string"
     },
     "meta": {
@@ -1534,6 +2795,29 @@
       ],
       "default": null
     },
+    "progression": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Progression"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "start_gold": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "start_skills": {
       "items": {
         "maxLength": 64,
@@ -1549,6 +2833,9 @@
         "type": "string"
       },
       "type": "array"
+    },
+    "start_equipment": {
+      "$ref": "#/$defs/StartEquipment"
     },
     "skills": {
       "items": {
@@ -1568,20 +2855,32 @@
       },
       "type": "array"
     },
+    "shops": {
+      "items": {
+        "$ref": "#/$defs/Shop"
+      },
+      "type": "array"
+    },
+    "quests": {
+      "items": {
+        "$ref": "#/$defs/Quest"
+      },
+      "type": "array"
+    },
     "flags": {
       "items": {
         "$ref": "#/$defs/FlagDef"
       },
       "type": "array"
     },
-    "scenes": {
+    "locations": {
       "items": {
-        "$ref": "#/$defs/Scene"
+        "$ref": "#/$defs/Location"
       },
       "minItems": 1,
       "type": "array"
     },
-    "start_scene": {
+    "start_location": {
       "maxLength": 64,
       "pattern": "^[a-z][a-z0-9_]*$",
       "type": "string"
@@ -1592,13 +2891,19 @@
       },
       "minItems": 1,
       "type": "array"
+    },
+    "levels": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Level"
+      },
+      "type": "object"
     }
   },
   "required": [
     "meta",
     "hero",
-    "scenes",
-    "start_scene",
+    "locations",
+    "start_location",
     "endings"
   ],
   "title": "Game",

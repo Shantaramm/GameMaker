@@ -10,7 +10,7 @@ import pytest
 from app.engine.art import LIBRARY_DIR, load_library, repair_art
 from app.engine.validator import validate
 
-from .conftest import scene
+from .conftest import location, obj, obj_path
 
 EMOTIONS = ["neutral", "angry", "sad", "happy", "scared", "surprised"]
 PORTRAIT_CHARS = set(".oswkmhcaerSHCAEWMR")
@@ -201,28 +201,35 @@ def test_unknown_portrait_part_and_color(demo):
 
 
 def test_hair_none_is_allowed(demo):
-    assert demo["characters"][2]["appearance"]["hair"] == "none"
+    oleander = next(c for c in demo["characters"] if c["id"] == "oleander")
+    assert oleander["appearance"]["hair"] == "none"
     assert validate(demo).ok
 
 
-def test_unknown_creature_feature_and_background_parts(demo):
+def test_unknown_creature_feature_background_and_look(demo):
     demo["enemies"][0]["appearance"]["features"] = ["tentacles"]
-    bg = scene(demo, "pier")["background"]
-    bg["props"][0]["id"] = "anchor"
-    bg["mood_palette"] = "sepia"
+    location(demo, "pier")["background"]["mood_palette"] = "sepia"
+    obj(demo, "alley", "net_crates")["look"] = "treasure_pile"
     errors = error_paths(demo)
     assert "enemies[0].appearance.features[0]" in errors
-    assert "scenes[0].background.props[0].id" in errors
-    assert "scenes[0].background.mood_palette" in errors
+    assert "locations[0].background.mood_palette" in errors
+    assert obj_path(demo, "alley", "net_crates") + ".look" in errors
+
+
+def test_tilesets_and_icons_are_not_checked_until_library_has_them(demo):
+    """До этапа 2в в библиотеке нет тайлсетов и иконок: их id пока не проверяются."""
+    demo["locations"][0]["theme"] = "anything"
+    demo["items"][0]["icon"] = "anything"
+    assert validate(demo).ok
 
 
 def test_setting_mismatch_is_warning(demo):
-    bg = scene(demo, "archive")["background"]
+    bg = location(demo, "archive")["background"]
     bg["sky"] = "moon"
-    bg["props"].append({"id": "pine", "x": 60})
+    bg["far"] = "forest"
     report = validate(demo)
     assert report.ok
-    assert {w.path for w in report.warnings} == {"scenes[2].background.sky", "scenes[2].background.props[4].id"}
+    assert {w.path for w in report.warnings} == {"locations[2].background.sky", "locations[2].background.far"}
 
 
 def test_repair_substitutes_defaults(demo):

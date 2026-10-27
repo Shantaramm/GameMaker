@@ -1,13 +1,12 @@
 """Структурная и смысловая проверка игры (SPEC §7.1).
 
 Возвращает список Issue с путём до проблемного места. Эти тексты уходят
-в промпт автопочинки (§6.5), поэтому сообщения должны быть понятны LLM
+в промпт автопочинки (§6.7), поэтому сообщения должны быть понятны LLM
 без контекста.
 """
 
 from __future__ import annotations
 
-from collections import defaultdict
 from typing import Any, Iterable
 
 from pydantic import BaseModel, ValidationError
@@ -15,17 +14,20 @@ from pydantic import BaseModel, ValidationError
 from . import schema as s
 from .art import ArtLibrary, check_art, load_library
 from .issues import Issue, format_path
+from .levels import build_level
+from .world import condition_items, item_sources, location_edges, reachable_locations
 
-MIN_SCENES, MAX_SCENES = 5, 8
+MIN_LOCATIONS, MAX_LOCATIONS = 5, 8
 MAX_ENDINGS = 3
 MAX_CHARACTERS = 12  # включая героя
+MAX_OBJECTS = 15
 MAX_DIALOGUE_NODES = 40
 MAX_LINE_LENGTH = 400
 MAIN_ROLES = ("hero", "companion", "antagonist")
 
-# Какие эффекты где допустимы. goto, флаги и предметы — только в сюжетных событиях.
+# Какие эффекты где допустимы. goto, флаги, предметы и золото — только в сюжетных событиях.
 STORY_EFFECTS = {
-    s.EffSetFlag, s.EffGiveItem, s.EffTakeItem, s.EffLearnSkill,
+    s.EffSetFlag, s.EffGiveItem, s.EffTakeItem, s.EffGiveGold, s.EffTakeGold, s.EffLearnSkill,
     s.EffModStat, s.EffHeal, s.EffDamage, s.EffGoto,
 }
 EFFECTS_BY_CONTEXT: dict[str, set[type]] = {
@@ -61,7 +63,10 @@ _DEFAULT_ART = object()
 
 
 def validate(data: dict[str, Any] | s.Game, art: ArtLibrary | None | object = _DEFAULT_ART) -> ValidationReport:
-    """art — библиотека деталей для проверки внешности; по умолчанию /pixelart/library, None — не проверять."""
+    """art — библиотека деталей для проверки внешности; по умолчанию /pixelart/library, None — не проверять.
+
+    Уровни проверяются пробной сборкой (game не меняется): объекты помещаются в зоны и достижимы.
+    """
     if isinstance(data, s.Game):
         game = data
     else:
@@ -70,6 +75,8 @@ def validate(data: dict[str, Any] | s.Game, art: ArtLibrary | None | object = _D
         except ValidationError as exc:
             return ValidationReport(game=None, issues=_schema_issues(exc))
     issues = _Checker(game).run()
+    for i, loc in enumerate(game.locations):
+        issues += build_level(loc, format_path("locations", i)).issues
     library = load_library() if art is _DEFAULT_ART else art
     if library is not None:
         issues += check_art(game, library)
@@ -90,15 +97,15 @@ class _Checker:
         self.issues: list[Issue] = []
         self.characters = {c.id for c in [game.hero, *game.characters]}
         self.skills = {k.id for k in game.skills}
-        self.items = {i.id for i in game.items}
+        self.items = {i.id: i for i in game.items}
         self.enemies = {e.id for e in game.enemies}
+        self.shops = {sh.id for sh in game.shops}
         self.flags = {f.id for f in game.flags}
-        self.scenes = {sc.id for sc in game.scenes}
+        self.locations = {loc.id for loc in game.locations}
         self.endings = {e.id for e in game.endings}
+        self.foes = {o.id for loc in game.locations for o in loc.objects if isinstance(o, s.Foe)}
         self.flags_checked: dict[str, str] = {}
         self.flags_set: set[str] = set()
-        # scene_id → цели goto из этой сцены
-        self.edges: dict[str, set[str]] = defaultdict(set)
 
     def error(self, path: str, message: str) -> None:
         self.issues.append(Issue(path=path, message=message))
@@ -108,12 +115,15 @@ class _Checker:
 
     def run(self) -> list[Issue]:
         self.check_unique_ids()
+        self.check_start()
         self.check_characters()
         self.check_sizes()
         self.check_combat_defs()
-        for si, scene in enumerate(self.game.scenes):
-            self.check_scene(si, scene)
-        self.check_scene_graph()
+        self.check_shops_and_quests()
+        for i, loc in enumerate(self.game.locations):
+            self.check_location(i, loc)
+        self.check_location_graph()
+        self.check_locked_behind_itself()
         for flag, path in self.flags_checked.items():
             if flag in self.flags and flag not in self.flags_set:
                 self.warn(path, f"флаг '{flag}' проверяется, но нигде не выставляется")
@@ -128,15 +138,24 @@ class _Checker:
             ("навыков", [(format_path("skills", i), x.id) for i, x in enumerate(g.skills)]),
             ("предметов", [(format_path("items", i), x.id) for i, x in enumerate(g.items)]),
             ("врагов", [(format_path("enemies", i), x.id) for i, x in enumerate(g.enemies)]),
+            ("магазинов", [(format_path("shops", i), x.id) for i, x in enumerate(g.shops)]),
+            ("квестов", [(format_path("quests", i), x.id) for i, x in enumerate(g.quests)]),
             ("флагов", [(format_path("flags", i), x.id) for i, x in enumerate(g.flags)]),
-            ("сцен и концовок", [(format_path("scenes", i), x.id) for i, x in enumerate(g.scenes)]
+            ("локаций и концовок", [(format_path("locations", i), x.id) for i, x in enumerate(g.locations)]
              + [(format_path("endings", i), x.id) for i, x in enumerate(g.endings)]),
+            ("объектов на картах", [(format_path("locations", i, "objects", j), o.id)
+                                    for i, loc in enumerate(g.locations) for j, o in enumerate(loc.objects)]),
         ]
-        for si, scene in enumerate(g.scenes):
-            spaces.append((f"событий сцены '{scene.id}'", [
-                (format_path("scenes", si, "events", ei), e.id)
-                for ei, e in enumerate(scene.events) if not isinstance(e, s.Transition)
-            ]))
+        for i, loc in enumerate(g.locations):
+            base = format_path("locations", i)
+            spaces.append((f"зон локации '{loc.id}'", [(format_path(base, "zones", j), z.id) for j, z in enumerate(loc.zones)]))
+            events = [(format_path(base, "on_enter", j), e.id) for j, e in enumerate(loc.on_enter)]
+            for j, o in enumerate(loc.objects):
+                if isinstance(o, s.Npc):
+                    events.append((format_path(base, "objects", j, "dialogue"), o.dialogue.id))
+                elif isinstance(o, s.Thing):
+                    events.append((format_path(base, "objects", j, "event"), o.event.id))
+            spaces.append((f"событий локации '{loc.id}'", events))
         for label, entries in spaces:
             seen: set[str] = set()
             for path, ident in entries:
@@ -144,18 +163,27 @@ class _Checker:
                     self.error(format_path(path, "id"), f"повторяющийся id '{ident}' среди {label}")
                 seen.add(ident)
 
-        if g.start_scene not in self.scenes:
-            self.error("start_scene", f"неизвестная сцена '{g.start_scene}'")
-        for i, k in enumerate(g.start_skills):
-            self.ref(k, self.skills, format_path("start_skills", i), "навык")
-        for i, k in enumerate(g.start_items):
-            self.ref(k, self.items, format_path("start_items", i), "предмет")
-
-    def ref(self, ident: str, known: set[str], path: str, kind: str) -> bool:
+    def ref(self, ident: str, known: Iterable[str], path: str, kind: str) -> bool:
         if ident not in known:
             self.error(path, f"неизвестный {kind} '{ident}'")
             return False
         return True
+
+    def check_start(self) -> None:
+        g = self.game
+        self.ref(g.start_location, self.locations, "start_location", "локация")
+        for i, k in enumerate(g.start_skills):
+            self.ref(k, self.skills, format_path("start_skills", i), "навык")
+        for i, k in enumerate(g.start_items):
+            self.ref(k, self.items, format_path("start_items", i), "предмет")
+        for slot, item_id in g.start_equipment.model_dump().items():
+            if item_id is None:
+                continue
+            path = format_path("start_equipment", slot)
+            if self.ref(item_id, self.items, path, "предмет"):
+                item = self.items[item_id]
+                if item.kind != "equipment" or item.equip is None or item.equip.slot != slot:
+                    self.error(path, f"'{item_id}' нельзя надеть в слот {slot}: нужен предмет kind=equipment с equip.slot='{slot}'")
 
     def check_condition(self, cond: s.Condition | None, path: str) -> None:
         if cond is None:
@@ -171,8 +199,10 @@ class _Checker:
                 self.flags_checked.setdefault(cond.flag, format_path(path, "flag"))
         elif isinstance(cond, s.CondItem):
             self.ref(cond.has_item, self.items, format_path(path, "has_item"), "предмет")
+        elif isinstance(cond, s.CondDefeated):
+            self.ref(cond.defeated, self.foes, format_path(path, "defeated"), "объект-враг (type: enemy)")
 
-    def check_effects(self, effects: list[s.Effect], path: str, context: str, scene_id: str | None = None) -> bool:
+    def check_effects(self, effects: list[s.Effect], path: str, context: str) -> bool:
         """Возвращает True, если среди эффектов есть goto."""
         allowed = EFFECTS_BY_CONTEXT[context]
         has_goto = False
@@ -182,7 +212,7 @@ class _Checker:
                 key = next(iter(e.model_dump(by_alias=True)))
                 self.error(p, f"эффект '{key}' здесь недопустим")
                 continue
-            if context != "story" and context != "item" and isinstance(e, s.EffModStat) and e.mod_stat not in BATTLE_ONLY_STATS:
+            if context not in ("story", "item") and isinstance(e, s.EffModStat) and e.mod_stat not in BATTLE_ONLY_STATS:
                 self.error(p, "в бою mod_stat меняет только attack или defense")
             if isinstance(e, s.EffSetFlag):
                 if self.ref(e.set_flag, self.flags, format_path(p, "set_flag"), "флаг"):
@@ -195,8 +225,7 @@ class _Checker:
                 self.ref(e.learn_skill, self.skills, format_path(p, "learn_skill"), "навык")
             elif isinstance(e, s.EffGoto):
                 has_goto = True
-                if self.ref(e.goto, self.scenes | self.endings, format_path(p, "goto"), "переход (сцена или концовка)") and scene_id:
-                    self.edges[scene_id].add(e.goto)
+                self.ref(e.goto, self.locations | self.endings, format_path(p, "goto"), "переход (локация или концовка)")
         return has_goto
 
     # --- верхний уровень ---
@@ -205,9 +234,15 @@ class _Checker:
         g = self.game
         if g.hero.role != "hero":
             self.error("hero.role", "у героя role должна быть 'hero'")
+        if g.hero.joins is not None:
+            self.error("hero.joins", "joins задаётся только компаньону")
         for i, c in enumerate(g.characters):
+            path = format_path("characters", i)
             if c.role == "hero":
-                self.error(format_path("characters", i, "role"), "герой может быть только один (поле hero)")
+                self.error(format_path(path, "role"), "герой может быть только один (поле hero)")
+            if c.joins is not None and c.role != "companion":
+                self.error(format_path(path, "joins"), "joins задаётся только компаньону")
+            self.check_condition(c.joins, format_path(path, "joins"))
         companions = [i for i, c in enumerate(g.characters) if c.role == "companion"]
         for i in companions[1:]:
             self.error(format_path("characters", i, "role"), "компаньон может быть только один")
@@ -226,69 +261,117 @@ class _Checker:
 
     def check_sizes(self) -> None:
         g = self.game
-        if not MIN_SCENES <= len(g.scenes) <= MAX_SCENES:
-            self.error("scenes", f"сцен {len(g.scenes)}, нужно от {MIN_SCENES} до {MAX_SCENES}")
+        if not MIN_LOCATIONS <= len(g.locations) <= MAX_LOCATIONS:
+            self.error("locations", f"локаций {len(g.locations)}, нужно от {MIN_LOCATIONS} до {MAX_LOCATIONS}")
         if len(g.endings) > MAX_ENDINGS:
             self.error("endings", f"концовок {len(g.endings)}, нужно не больше {MAX_ENDINGS}")
         if 1 + len(g.characters) > MAX_CHARACTERS:
             self.error("characters", f"персонажей {1 + len(g.characters)} вместе с героем, максимум {MAX_CHARACTERS}")
+        for i, loc in enumerate(g.locations):
+            if len(loc.objects) > MAX_OBJECTS:
+                self.error(format_path("locations", i, "objects"), f"объектов {len(loc.objects)}, максимум {MAX_OBJECTS}")
 
     def check_combat_defs(self) -> None:
         g = self.game
         for i, k in enumerate(g.skills):
             self.check_effects(k.effect, format_path("skills", i, "effect"), f"skill_{k.target}")
         for i, item in enumerate(g.items):
-            self.check_effects(item.effect, format_path("items", i, "effect"), "item")
+            path = format_path("items", i)
+            self.check_effects(item.effect, format_path(path, "effect"), "item")
+            if item.kind == "equipment" and item.equip is None:
+                self.error(format_path(path, "equip"), "у предмета kind=equipment должен быть equip {slot, bonus}")
+            if item.kind != "equipment" and item.equip is not None:
+                self.error(format_path(path, "equip"), "equip задаётся только предметам kind=equipment")
+            if item.kind == "consumable" and not item.effect:
+                self.error(format_path(path, "effect"), "у расходуемого предмета (consumable) должен быть effect")
+            if item.kind in ("key", "misc", "equipment") and item.effect:
+                self.error(format_path(path, "effect"), f"у предмета kind={item.kind} не бывает effect: его нельзя «использовать»")
         for i, enemy in enumerate(g.enemies):
             for j, ability in enumerate(enemy.abilities):
                 self.check_effects(ability.effect, format_path("enemies", i, "abilities", j, "effect"), "ability")
 
-    # --- сцены ---
+    def check_shops_and_quests(self) -> None:
+        g = self.game
+        for i, shop in enumerate(g.shops):
+            for j, item in enumerate(shop.items):
+                self.ref(item, self.items, format_path("shops", i, "items", j), "предмет")
+        if g.quests and not any(q.main for q in g.quests):
+            self.error("quests", "нужен основной квест (main: true)")
+        if not g.quests:
+            self.error("quests", "нужен хотя бы основной квест")
+        for i, q in enumerate(g.quests):
+            path = format_path("quests", i)
+            if q.giver is not None:
+                self.ref(q.giver, self.characters, format_path(path, "giver"), "персонаж")
+            self.check_condition(q.start, format_path(path, "start"))
+            for j, stage in enumerate(q.stages):
+                self.check_line(stage.text, format_path(path, "stages", j, "text"))
+                self.check_condition(stage.done, format_path(path, "stages", j, "done"))
 
-    def check_scene(self, si: int, scene: s.Scene) -> None:
-        base = format_path("scenes", si)
-        terminal_at: int | None = None
-        for ei, event in enumerate(scene.events):
-            path = format_path(base, "events", ei)
-            if terminal_at is not None:
-                self.error(path, f"событие недостижимо: перед ним безусловный goto (events[{terminal_at}])")
-                break
-            if isinstance(event, s.Transition):
-                self.check_condition(event.condition, format_path(path, "condition"))
-                if self.ref(event.to, self.scenes | self.endings, format_path(path, "to"), "переход (сцена или концовка)"):
-                    self.edges[scene.id].add(event.to)
-                if event.condition is None:
-                    terminal_at = ei
-            elif isinstance(event, s.Dialogue):
-                self.check_dialogue(event, path, scene.id)
-            elif isinstance(event, s.Choice):
-                self.check_choice(event, path, scene.id)
-            elif isinstance(event, s.Battle):
-                for j, enemy_id in enumerate(event.enemies):
-                    self.ref(enemy_id, self.enemies, format_path(path, "enemies", j), "враг")
-                self.check_effects(event.on_win, format_path(path, "on_win"), "story", scene.id)
-                if isinstance(event.on_lose, list):
-                    self.check_effects(event.on_lose, format_path(path, "on_lose"), "story", scene.id)
+    # --- локации ---
 
-        last = scene.events[-1]
-        if not (isinstance(last, s.Transition) and last.condition is None) and terminal_at is None:
-            self.error(format_path(base, "events"), "сцена должна заканчиваться безусловным goto (последнее событие: {\"type\": \"goto\", \"to\": ...} без condition)")
+    def check_location(self, li: int, loc: s.Location) -> None:
+        base = format_path("locations", li)
+        zones = {z.id: z for z in loc.zones}
+        for j, zone in enumerate(loc.zones):
+            if zone.floor >= loc.floors:
+                self.error(format_path(base, "zones", j, "floor"), f"этаж {zone.floor}, а в локации floors={loc.floors} (этажи с 0)")
+        for floor in range(loc.floors):
+            if not any(z.floor == floor for z in loc.zones):
+                self.warn(format_path(base, "zones"), f"на этаже {floor} нет ни одной зоны — он будет пустым")
+        for j, event in enumerate(loc.on_enter):
+            self.check_event(event, format_path(base, "on_enter", j))
+
+        for j, obj in enumerate(loc.objects):
+            path = format_path(base, "objects", j)
+            self.ref(obj.zone, zones, format_path(path, "zone"), f"зона (локация '{loc.id}')")
+            self.check_condition(obj.condition, format_path(path, "condition"))
+            if isinstance(obj, s.Npc):
+                if self.ref(obj.character, self.characters, format_path(path, "character"), "персонаж") and obj.character == self.game.hero.id:
+                    self.error(format_path(path, "character"), "герой не может стоять на карте как NPC")
+                if obj.shop is not None:
+                    self.ref(obj.shop, self.shops, format_path(path, "shop"), "магазин")
+                self.check_dialogue(obj.dialogue, format_path(path, "dialogue"))
+            elif isinstance(obj, s.Foe):
+                for k, enemy_id in enumerate(obj.enemies):
+                    self.ref(enemy_id, self.enemies, format_path(path, "enemies", k), "враг")
+                self.check_effects(obj.on_win, format_path(path, "on_win"), "story")
+                if isinstance(obj.on_lose, list):
+                    self.check_effects(obj.on_lose, format_path(path, "on_lose"), "story")
+            elif isinstance(obj, s.Chest):
+                self.check_effects(obj.contents, format_path(path, "contents"), "story")
+                self.check_condition(obj.requires, format_path(path, "requires"))
+            elif isinstance(obj, s.Thing):
+                self.check_event(obj.event, format_path(path, "event"))
+            elif isinstance(obj, s.Exit):
+                self.ref(obj.to, self.locations | self.endings, format_path(path, "to"), "переход (локация или концовка)")
+                self.check_condition(obj.requires, format_path(path, "requires"))
+                if obj.to == loc.id:
+                    self.error(format_path(path, "to"), "выход ведёт в ту же локацию")
+
+    def check_event(self, event: s.Event, path: str) -> None:
+        if isinstance(event, s.Dialogue):
+            self.check_dialogue(event, path)
+        elif isinstance(event, s.Choice):
+            self.check_choice(event, path)
+        else:
+            self.check_line(event.text, format_path(path, "text"))
 
     def check_line(self, text: str, path: str) -> None:
         if len(text) > MAX_LINE_LENGTH:
             self.error(path, f"текст длиной {len(text)} символов, максимум {MAX_LINE_LENGTH}")
 
-    def check_choice(self, event: s.Choice, path: str, scene_id: str) -> None:
+    def check_choice(self, event: s.Choice, path: str) -> None:
         self.check_line(event.prompt, format_path(path, "prompt"))
         for i, option in enumerate(event.options):
             p = format_path(path, "options", i)
             self.check_line(option.text, format_path(p, "text"))
             self.check_condition(option.condition, format_path(p, "condition"))
-            self.check_effects(option.effects, format_path(p, "effects"), "story", scene_id)
+            self.check_effects(option.effects, format_path(p, "effects"), "story")
         if all(o.condition is not None for o in event.options):
             self.error(format_path(path, "options"), "у всех вариантов есть condition — игрок может застрять; нужен хотя бы один вариант без условия")
 
-    def check_dialogue(self, event: s.Dialogue, path: str, scene_id: str) -> None:
+    def check_dialogue(self, event: s.Dialogue, path: str) -> None:
         nodes = {n.id: n for n in event.nodes}
         if len(event.nodes) > MAX_DIALOGUE_NODES:
             self.error(format_path(path, "nodes"), f"узлов {len(event.nodes)}, максимум {MAX_DIALOGUE_NODES}")
@@ -312,7 +395,7 @@ class _Checker:
                     cp = format_path(p, "choices", ci)
                     self.check_line(choice.text, format_path(cp, "text"))
                     self.check_condition(choice.condition, format_path(cp, "condition"))
-                    if self.check_effects(choice.effects, format_path(cp, "effects"), "story", scene_id) or choice.next == "end":
+                    if self.check_effects(choice.effects, format_path(cp, "effects"), "story") or choice.next == "end":
                         exits.add(node.id)
                     elif choice.next in nodes:
                         targets.add(choice.next)
@@ -348,19 +431,49 @@ class _Checker:
             if node.id not in can_exit:
                 self.error(format_path(path, "nodes", ni), f"из узла '{node.id}' не достижим 'end' — диалог зацикливается")
 
-    def check_scene_graph(self) -> None:
+    # --- мир целиком ---
+
+    def check_location_graph(self) -> None:
         g = self.game
-        if g.start_scene not in self.scenes:
+        if g.start_location not in self.locations:
             return
-        reached = _reachable(g.start_scene, self.edges)
-        for si, scene in enumerate(g.scenes):
-            if scene.id not in reached:
-                self.error(format_path("scenes", si), f"сцена '{scene.id}' недостижима из start_scene")
+        reached = reachable_locations(g)
+        for i, loc in enumerate(g.locations):
+            if loc.id not in reached:
+                self.error(format_path("locations", i), f"локация '{loc.id}' недостижима из start_location: нет ведущих в неё выходов")
         if not reached & self.endings:
-            self.error("endings", "ни одна концовка не достижима из start_scene")
+            self.error("endings", "ни одна концовка не достижима: нужен выход (type: exit, to: <ending_id>) или goto на концовку")
         for i, ending in enumerate(g.endings):
             if ending.id not in reached:
                 self.warn(format_path("endings", i), f"концовка '{ending.id}' недостижима")
+        edges = location_edges(g)
+        for i, loc in enumerate(g.locations):
+            if not edges[loc.id]:
+                self.error(format_path("locations", i, "objects"), f"из локации '{loc.id}' нет выхода: нужен объект type: exit (или goto в событии)")
+
+    def check_locked_behind_itself(self) -> None:
+        """Ключ к двери или сундуку должен быть доступен, не проходя через эту дверь (и не лёжа в этом сундуке)."""
+        g = self.game
+        if g.start_location not in self.locations:
+            return
+        sources = item_sources(g)
+        for li, loc in enumerate(g.locations):
+            for oi, obj in enumerate(loc.objects):
+                if not isinstance(obj, (s.Exit, s.Chest)) or obj.requires is None:
+                    continue
+                needed = condition_items(obj.requires)
+                if not needed:
+                    continue
+                around = reachable_locations(g, skip=frozenset({(loc.id, obj.id)}))
+                for item in needed:
+                    ok = any(
+                        src_loc == "start" or (src_loc in around and src_obj != obj.id)
+                        for src_loc, src_obj in sources.get(item, [])
+                    )
+                    if not ok:
+                        what = "дверь" if isinstance(obj, s.Exit) else "сундук"
+                        self.error(format_path("locations", li, "objects", oi, "requires"),
+                                   f"тупик: '{item}' нельзя получить, не открыв этот {what}; положи его раньше по пути")
 
 
 def _reachable(start: str, edges: dict[str, set[str]]) -> set[str]:
@@ -372,3 +485,4 @@ def _reachable(start: str, edges: dict[str, set[str]]) -> set[str]:
                 seen.add(nxt)
                 stack.append(nxt)
     return seen
+

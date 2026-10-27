@@ -1,4 +1,4 @@
-"""Примитивы движка: документ Game и всё, из чего он состоит (SPEC §5).
+"""Примитивы движка: документ Game версии 2 и всё, из чего он состоит (SPEC §5).
 
 Модели проверяют только форму данных. Ссылки между объектами, достижимость
 и прочие смысловые правила проверяет validator.py.
@@ -80,7 +80,21 @@ class CondStat(Strict):
     value: int
 
 
-_COND_KEYS = ("all", "any", "not", "flag", "has_item", "stat")
+class CondGold(Strict):
+    gold: Literal[">=", "<="]
+    value: int = Field(ge=0)
+
+
+class CondLevel(Strict):
+    level: Literal[">=", "<="]
+    value: int = Field(ge=1)
+
+
+class CondDefeated(Strict):
+    defeated: Id  # id объекта-врага на карте
+
+
+_COND_KEYS = ("all", "any", "not", "flag", "has_item", "stat", "gold", "level", "defeated")
 
 Condition = Annotated[
     Union[
@@ -90,6 +104,9 @@ Condition = Annotated[
         Annotated[CondFlag, _tag("flag")],
         Annotated[CondItem, _tag("has_item")],
         Annotated[CondStat, _tag("stat")],
+        Annotated[CondGold, _tag("gold")],
+        Annotated[CondLevel, _tag("level")],
+        Annotated[CondDefeated, _tag("defeated")],
     ],
     _key_discriminator(_COND_KEYS),
 ]
@@ -128,12 +145,20 @@ class EffDamage(Strict):
     damage: int = Field(ge=1)
 
 
+class EffGiveGold(Strict):
+    give_gold: int = Field(ge=1)
+
+
+class EffTakeGold(Strict):
+    take_gold: int = Field(ge=1)
+
+
 class EffGoto(Strict):
-    goto: Id
+    goto: Id  # location_id или ending_id
 
 
 _EFFECT_KEYS = (
-    "set_flag", "give_item", "take_item", "learn_skill",
+    "set_flag", "give_item", "take_item", "give_gold", "take_gold", "learn_skill",
     "mod_stat", "heal", "damage", "goto",
 )
 
@@ -142,6 +167,8 @@ Effect = Annotated[
         Annotated[EffSetFlag, _tag("set_flag")],
         Annotated[EffGiveItem, _tag("give_item")],
         Annotated[EffTakeItem, _tag("take_item")],
+        Annotated[EffGiveGold, _tag("give_gold")],
+        Annotated[EffTakeGold, _tag("take_gold")],
         Annotated[EffLearnSkill, _tag("learn_skill")],
         Annotated[EffModStat, _tag("mod_stat")],
         Annotated[EffHeal, _tag("heal")],
@@ -231,6 +258,8 @@ class Character(Strict):
     role: Role
     description: str = Field(max_length=1000)
     appearance: PortraitSpec
+    # Только для компаньона: с какого момента он следует за героем; None — с начала игры.
+    joins: Condition | None = None
 
 
 class Stats(Strict):
@@ -251,12 +280,31 @@ class Skill(Strict):
     target: Literal["enemy", "self"]
 
 
+Slot = Literal["hand", "body", "trinket"]
+
+
+class EquipBonus(Strict):
+    attack: int = 0
+    defense: int = 0
+    focus: int = 0
+    hp: int = 0
+
+
+class Equip(Strict):
+    slot: Slot
+    bonus: EquipBonus
+
+
 class Item(Strict):
     id: Id
     name: str = Field(min_length=1, max_length=60)
     description: str = Field(max_length=300)
-    consumable: bool
-    effect: list[Effect] = Field(default_factory=list)
+    icon: Id
+    kind: Literal["consumable", "equipment", "key", "misc"]
+    effect: list[Effect] = Field(default_factory=list)  # для consumable
+    equip: Equip | None = None  # для equipment
+    value_tier: int = Field(ge=1, le=5)
+    price: int | None = Field(default=None, ge=0)  # заполняет balance.py
 
 
 class EnemyAbility(Strict):
@@ -271,11 +319,34 @@ class Enemy(Strict):
     description: str = Field(max_length=500)
     tier: int = Field(ge=1, le=5)
     appearance: EnemyAppearance
+    abilities: list[EnemyAbility] = Field(default_factory=list, max_length=2)
     # Заполняет balance.py, не LLM.
     hp: int | None = Field(default=None, ge=1)
     attack: int | None = Field(default=None, ge=0)
     defense: int | None = Field(default=None, ge=0)
-    abilities: list[EnemyAbility] = Field(default_factory=list, max_length=2)
+    xp: int | None = Field(default=None, ge=0)
+    gold: int | None = Field(default=None, ge=0)
+
+
+class Shop(Strict):
+    id: Id
+    name: str = Field(min_length=1, max_length=60)
+    items: list[Id] = Field(min_length=1)
+    buys: bool = True  # покупает ли у героя (за половину цены)
+
+
+class QuestStage(Strict):
+    text: str = Field(min_length=1, max_length=300)
+    done: Condition
+
+
+class Quest(Strict):
+    id: Id
+    title: str = Field(min_length=1, max_length=120)
+    main: bool = False
+    giver: Id | None = None
+    start: Condition | None = None  # когда квест появляется в журнале; None — с начала игры
+    stages: list[QuestStage] = Field(min_length=1)
 
 
 class FlagDef(Strict):
@@ -283,7 +354,20 @@ class FlagDef(Strict):
     description: str = Field(default="", max_length=300)
 
 
-# --- Сцены и события (§5.4) ------------------------------------------------
+class Progression(Strict):
+    """Кривая опыта и прирост статов за уровень. Заполняет balance.py."""
+
+    xp_to_level: list[int]  # суммарный опыт для уровней 2, 3, …
+    per_level: Stats
+
+
+class StartEquipment(Strict):
+    hand: Id | None = None
+    body: Id | None = None
+    trinket: Id | None = None
+
+
+# --- События (§5.5) ---------------------------------------------------------
 
 
 class DialogueChoice(Strict):
@@ -309,28 +393,6 @@ class Dialogue(Strict):
     start_node: Id
 
 
-def _on_lose_tag(value: Any) -> str:
-    return TAG_PREFIX + ("game_over" if isinstance(value, str) else "effects")
-
-
-OnLose = Annotated[
-    Union[
-        Annotated[Literal["game_over"], _tag("game_over")],
-        Annotated[list[Effect], _tag("effects")],
-    ],
-    Discriminator(_on_lose_tag),
-]
-
-
-class Battle(Strict):
-    type: Literal["battle"]
-    id: Id
-    enemies: list[Id] = Field(min_length=1, max_length=3)
-    on_win: list[Effect] = Field(default_factory=list)
-    on_lose: OnLose = "game_over"
-    can_flee: bool = False
-
-
 class ChoiceOption(Strict):
     text: str = Field(min_length=1)
     condition: Condition | None = None
@@ -350,13 +412,7 @@ class Narration(Strict):
     text: str = Field(min_length=1)
 
 
-class Transition(Strict):
-    type: Literal["goto"]
-    to: Id  # scene_id или ending_id
-    condition: Condition | None = None
-
-
-def _event_tag(value: Any) -> str | None:
+def _type_tag(value: Any) -> str | None:
     kind = value.get("type") if isinstance(value, dict) else getattr(value, "type", None)
     return TAG_PREFIX + kind if isinstance(kind, str) else None
 
@@ -364,21 +420,140 @@ def _event_tag(value: Any) -> str | None:
 Event = Annotated[
     Union[
         Annotated[Dialogue, _tag("dialogue")],
-        Annotated[Battle, _tag("battle")],
         Annotated[Choice, _tag("choice")],
         Annotated[Narration, _tag("narration")],
-        Annotated[Transition, _tag("goto")],
     ],
-    Discriminator(_event_tag),
+    Discriminator(_type_tag),
 ]
 
 
-class Scene(Strict):
+# --- Локации и объекты (§5.4) ---------------------------------------------------
+
+
+def _on_lose_tag(value: Any) -> str:
+    return TAG_PREFIX + ("game_over" if isinstance(value, str) else "effects")
+
+
+OnLose = Annotated[
+    Union[
+        Annotated[Literal["game_over"], _tag("game_over")],
+        Annotated[list[Effect], _tag("effects")],
+    ],
+    Discriminator(_on_lose_tag),
+]
+
+
+class MapObjectBase(Strict):
+    id: Id
+    zone: Id
+    condition: Condition | None = None  # объект есть на карте, только пока условие выполнено
+
+
+class Npc(MapObjectBase):
+    type: Literal["npc"]
+    character: Id
+    dialogue: Dialogue
+    shop: Id | None = None
+
+
+class Foe(MapObjectBase):
+    type: Literal["enemy"]
+    enemies: list[Id] = Field(min_length=1, max_length=3)
+    on_win: list[Effect] = Field(default_factory=list)
+    on_lose: OnLose = "game_over"
+    can_flee: bool = False
+
+
+class Chest(MapObjectBase):
+    type: Literal["chest"]
+    look: Id  # предмет фона из библиотеки (prop)
+    contents: list[Effect] = Field(min_length=1)
+    requires: Condition | None = None
+    locked_text: str | None = Field(default=None, max_length=200)
+
+
+class Thing(MapObjectBase):
+    type: Literal["thing"]
+    look: Id
+    name: str = Field(min_length=1, max_length=60)
+    event: Event
+    once: bool = True
+
+
+class Exit(MapObjectBase):
+    type: Literal["exit"]
+    kind: Literal["door", "left_edge", "right_edge"]
+    to: Id  # location_id или ending_id
+    requires: Condition | None = None
+    locked_text: str | None = Field(default=None, max_length=200)
+
+
+MapObject = Annotated[
+    Union[
+        Annotated[Npc, _tag("npc")],
+        Annotated[Foe, _tag("enemy")],
+        Annotated[Chest, _tag("chest")],
+        Annotated[Thing, _tag("thing")],
+        Annotated[Exit, _tag("exit")],
+    ],
+    Discriminator(_type_tag),
+]
+
+
+class Zone(Strict):
+    id: Id
+    floor: int = Field(ge=0, le=2)
+    name: str = Field(min_length=1, max_length=60)
+
+
+class Location(Strict):
     id: Id
     title: str = Field(min_length=1, max_length=120)
-    background: BackgroundSpec
     intro: str = Field(min_length=1)
-    events: list[Event] = Field(min_length=1)
+    theme: Id  # тайлсет
+    background: BackgroundSpec
+    size: Literal["small", "medium", "large"]
+    floors: int = Field(ge=1, le=3)
+    zones: list[Zone] = Field(min_length=1)
+    objects: list[MapObject] = Field(default_factory=list)
+    on_enter: list[Event] = Field(default_factory=list)
+
+
+# --- Уровни (§5.6): строит levels.py, не LLM -------------------------------------
+
+
+class LevelFloor(Strict):
+    y: int  # строка тайлов, на которой стоят персонажи
+    x0: int
+    x1: int
+
+
+class LevelLink(Strict):
+    kind: Literal["stairs", "ladder"]
+    a: tuple[int, int]  # (этаж, x)
+    b: tuple[int, int]
+
+
+class LevelObject(Strict):
+    id: Id
+    floor: int
+    x: int
+
+
+class LevelSpawn(Strict):
+    from_: Id = Field(alias="from")  # откуда пришли (location_id) или "default" — старт и переходы через goto
+    floor: int
+    x: int
+
+
+class Level(Strict):
+    width: int
+    height: int
+    tiles: list[str]
+    floors: list[LevelFloor]
+    links: list[LevelLink]
+    objects: list[LevelObject]
+    spawns: list[LevelSpawn]
 
 
 class Ending(Strict):
@@ -389,26 +564,37 @@ class Ending(Strict):
 
 
 class Game(Strict):
-    schema_version: Literal["1"] = "1"
+    schema_version: Literal["2"] = "2"
     meta: Meta
     hero: Character
     characters: list[Character] = Field(default_factory=list)
-    stats_template: Stats | None = None  # заполняет balance.py
+    # Заполняет balance.py.
+    stats_template: Stats | None = None
+    progression: Progression | None = None
+    start_gold: int | None = Field(default=None, ge=0)
     start_skills: list[Id] = Field(default_factory=list)
     start_items: list[Id] = Field(default_factory=list)
+    start_equipment: StartEquipment = Field(default_factory=StartEquipment)
     skills: list[Skill] = Field(default_factory=list)
     items: list[Item] = Field(default_factory=list)
     enemies: list[Enemy] = Field(default_factory=list)
+    shops: list[Shop] = Field(default_factory=list)
+    quests: list[Quest] = Field(default_factory=list)
     flags: list[FlagDef] = Field(default_factory=list)
-    scenes: list[Scene] = Field(min_length=1)
-    start_scene: Id
+    locations: list[Location] = Field(min_length=1)
+    start_location: Id
     endings: list[Ending] = Field(min_length=1)
+    # Заполняет levels.py.
+    levels: dict[str, Level] = Field(default_factory=dict)
 
     def dump(self) -> dict[str, Any]:
         return self.model_dump(mode="json", by_alias=True, exclude_none=True)
 
+    def location(self, location_id: str) -> Location:
+        return next(loc for loc in self.locations if loc.id == location_id)
 
-for _model in (CondAll, CondAny, CondNot):
+
+for _model in (CondAll, CondAny, CondNot, Character):
     _model.model_rebuild()
 
 
