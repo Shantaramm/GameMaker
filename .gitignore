@@ -7,3 +7,4 @@ __pycache__/
 node_modules/
 frontend/dist/
 certs/
+frontend/e2e-fail-*.png

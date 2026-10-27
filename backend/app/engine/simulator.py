@@ -231,6 +231,7 @@ class Fighter:
     attack: int
     defense: int
     abilities: list[s.EnemyAbility]
+    max_hp: int = 0
     turn: int = 0
 
     @property
@@ -253,7 +254,7 @@ def run_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) ->
     Бафы навыков (mod_stat) действуют до конца боя.
     """
     foes = [
-        Fighter(e.id, e.hp, e.attack, e.defense, e.abilities)
+        Fighter(e.id, e.hp, e.attack, e.defense, e.abilities, max_hp=e.hp)
         for e in (world.enemies[i] for i in foe.enemies)
     ]
     eff = world.effective(hero)
@@ -318,7 +319,7 @@ def run_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) ->
                     if isinstance(e, s.EffDamage):
                         hero.hp -= e.damage
                     elif isinstance(e, s.EffHeal):
-                        f.hp += e.heal
+                        f.hp = min(f.max_hp, f.hp + e.heal)
                     elif isinstance(e, s.EffModStat) and e.mod_stat in ("attack", "defense"):
                         setattr(f, e.mod_stat, max(0, getattr(f, e.mod_stat) + e.delta))
             else:
