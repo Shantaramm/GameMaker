@@ -1,0 +1,299 @@
+{
+  "schema_version": "1",
+  "meta": {
+    "title": "Погасший маяк",
+    "logline": "Молодая следовательница возвращается в туманный портовый город, где три ночи назад погас маяк и начали пропадать люди.",
+    "tone": "мрачная сказка с надеждой",
+    "art_style": "пиксель-арт, приглушённые морские цвета",
+    "language": "ru",
+    "est_minutes": 15
+  },
+  "hero": {
+    "id": "arina",
+    "name": "Арина Стрельцова",
+    "role": "hero",
+    "description": "Следовательница из столицы, выросла в этом порту. Упрямая, наблюдательная, привыкла полагаться только на себя. Вернулась, потому что среди пропавших — её бывший учитель.",
+    "appearance": {
+      "head": "oval", "skin": "fair", "hair": "long_braid", "hair_color": "chestnut",
+      "eyes": "sharp", "eye_color": "green", "brows": "straight", "mouth": "thin",
+      "outfit": "detective_coat", "outfit_color": "slate", "accent_color": "brass",
+      "accessory": ["scarf"], "bg_color": "night_blue"
+    }
+  },
+  "characters": [
+    {
+      "id": "tim",
+      "name": "Тимофей",
+      "role": "companion",
+      "description": "Ученик смотрителя маяка, друг детства Арины. Пугливый, но верный; знает каждый закоулок порта.",
+      "appearance": {
+        "head": "round", "skin": "tan", "hair": "short_messy", "hair_color": "ginger",
+        "eyes": "round", "eye_color": "brown", "brows": "raised", "mouth": "smile",
+        "outfit": "work_jacket", "outfit_color": "moss", "accent_color": "rust",
+        "bg_color": "sea_green"
+      }
+    },
+    {
+      "id": "efim",
+      "name": "Ефим Лукич",
+      "role": "npc",
+      "description": "Старый архивариус портовой управы. Глуховат, подозрителен, помнит всё, что записано за сорок лет.",
+      "appearance": {
+        "head": "old", "skin": "pale", "hair": "balding", "hair_color": "white",
+        "eyes": "narrow", "eye_color": "gray", "brows": "bushy", "mouth": "frown",
+        "facial_hair": "full_beard", "outfit": "business_suit", "outfit_color": "brown",
+        "accent_color": "gold", "accessory": ["glasses"], "bg_color": "parchment"
+      }
+    },
+    {
+      "id": "oleander",
+      "name": "Магистр Олеандр",
+      "role": "antagonist",
+      "description": "Учёный-отшельник, поселившийся в маяке. Вежлив и холоден; верит, что тьма из моря даст ему знание, и платит ей людьми.",
+      "appearance": {
+        "head": "thin", "skin": "pale", "hair": "none", "hair_color": "gray",
+        "eyes": "sharp", "eye_color": "violet", "brows": "arched", "mouth": "smirk",
+        "outfit": "mage_robe", "outfit_color": "plum", "accent_color": "silver",
+        "accessory": ["scar"], "bg_color": "dark_violet"
+      }
+    }
+  ],
+  "start_skills": ["sharp_strike"],
+  "start_items": [],
+  "skills": [
+    {
+      "id": "sharp_strike",
+      "name": "Точный удар",
+      "description": "Удар в уязвимое место, который не смягчает броня.",
+      "cost_focus": 3,
+      "effect": [{"damage": 14}],
+      "target": "enemy"
+    },
+    {
+      "id": "salt_ward",
+      "name": "Соляной круг",
+      "description": "Круг из соли отгоняет тьму: немного лечит и укрепляет защиту до конца боя.",
+      "cost_focus": 2,
+      "effect": [{"heal": 8}, {"mod_stat": "defense", "delta": 3}],
+      "target": "self"
+    }
+  ],
+  "items": [
+    {
+      "id": "tonic",
+      "name": "Бабушкина настойка",
+      "description": "Горькая, но ставит на ноги.",
+      "consumable": true,
+      "effect": [{"heal": 20}]
+    },
+    {
+      "id": "archive_key",
+      "name": "Ключ от архива",
+      "description": "Медный ключ с биркой портовой управы.",
+      "consumable": false,
+      "effect": []
+    },
+    {
+      "id": "ledger",
+      "name": "Журнал Олеандра",
+      "description": "Записи о «подношениях морю» с датами исчезновений.",
+      "consumable": false,
+      "effect": []
+    }
+  ],
+  "enemies": [
+    {
+      "id": "dock_rat",
+      "name": "Портовая крыса",
+      "description": "Крыса размером с собаку, глаза светятся тем же холодным светом, что и туман.",
+      "tier": 1,
+      "appearance": {"body": "rat", "color": "ash", "accent_color": "pale_cyan", "features": ["glowing_eyes"], "size": "small"},
+      "abilities": [{"name": "Укус", "effect": [{"damage": 8}], "every_n_turns": 3}]
+    },
+    {
+      "id": "cultist",
+      "name": "Служитель тумана",
+      "description": "Бывший рыбак в мокром балахоне, говорит голосом Олеандра.",
+      "tier": 2,
+      "appearance": {
+        "head": "square", "skin": "olive", "hair": "hood", "hair_color": "black",
+        "eyes": "hollow", "eye_color": "pale_cyan", "brows": "flat", "mouth": "open",
+        "outfit": "rags", "outfit_color": "ash", "accent_color": "pale_cyan",
+        "bg_color": "night_blue"
+      },
+      "abilities": []
+    },
+    {
+      "id": "shade",
+      "name": "Морская тень",
+      "description": "Сгусток тумана с очертаниями человека.",
+      "tier": 3,
+      "appearance": {"body": "ghost", "color": "night_blue", "accent_color": "pale_cyan", "features": ["third_eye"], "size": "large"},
+      "abilities": [{"name": "Холод глубин", "effect": [{"damage": 10}], "every_n_turns": 3}]
+    }
+  ],
+  "flags": [
+    {"id": "trusted_tim", "description": "Арина открылась Тимофею и доверяет ему"},
+    {"id": "found_ledger", "description": "Арина нашла журнал Олеандра в архиве"}
+  ],
+  "scenes": [
+    {
+      "id": "pier",
+      "title": "Пристань",
+      "background": {
+        "setting": "outdoor", "time": "night", "sky": "night_moon", "far": "harbor_city",
+        "props": [{"id": "lamp_post", "x": 30}, {"id": "crates", "x": 120}],
+        "ground": "wooden_planks", "overlay": "fog", "mood_palette": "cold_sea"
+      },
+      "intro": "Паром причаливает в полночь. Над бухтой должен гореть маяк, но мыс тонет в темноте, и туман ползёт по доскам пристани, как живой.",
+      "events": [
+        {"type": "narration", "id": "arrival", "text": "У фонаря кто-то машет рукой — слишком знакомо, чтобы ошибиться."},
+        {
+          "type": "dialogue", "id": "meet_tim", "start_node": "n1",
+          "nodes": [
+            {"id": "n1", "speaker": "tim", "emotion": "happy", "text": "Арина! Ты всё-таки приехала. Я думал, письмо утонуло вместе с почтовым ботом.", "next": "n2"},
+            {
+              "id": "n2", "speaker": "arina", "emotion": "neutral", "text": "Я здесь. Что происходит, Тим?",
+              "choices": [
+                {"text": "Я рада тебя видеть. Рассказывай всё, я слушаю.", "effects": [{"set_flag": "trusted_tim", "value": true}], "next": "n3"},
+                {"text": "Без лирики. Что с маяком?", "effects": [], "next": "n3"}
+              ]
+            },
+            {"id": "n3", "speaker": "tim", "emotion": "scared", "text": "Маяк погас три ночи назад. Смотритель пропал. А в маяке теперь живёт этот… магистр.", "next": "n4"},
+            {
+              "id": "n4", "speaker": "tim", "emotion": "neutral", "text": "Вот, бабушка передала. Сказала — тебе пригодится.",
+              "choices": [
+                {"text": "Взять настойку", "effects": [{"give_item": "tonic"}], "next": "end"},
+                {"text": "Оставь себе, Тим", "effects": [], "next": "end"}
+              ]
+            }
+          ]
+        },
+        {"type": "goto", "to": "alley"}
+      ]
+    },
+    {
+      "id": "alley",
+      "title": "Рыбный переулок",
+      "background": {
+        "setting": "outdoor", "time": "night", "sky": "night_stars", "far": "brick_wall",
+        "props": [{"id": "barrel", "x": 20}, {"id": "net", "x": 90}, {"id": "lamp_post", "x": 140}],
+        "ground": "cobblestone", "overlay": "rain", "mood_palette": "cold_sea"
+      },
+      "intro": "Короткий путь к управе лежит через рыбный переулок. Под ногами хрустит чешуя, а из темноты доносится писк — слишком низкий для обычных крыс.",
+      "events": [
+        {"type": "battle", "id": "rats", "enemies": ["dock_rat", "dock_rat"], "on_win": [{"give_item": "archive_key"}], "on_lose": "game_over", "can_flee": false},
+        {"type": "narration", "id": "collar", "text": "На шее одной из крыс — медный ключ на бечёвке. Бирка портовой управы."},
+        {"type": "goto", "to": "archive"}
+      ]
+    },
+    {
+      "id": "archive",
+      "title": "Архив управы",
+      "background": {
+        "setting": "indoor", "time": "night", "far": "archive_room",
+        "props": [{"id": "bookshelf", "x": 15}, {"id": "desk", "x": 80}, {"id": "candle", "x": 95}],
+        "ground": "parquet", "overlay": "dust", "mood_palette": "warm_candle"
+      },
+      "intro": "Управа заперта, но в окне архива дрожит огонёк свечи. Кто-то не спит среди старых бумаг.",
+      "events": [
+        {
+          "type": "choice", "id": "door", "prompt": "Дверь архива заперта.",
+          "options": [
+            {"text": "Открыть ключом с ошейника", "condition": {"has_item": "archive_key"}, "effects": [{"give_item": "ledger"}, {"set_flag": "found_ledger", "value": true}]},
+            {"text": "Выбить окно", "effects": [{"damage": 5}]}
+          ]
+        },
+        {
+          "type": "dialogue", "id": "talk_efim", "start_node": "n1",
+          "nodes": [
+            {"id": "n1", "speaker": "efim", "emotion": "surprised", "text": "Кто здесь?! А, Стрельцова. Выросла. Всё равно без стука не входят.", "next": "n2"},
+            {
+              "id": "n2", "speaker": "arina", "emotion": "neutral", "text": "Ефим Лукич, мне нужна правда о магистре.",
+              "choices": [
+                {"text": "Показать журнал Олеандра", "condition": {"flag": "found_ledger", "is": true}, "effects": [{"learn_skill": "salt_ward"}], "next": "n3"},
+                {"text": "Что вы о нём знаете?", "effects": [], "next": "n4"}
+              ]
+            },
+            {"id": "n3", "speaker": "efim", "emotion": "scared", "text": "Подношения морю… Слушай. Тьма из глубин боится соли. Очерти круг — и она не тронет.", "next": "end"},
+            {"id": "n4", "speaker": "efim", "emotion": "angry", "text": "Знаю, что он платит за аренду маяка золотом, которого у учёных не бывает. Больше ничего.", "next": "end"}
+          ]
+        },
+        {"type": "goto", "to": "lighthouse"}
+      ]
+    },
+    {
+      "id": "lighthouse",
+      "title": "Подножие маяка",
+      "background": {
+        "setting": "outdoor", "time": "night", "sky": "night_moon", "far": "cliffs",
+        "props": [{"id": "lighthouse_door", "x": 80}, {"id": "rocks", "x": 25}],
+        "ground": "stone", "overlay": "fog", "mood_palette": "violet_dread"
+      },
+      "intro": "Дверь маяка открыта. На пороге, будто ждал гостей, стоит человек в фиолетовой мантии.",
+      "events": [
+        {
+          "type": "dialogue", "id": "meet_oleander", "start_node": "n1",
+          "nodes": [
+            {"id": "n1", "speaker": "oleander", "emotion": "happy", "text": "Следователь Стрельцова. Море шептало, что вы придёте.", "next": "n2"},
+            {
+              "id": "n2", "speaker": "arina", "emotion": "angry", "text": "Где смотритель и остальные?",
+              "choices": [
+                {"text": "Ты ответишь за каждого пропавшего.", "effects": [], "next": "n3"},
+                {"text": "Я читала твой журнал. Дат там хватит на виселицу.", "condition": {"flag": "found_ledger", "is": true}, "effects": [], "next": "n4"}
+              ]
+            },
+            {"id": "n3", "speaker": "oleander", "emotion": "neutral", "text": "Они там, где им и место. Впрочем, спорить я не люблю.", "next": "n5"},
+            {"id": "n4", "speaker": "oleander", "emotion": "surprised", "text": "Вы рылись в моих бумагах? Как грубо.", "next": "n5"},
+            {"id": "n5", "speaker": "oleander", "emotion": "angry", "text": "Пусть с вами поговорит туман.", "next": "end"}
+          ]
+        },
+        {"type": "battle", "id": "guardians", "enemies": ["cultist", "shade"], "on_win": [], "on_lose": "game_over", "can_flee": false},
+        {"type": "goto", "to": "lamp_room"}
+      ]
+    },
+    {
+      "id": "lamp_room",
+      "title": "Фонарная",
+      "background": {
+        "setting": "indoor", "time": "night", "far": "lamp_room",
+        "props": [{"id": "great_lens", "x": 80}],
+        "ground": "metal", "overlay": "none", "mood_palette": "cold_sea"
+      },
+      "intro": "Олеандр исчез, оставив только запах соли. Наверху, в фонарной, огромная линза треснула, а фитиль давно остыл.",
+      "events": [
+        {
+          "type": "dialogue", "id": "relight", "start_node": "n1",
+          "nodes": [
+            {
+              "id": "n1", "speaker": "tim", "emotion": "sad", "text": "Линза треснула. Одной её не удержать, пока зажигаешь огонь.",
+              "choices": [
+                {"text": "Держи линзу, Тим. Я зажгу.", "condition": {"flag": "trusted_tim", "is": true}, "effects": [], "next": "n2"},
+                {"text": "Отойди. Я справлюсь сама.", "effects": [{"set_flag": "trusted_tim", "value": false}], "next": "n3"}
+              ]
+            },
+            {"id": "n2", "speaker": "tim", "emotion": "happy", "text": "Вместе — как в детстве, когда мы чинили лодку!", "next": "end"},
+            {"id": "n3", "speaker": "tim", "emotion": "sad", "text": "Как скажешь…", "next": "end"}
+          ]
+        },
+        {"type": "goto", "to": "ending_dawn", "condition": {"flag": "trusted_tim", "is": true}},
+        {"type": "goto", "to": "ending_fog"}
+      ]
+    }
+  ],
+  "start_scene": "pier",
+  "endings": [
+    {
+      "id": "ending_dawn",
+      "title": "Рассвет над бухтой",
+      "text": "Луч маяка разрезает туман. Внизу, на камнях, приходят в себя пропавшие люди. Тимофей смеётся, и Арина впервые за много лет смеётся вместе с ним.",
+      "kind": "good"
+    },
+    {
+      "id": "ending_fog",
+      "title": "Туман остаётся",
+      "text": "Линза выскальзывает из рук и разбивается. Огонь горит, но свет тонет в тумане. Арина спасла город этой ночью — но не тех, кого забрало море.",
+      "kind": "bad"
+    }
+  ]
+}

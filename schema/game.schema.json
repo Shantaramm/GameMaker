@@ -1,0 +1,1745 @@
+{
+  "$defs": {
+    "BackgroundProp": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "x": {
+          "maximum": 160,
+          "minimum": 0,
+          "title": "X",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "x"
+      ],
+      "title": "BackgroundProp",
+      "type": "object"
+    },
+    "BackgroundSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "setting": {
+          "enum": [
+            "indoor",
+            "outdoor"
+          ],
+          "title": "Setting",
+          "type": "string"
+        },
+        "time": {
+          "enum": [
+            "day",
+            "dusk",
+            "night"
+          ],
+          "title": "Time",
+          "type": "string"
+        },
+        "sky": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sky"
+        },
+        "far": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Far",
+          "type": "string"
+        },
+        "props": {
+          "items": {
+            "$ref": "#/$defs/BackgroundProp"
+          },
+          "maxItems": 5,
+          "title": "Props",
+          "type": "array"
+        },
+        "ground": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Ground",
+          "type": "string"
+        },
+        "overlay": {
+          "default": "none",
+          "enum": [
+            "rain",
+            "fog",
+            "snow",
+            "dust",
+            "none"
+          ],
+          "title": "Overlay",
+          "type": "string"
+        },
+        "mood_palette": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Mood Palette",
+          "type": "string"
+        }
+      },
+      "required": [
+        "setting",
+        "time",
+        "far",
+        "ground",
+        "mood_palette"
+      ],
+      "title": "BackgroundSpec",
+      "type": "object"
+    },
+    "Battle": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "battle",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "enemies": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Enemies",
+          "type": "array"
+        },
+        "on_win": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "title": "On Win",
+          "type": "array"
+        },
+        "on_lose": {
+          "default": "game_over",
+          "oneOf": [
+            {
+              "const": "game_over",
+              "type": "string"
+            },
+            {
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/EffSetFlag"
+                  },
+                  {
+                    "$ref": "#/$defs/EffGiveItem"
+                  },
+                  {
+                    "$ref": "#/$defs/EffTakeItem"
+                  },
+                  {
+                    "$ref": "#/$defs/EffLearnSkill"
+                  },
+                  {
+                    "$ref": "#/$defs/EffModStat"
+                  },
+                  {
+                    "$ref": "#/$defs/EffHeal"
+                  },
+                  {
+                    "$ref": "#/$defs/EffDamage"
+                  },
+                  {
+                    "$ref": "#/$defs/EffGoto"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "title": "On Lose"
+        },
+        "can_flee": {
+          "default": false,
+          "title": "Can Flee",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "enemies"
+      ],
+      "title": "Battle",
+      "type": "object"
+    },
+    "Character": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "hero",
+            "companion",
+            "npc",
+            "antagonist"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 1000,
+          "title": "Description",
+          "type": "string"
+        },
+        "appearance": {
+          "$ref": "#/$defs/PortraitSpec"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "description",
+        "appearance"
+      ],
+      "title": "Character",
+      "type": "object"
+    },
+    "Choice": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "choice",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/ChoiceOption"
+          },
+          "minItems": 1,
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "prompt",
+        "options"
+      ],
+      "title": "Choice",
+      "type": "object"
+    },
+    "ChoiceOption": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "effects": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "title": "Effects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ChoiceOption",
+      "type": "object"
+    },
+    "CondAll": {
+      "additionalProperties": false,
+      "properties": {
+        "all": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CondAll"
+              },
+              {
+                "$ref": "#/$defs/CondAny"
+              },
+              {
+                "$ref": "#/$defs/CondNot"
+              },
+              {
+                "$ref": "#/$defs/CondFlag"
+              },
+              {
+                "$ref": "#/$defs/CondItem"
+              },
+              {
+                "$ref": "#/$defs/CondStat"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "All",
+          "type": "array"
+        }
+      },
+      "required": [
+        "all"
+      ],
+      "title": "CondAll",
+      "type": "object"
+    },
+    "CondAny": {
+      "additionalProperties": false,
+      "properties": {
+        "any": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CondAll"
+              },
+              {
+                "$ref": "#/$defs/CondAny"
+              },
+              {
+                "$ref": "#/$defs/CondNot"
+              },
+              {
+                "$ref": "#/$defs/CondFlag"
+              },
+              {
+                "$ref": "#/$defs/CondItem"
+              },
+              {
+                "$ref": "#/$defs/CondStat"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Any",
+          "type": "array"
+        }
+      },
+      "required": [
+        "any"
+      ],
+      "title": "CondAny",
+      "type": "object"
+    },
+    "CondFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "flag": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Flag",
+          "type": "string"
+        },
+        "is": {
+          "title": "Is",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "flag",
+        "is"
+      ],
+      "title": "CondFlag",
+      "type": "object"
+    },
+    "CondItem": {
+      "additionalProperties": false,
+      "properties": {
+        "has_item": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Has Item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "has_item"
+      ],
+      "title": "CondItem",
+      "type": "object"
+    },
+    "CondNot": {
+      "additionalProperties": false,
+      "properties": {
+        "not": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CondAll"
+            },
+            {
+              "$ref": "#/$defs/CondAny"
+            },
+            {
+              "$ref": "#/$defs/CondNot"
+            },
+            {
+              "$ref": "#/$defs/CondFlag"
+            },
+            {
+              "$ref": "#/$defs/CondItem"
+            },
+            {
+              "$ref": "#/$defs/CondStat"
+            }
+          ],
+          "title": "Not"
+        }
+      },
+      "required": [
+        "not"
+      ],
+      "title": "CondNot",
+      "type": "object"
+    },
+    "CondStat": {
+      "additionalProperties": false,
+      "properties": {
+        "stat": {
+          "enum": [
+            "hp",
+            "attack",
+            "defense",
+            "focus"
+          ],
+          "title": "Stat",
+          "type": "string"
+        },
+        "op": {
+          "enum": [
+            ">=",
+            "<="
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stat",
+        "op",
+        "value"
+      ],
+      "title": "CondStat",
+      "type": "object"
+    },
+    "CreatureSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Body",
+          "type": "string"
+        },
+        "color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Color",
+          "type": "string"
+        },
+        "accent_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Accent Color",
+          "type": "string"
+        },
+        "features": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Features",
+          "type": "array"
+        },
+        "size": {
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "title": "Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body",
+        "color",
+        "accent_color",
+        "size"
+      ],
+      "title": "CreatureSpec",
+      "type": "object"
+    },
+    "Dialogue": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "dialogue",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/DialogueNode"
+          },
+          "minItems": 1,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "start_node": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Start Node",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "nodes",
+        "start_node"
+      ],
+      "title": "Dialogue",
+      "type": "object"
+    },
+    "DialogueChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        },
+        "effects": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "title": "Effects",
+          "type": "array"
+        },
+        "next": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Next",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "next"
+      ],
+      "title": "DialogueChoice",
+      "type": "object"
+    },
+    "DialogueNode": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "speaker": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Speaker",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "emotion": {
+          "anyOf": [
+            {
+              "enum": [
+                "neutral",
+                "angry",
+                "sad",
+                "happy",
+                "scared",
+                "surprised"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emotion"
+        },
+        "choices": {
+          "items": {
+            "$ref": "#/$defs/DialogueChoice"
+          },
+          "title": "Choices",
+          "type": "array"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "required": [
+        "id",
+        "speaker",
+        "text"
+      ],
+      "title": "DialogueNode",
+      "type": "object"
+    },
+    "EffDamage": {
+      "additionalProperties": false,
+      "properties": {
+        "damage": {
+          "minimum": 1,
+          "title": "Damage",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "damage"
+      ],
+      "title": "EffDamage",
+      "type": "object"
+    },
+    "EffGiveItem": {
+      "additionalProperties": false,
+      "properties": {
+        "give_item": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Give Item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "give_item"
+      ],
+      "title": "EffGiveItem",
+      "type": "object"
+    },
+    "EffGoto": {
+      "additionalProperties": false,
+      "properties": {
+        "goto": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Goto",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goto"
+      ],
+      "title": "EffGoto",
+      "type": "object"
+    },
+    "EffHeal": {
+      "additionalProperties": false,
+      "properties": {
+        "heal": {
+          "minimum": 1,
+          "title": "Heal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heal"
+      ],
+      "title": "EffHeal",
+      "type": "object"
+    },
+    "EffLearnSkill": {
+      "additionalProperties": false,
+      "properties": {
+        "learn_skill": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Learn Skill",
+          "type": "string"
+        }
+      },
+      "required": [
+        "learn_skill"
+      ],
+      "title": "EffLearnSkill",
+      "type": "object"
+    },
+    "EffModStat": {
+      "additionalProperties": false,
+      "properties": {
+        "mod_stat": {
+          "enum": [
+            "hp",
+            "attack",
+            "defense",
+            "focus"
+          ],
+          "title": "Mod Stat",
+          "type": "string"
+        },
+        "delta": {
+          "title": "Delta",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mod_stat",
+        "delta"
+      ],
+      "title": "EffModStat",
+      "type": "object"
+    },
+    "EffSetFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "set_flag": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Set Flag",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "set_flag",
+        "value"
+      ],
+      "title": "EffSetFlag",
+      "type": "object"
+    },
+    "EffTakeItem": {
+      "additionalProperties": false,
+      "properties": {
+        "take_item": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Take Item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "take_item"
+      ],
+      "title": "EffTakeItem",
+      "type": "object"
+    },
+    "Ending": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "good",
+            "neutral",
+            "bad"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "text",
+        "kind"
+      ],
+      "title": "Ending",
+      "type": "object"
+    },
+    "Enemy": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 500,
+          "title": "Description",
+          "type": "string"
+        },
+        "tier": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Tier",
+          "type": "integer"
+        },
+        "appearance": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PortraitSpec"
+            },
+            {
+              "$ref": "#/$defs/CreatureSpec"
+            }
+          ],
+          "title": "Appearance"
+        },
+        "hp": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hp"
+        },
+        "attack": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attack"
+        },
+        "defense": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Defense"
+        },
+        "abilities": {
+          "items": {
+            "$ref": "#/$defs/EnemyAbility"
+          },
+          "maxItems": 2,
+          "title": "Abilities",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "tier",
+        "appearance"
+      ],
+      "title": "Enemy",
+      "type": "object"
+    },
+    "EnemyAbility": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "effect": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Effect",
+          "type": "array"
+        },
+        "every_n_turns": {
+          "minimum": 1,
+          "title": "Every N Turns",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "effect",
+        "every_n_turns"
+      ],
+      "title": "EnemyAbility",
+      "type": "object"
+    },
+    "FlagDef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FlagDef",
+      "type": "object"
+    },
+    "Item": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "title": "Description",
+          "type": "string"
+        },
+        "consumable": {
+          "title": "Consumable",
+          "type": "boolean"
+        },
+        "effect": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "title": "Effect",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "consumable"
+      ],
+      "title": "Item",
+      "type": "object"
+    },
+    "Meta": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "logline": {
+          "maxLength": 500,
+          "title": "Logline",
+          "type": "string"
+        },
+        "tone": {
+          "maxLength": 200,
+          "title": "Tone",
+          "type": "string"
+        },
+        "art_style": {
+          "maxLength": 200,
+          "title": "Art Style",
+          "type": "string"
+        },
+        "language": {
+          "const": "ru",
+          "default": "ru",
+          "title": "Language",
+          "type": "string"
+        },
+        "est_minutes": {
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Est Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "title",
+        "logline",
+        "tone",
+        "art_style",
+        "est_minutes"
+      ],
+      "title": "Meta",
+      "type": "object"
+    },
+    "Narration": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "narration",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "text"
+      ],
+      "title": "Narration",
+      "type": "object"
+    },
+    "PortraitSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Head",
+          "type": "string"
+        },
+        "skin": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Skin",
+          "type": "string"
+        },
+        "hair": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Hair",
+          "type": "string"
+        },
+        "hair_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Hair Color",
+          "type": "string"
+        },
+        "eyes": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Eyes",
+          "type": "string"
+        },
+        "eye_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Eye Color",
+          "type": "string"
+        },
+        "brows": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Brows",
+          "type": "string"
+        },
+        "mouth": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Mouth",
+          "type": "string"
+        },
+        "facial_hair": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facial Hair"
+        },
+        "outfit": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Outfit",
+          "type": "string"
+        },
+        "outfit_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Outfit Color",
+          "type": "string"
+        },
+        "accent_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Accent Color",
+          "type": "string"
+        },
+        "accessory": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Accessory",
+          "type": "array"
+        },
+        "bg_color": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Bg Color",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "skin",
+        "hair",
+        "hair_color",
+        "eyes",
+        "eye_color",
+        "brows",
+        "mouth",
+        "outfit",
+        "outfit_color",
+        "accent_color",
+        "bg_color"
+      ],
+      "title": "PortraitSpec",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "background": {
+          "$ref": "#/$defs/BackgroundSpec"
+        },
+        "intro": {
+          "minLength": 1,
+          "title": "Intro",
+          "type": "string"
+        },
+        "events": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Dialogue"
+              },
+              {
+                "$ref": "#/$defs/Battle"
+              },
+              {
+                "$ref": "#/$defs/Choice"
+              },
+              {
+                "$ref": "#/$defs/Narration"
+              },
+              {
+                "$ref": "#/$defs/Transition"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "background",
+        "intro",
+        "events"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "Skill": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "title": "Description",
+          "type": "string"
+        },
+        "cost_focus": {
+          "minimum": 0,
+          "title": "Cost Focus",
+          "type": "integer"
+        },
+        "effect": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Effect",
+          "type": "array"
+        },
+        "target": {
+          "enum": [
+            "enemy",
+            "self"
+          ],
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "cost_focus",
+        "effect",
+        "target"
+      ],
+      "title": "Skill",
+      "type": "object"
+    },
+    "Stats": {
+      "additionalProperties": false,
+      "description": "Стартовые статы героя. hp и focus — максимумы; текущие значения живут в рантайме.",
+      "properties": {
+        "hp": {
+          "minimum": 1,
+          "title": "Hp",
+          "type": "integer"
+        },
+        "attack": {
+          "minimum": 0,
+          "title": "Attack",
+          "type": "integer"
+        },
+        "defense": {
+          "minimum": 0,
+          "title": "Defense",
+          "type": "integer"
+        },
+        "focus": {
+          "minimum": 0,
+          "title": "Focus",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hp",
+        "attack",
+        "defense",
+        "focus"
+      ],
+      "title": "Stats",
+      "type": "object"
+    },
+    "Transition": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "goto",
+          "title": "Type",
+          "type": "string"
+        },
+        "to": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "To",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition"
+        }
+      },
+      "required": [
+        "type",
+        "to"
+      ],
+      "title": "Transition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "hero": {
+      "$ref": "#/$defs/Character"
+    },
+    "characters": {
+      "items": {
+        "$ref": "#/$defs/Character"
+      },
+      "title": "Characters",
+      "type": "array"
+    },
+    "stats_template": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Stats"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "start_skills": {
+      "items": {
+        "maxLength": 64,
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "type": "string"
+      },
+      "title": "Start Skills",
+      "type": "array"
+    },
+    "start_items": {
+      "items": {
+        "maxLength": 64,
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "type": "string"
+      },
+      "title": "Start Items",
+      "type": "array"
+    },
+    "skills": {
+      "items": {
+        "$ref": "#/$defs/Skill"
+      },
+      "title": "Skills",
+      "type": "array"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/Item"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "enemies": {
+      "items": {
+        "$ref": "#/$defs/Enemy"
+      },
+      "title": "Enemies",
+      "type": "array"
+    },
+    "flags": {
+      "items": {
+        "$ref": "#/$defs/FlagDef"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "minItems": 1,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "start_scene": {
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Start Scene",
+      "type": "string"
+    },
+    "endings": {
+      "items": {
+        "$ref": "#/$defs/Ending"
+      },
+      "minItems": 1,
+      "title": "Endings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "meta",
+    "hero",
+    "scenes",
+    "start_scene",
+    "endings"
+  ],
+  "title": "Game",
+  "type": "object"
+}
