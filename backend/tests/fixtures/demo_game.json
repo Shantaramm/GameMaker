@@ -345,6 +345,22 @@
    "icon": "notebook",
    "kind": "clue",
    "value_tier": 1
+  },
+  {
+   "id": "sea_salt",
+   "name": "Морская соль",
+   "description": "Крупные кристаллы с просоленных бочек. Туман её не любит.",
+   "icon": "crystal",
+   "kind": "material",
+   "value_tier": 1
+  },
+  {
+   "id": "sea_wormwood",
+   "name": "Морская полынь",
+   "description": "Горькая трава со скал у маяка. Отвар бодрит и лечит.",
+   "icon": "herb",
+   "kind": "material",
+   "value_tier": 1
   }
  ],
  "enemies": [
@@ -632,6 +648,16 @@
     }
    ],
    "objects": [
+    {
+     "type": "gather",
+     "id": "salt_crust",
+     "zone": "ferry",
+     "look": "barrel",
+     "name": "Соляная корка на бочках",
+     "item": "sea_salt",
+     "amount": 2,
+     "skill": "perception"
+    },
     {
      "type": "chest",
      "id": "loose_plank",
@@ -1250,6 +1276,24 @@
      "to": "alley"
     },
     {
+     "type": "gather",
+     "id": "wormwood_patch",
+     "zone": "rocks",
+     "look": "bush",
+     "name": "Морская полынь",
+     "item": "sea_wormwood",
+     "amount": 2,
+     "skill": "knowledge"
+    },
+    {
+     "type": "station",
+     "id": "fishers_fire",
+     "zone": "path",
+     "look": "campfire",
+     "name": "Костёр рыбаков",
+     "kind": "campfire"
+    },
+    {
      "type": "npc",
      "id": "oleander_at_door",
      "barks": [
@@ -1523,6 +1567,30 @@
      "delta": 1
     }
    ]
+  }
+ ],
+ "recipes": [
+  {
+   "id": "make_salt_pouch",
+   "result": "salt_pouch",
+   "inputs": [
+    {
+     "item": "sea_salt",
+     "count": 2
+    }
+   ],
+   "station": "anywhere"
+  },
+  {
+   "id": "brew_tonic",
+   "result": "tonic",
+   "inputs": [
+    {
+     "item": "sea_wormwood",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
   }
  ]
 }

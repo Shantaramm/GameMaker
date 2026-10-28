@@ -38,6 +38,7 @@ export interface GameState {
   // механики §5.12
   revealed: string[]; // найденные тайники
   deduced: string[]; // сделанные выводы на доске улик
+  crafted: string[]; // рецепты, по которым уже что-то сделано
 }
 
 export interface Effective {
@@ -66,7 +67,7 @@ export function newState(world: World): GameState {
     defeated: [], opened: [], used: [], visited: [],
     ending: null,
     morale: 0, inner: { ...(g.hero_skills ?? {}) }, skillPoints: 0, checks: {}, examined: [], questsRewarded: [],
-    revealed: [], deduced: [],
+    revealed: [], deduced: [], crafted: [],
   };
   for (const id of g.start_items ?? []) state.inventory[id] = (state.inventory[id] ?? 0) + 1;
   for (const slot of SLOTS) {
@@ -86,6 +87,7 @@ export function newState(world: World): GameState {
 export function upgrade(state: GameState, world: World): GameState {
   state.revealed ??= [];
   state.deduced ??= [];
+  state.crafted ??= [];
   if (state.inner && state.checks) return state;
   const fresh = newState(world);
   Object.assign(state, {

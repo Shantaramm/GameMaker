@@ -1,29 +1,289 @@
-{"intro": "Кедровка. Над крышами уже тянет снегом, а до перевала — полдня пути. Сегодня уходит последняя почта перед зимой.",
-"on_enter": [],
-"objects": [{"type": "chest", "id": "buried_jar", "zone": "outskirts", "look": "barrel", "hidden": {"skill": "perception", "difficulty": "easy", "text": "У поленницы снег утоптан кругом — кто-то что-то закапывал."}, "contents": [{"give_item": "herb_tonic"}, {"give_gold": 6}]}, 
- {"type": "npc", "id": "mother_at_post", "barks": [{"text": "Варежки надел? Перевал не прощает."}, {"text": "Соль вернулась… Значит, дорога есть.", "condition": {"flag": "salt_returned", "is": true}}], "zone": "post_office", "character": "pelageya", "dialogue": {"type": "dialogue", "id": "talk_mother", "start_node": "m1", "nodes": [
-  {"id": "m1", "speaker": "pelageya", "emotion": "neutral", "text": "Мирон, вот оно. Прошение о лекаре, с подписями всей деревни. Если до снега не дойдёт — до весны у нас никого не будет, а у Сидоровых малой кашляет.", "choices": [
-   {"text": "Давай, мама. Донесу.", "condition": {"not": {"has_item": "petition_letter"}}, "effects": [{"give_item": "petition_letter"}, {"give_gold": 10}, {"give_item": "herb_tonic"}], "next": "m2"},
-   {"text": "Староста говорит, перевал завален.", "next": "m3"},
-   {"text": "Я помню. Уже иду.", "next": "end"}]},
-  {"id": "m2", "speaker": "pelageya", "emotion": "happy", "text": "Тут ещё десять монет на дорогу и мой отвар от простуды. И не геройствуй, слышишь? Письмо важнее гордости.", "next": "end"},
-  {"id": "m3", "speaker": "pelageya", "emotion": "sad", "text": "Гордей много чего говорит. Только почему-то обозы из-за перевала к нему всё ездят, а к нам — нет. Будь осторожен, сынок.", "next": "end"}]}},
- {"type": "thing", "id": "notice_board", "zone": "square", "look": "signpost", "name": "Доска объявлений", "once": false, "event": {"type": "narration", "id": "read_notice", "text": "«Перевал закрыт по причине обвала. Ходить запрещается. Староста Г. Пахомов». Бумага свежая, а чернила — дорогие, городские."}},
- {"type": "npc", "id": "gordey_on_square", "barks": [{"text": "Зима — время терпеть, голубчик."}, {"text": "Куда смотришь? Иди своей дорогой.", "condition": {"flag": "headman_exposed", "is": true}}], "zone": "square", "character": "gordey", "dialogue": {"type": "dialogue", "id": "talk_gordey", "start_node": "g1", "nodes": [
-  {"id": "g1", "speaker": "gordey", "emotion": "happy", "text": "А, наш почтальон! Куда собрался, голубчик? Там обвал, камни с дом. Переждал бы ты до весны, а письмо — что письмо, полежит.", "choices": [
-   {"text": "Прошение не может ждать. Я пойду.", "next": "g2"},
-   {"text": "А вы сами видели этот обвал?", "next": "g3"}]},
-  {"id": "g2", "speaker": "gordey", "emotion": "angry", "text": "Упрямый, весь в отца. Ну иди, иди. Только не говори потом, что тебя не предупреждали.", "next": "end"},
-  {"id": "g3", "speaker": "gordey", "emotion": "surprised", "text": "Я?.. Мне люди сказали. Надёжные люди. И вообще, староста тут я, и мне виднее, кому куда ходить.", "next": "g2"}]}},
- {"type": "exit", "id": "village_to_house", "zone": "square", "kind": "door", "to": "headman_house"},
- {"type": "npc", "id": "vera_at_shop", "barks": [{"text": "Грибы без соли — не грибы, а горе!", "condition": {"flag": "salt_returned", "is": false}}, {"text": "Солью пахнет! Мироша, ты золото!", "condition": {"flag": "salt_returned", "is": true}}], "zone": "shop", "character": "vera", "shop": "vera_shop", "dialogue": {"type": "dialogue", "id": "talk_vera", "start_node": "v1", "nodes": [
-  {"id": "v1", "speaker": "vera", "emotion": "happy", "text": "Мироша! Тёплые варежки, сухари, отвар — всё для дороги. А ещё у меня беда: ящик соли с заставы так и не привезли. Говорят, «обвал». Ага, обвал, как же.", "choices": [
-   {"text": "Вот твоя соль, Вера. Нашёл на заставе.", "condition": {"has_item": "salt_crate"}, "effects": [{"take_item": "salt_crate"}, {"set_flag": "salt_returned", "value": true}, {"give_gold": 15}, {"give_item": "gordey_key"}], "next": "v3"},
-   {"text": "Я посмотрю, что там с солью.", "next": "v2"},
-   {"text": "Покажи товар.", "next": "end"}]},
-  {"id": "v2", "speaker": "vera", "emotion": "neutral", "text": "Ящик с синей печатью, не перепутаешь. Вернёшь — отблагодарю. Чем-нибудь поинтереснее монет.", "next": "end"},
-  {"id": "v3", "speaker": "vera", "emotion": "surprised", "text": "Моя соль! С заставы, значит… Вот что, держи ключ. Гордей оставил мне на хранение — от чердака. Сказал, «чтоб жена не нашла». Я-то думала, там наливка. А теперь думаю — не наливка.", "next": "end"}]}},
- {"type": "chest", "id": "woodpile", "zone": "outskirts", "look": "crates", "contents": [{"give_item": "herb_tonic"}, {"give_gold": 5}]},
- {"type": "exit", "id": "village_to_trail", "zone": "outskirts", "kind": "right_edge", "to": "trail"}
-],
-"enemies": []}
+{
+ "intro": "Кедровка. Над крышами уже тянет снегом, а до перевала — полдня пути. Сегодня уходит последняя почта перед зимой.",
+ "on_enter": [],
+ "objects": [
+  {
+   "type": "gather",
+   "id": "herb_slope",
+   "zone": "outskirts",
+   "look": "bush",
+   "name": "Зверобой у околицы",
+   "item": "mountain_herb",
+   "amount": 2,
+   "skill": "knowledge"
+  },
+  {
+   "type": "chest",
+   "id": "buried_jar",
+   "zone": "outskirts",
+   "look": "barrel",
+   "hidden": {
+    "skill": "perception",
+    "difficulty": "easy",
+    "text": "У поленницы снег утоптан кругом — кто-то что-то закапывал."
+   },
+   "contents": [
+    {
+     "give_item": "herb_tonic"
+    },
+    {
+     "give_gold": 6
+    }
+   ]
+  },
+  {
+   "type": "npc",
+   "id": "mother_at_post",
+   "barks": [
+    {
+     "text": "Варежки надел? Перевал не прощает."
+    },
+    {
+     "text": "Соль вернулась… Значит, дорога есть.",
+     "condition": {
+      "flag": "salt_returned",
+      "is": true
+     }
+    }
+   ],
+   "zone": "post_office",
+   "character": "pelageya",
+   "dialogue": {
+    "type": "dialogue",
+    "id": "talk_mother",
+    "start_node": "m1",
+    "nodes": [
+     {
+      "id": "m1",
+      "speaker": "pelageya",
+      "emotion": "neutral",
+      "text": "Мирон, вот оно. Прошение о лекаре, с подписями всей деревни. Если до снега не дойдёт — до весны у нас никого не будет, а у Сидоровых малой кашляет.",
+      "choices": [
+       {
+        "text": "Давай, мама. Донесу.",
+        "condition": {
+         "not": {
+          "has_item": "petition_letter"
+         }
+        },
+        "effects": [
+         {
+          "give_item": "petition_letter"
+         },
+         {
+          "give_gold": 10
+         },
+         {
+          "give_item": "herb_tonic"
+         }
+        ],
+        "next": "m2"
+       },
+       {
+        "text": "Староста говорит, перевал завален.",
+        "next": "m3"
+       },
+       {
+        "text": "Я помню. Уже иду.",
+        "next": "end"
+       }
+      ]
+     },
+     {
+      "id": "m2",
+      "speaker": "pelageya",
+      "emotion": "happy",
+      "text": "Тут ещё десять монет на дорогу и мой отвар от простуды. И не геройствуй, слышишь? Письмо важнее гордости.",
+      "next": "end"
+     },
+     {
+      "id": "m3",
+      "speaker": "pelageya",
+      "emotion": "sad",
+      "text": "Гордей много чего говорит. Только почему-то обозы из-за перевала к нему всё ездят, а к нам — нет. Будь осторожен, сынок.",
+      "next": "end"
+     }
+    ]
+   }
+  },
+  {
+   "type": "thing",
+   "id": "notice_board",
+   "zone": "square",
+   "look": "signpost",
+   "name": "Доска объявлений",
+   "once": false,
+   "event": {
+    "type": "narration",
+    "id": "read_notice",
+    "text": "«Перевал закрыт по причине обвала. Ходить запрещается. Староста Г. Пахомов». Бумага свежая, а чернила — дорогие, городские."
+   }
+  },
+  {
+   "type": "npc",
+   "id": "gordey_on_square",
+   "barks": [
+    {
+     "text": "Зима — время терпеть, голубчик."
+    },
+    {
+     "text": "Куда смотришь? Иди своей дорогой.",
+     "condition": {
+      "flag": "headman_exposed",
+      "is": true
+     }
+    }
+   ],
+   "zone": "square",
+   "character": "gordey",
+   "dialogue": {
+    "type": "dialogue",
+    "id": "talk_gordey",
+    "start_node": "g1",
+    "nodes": [
+     {
+      "id": "g1",
+      "speaker": "gordey",
+      "emotion": "happy",
+      "text": "А, наш почтальон! Куда собрался, голубчик? Там обвал, камни с дом. Переждал бы ты до весны, а письмо — что письмо, полежит.",
+      "choices": [
+       {
+        "text": "Прошение не может ждать. Я пойду.",
+        "next": "g2"
+       },
+       {
+        "text": "А вы сами видели этот обвал?",
+        "next": "g3"
+       }
+      ]
+     },
+     {
+      "id": "g2",
+      "speaker": "gordey",
+      "emotion": "angry",
+      "text": "Упрямый, весь в отца. Ну иди, иди. Только не говори потом, что тебя не предупреждали.",
+      "next": "end"
+     },
+     {
+      "id": "g3",
+      "speaker": "gordey",
+      "emotion": "surprised",
+      "text": "Я?.. Мне люди сказали. Надёжные люди. И вообще, староста тут я, и мне виднее, кому куда ходить.",
+      "next": "g2"
+     }
+    ]
+   }
+  },
+  {
+   "type": "exit",
+   "id": "village_to_house",
+   "zone": "square",
+   "kind": "door",
+   "to": "headman_house"
+  },
+  {
+   "type": "npc",
+   "id": "vera_at_shop",
+   "barks": [
+    {
+     "text": "Грибы без соли — не грибы, а горе!",
+     "condition": {
+      "flag": "salt_returned",
+      "is": false
+     }
+    },
+    {
+     "text": "Солью пахнет! Мироша, ты золото!",
+     "condition": {
+      "flag": "salt_returned",
+      "is": true
+     }
+    }
+   ],
+   "zone": "shop",
+   "character": "vera",
+   "shop": "vera_shop",
+   "dialogue": {
+    "type": "dialogue",
+    "id": "talk_vera",
+    "start_node": "v1",
+    "nodes": [
+     {
+      "id": "v1",
+      "speaker": "vera",
+      "emotion": "happy",
+      "text": "Мироша! Тёплые варежки, сухари, отвар — всё для дороги. А ещё у меня беда: ящик соли с заставы так и не привезли. Говорят, «обвал». Ага, обвал, как же.",
+      "choices": [
+       {
+        "text": "Вот твоя соль, Вера. Нашёл на заставе.",
+        "condition": {
+         "has_item": "salt_crate"
+        },
+        "effects": [
+         {
+          "take_item": "salt_crate"
+         },
+         {
+          "set_flag": "salt_returned",
+          "value": true
+         },
+         {
+          "give_gold": 15
+         },
+         {
+          "give_item": "gordey_key"
+         }
+        ],
+        "next": "v3"
+       },
+       {
+        "text": "Я посмотрю, что там с солью.",
+        "next": "v2"
+       },
+       {
+        "text": "Покажи товар.",
+        "next": "end"
+       }
+      ]
+     },
+     {
+      "id": "v2",
+      "speaker": "vera",
+      "emotion": "neutral",
+      "text": "Ящик с синей печатью, не перепутаешь. Вернёшь — отблагодарю. Чем-нибудь поинтереснее монет.",
+      "next": "end"
+     },
+     {
+      "id": "v3",
+      "speaker": "vera",
+      "emotion": "surprised",
+      "text": "Моя соль! С заставы, значит… Вот что, держи ключ. Гордей оставил мне на хранение — от чердака. Сказал, «чтоб жена не нашла». Я-то думала, там наливка. А теперь думаю — не наливка.",
+      "next": "end"
+     }
+    ]
+   }
+  },
+  {
+   "type": "chest",
+   "id": "woodpile",
+   "zone": "outskirts",
+   "look": "crates",
+   "contents": [
+    {
+     "give_item": "herb_tonic"
+    },
+    {
+     "give_gold": 5
+    }
+   ]
+  },
+  {
+   "type": "exit",
+   "id": "village_to_trail",
+   "zone": "outskirts",
+   "kind": "right_edge",
+   "to": "trail"
+  }
+ ],
+ "enemies": []
+}

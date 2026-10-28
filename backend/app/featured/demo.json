@@ -430,6 +430,26 @@
    "effect": [],
    "value_tier": 1,
    "price": 10
+  },
+  {
+   "id": "sea_salt",
+   "name": "Морская соль",
+   "description": "Крупные кристаллы с просоленных бочек. Туман её не любит.",
+   "icon": "crystal",
+   "kind": "material",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "sea_wormwood",
+   "name": "Морская полынь",
+   "description": "Горькая трава со скал у маяка. Отвар бодрит и лечит.",
+   "icon": "herb",
+   "kind": "material",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
   }
  ],
  "enemies": [
@@ -694,6 +714,32 @@
    ]
   }
  ],
+ "recipes": [
+  {
+   "id": "make_salt_pouch",
+   "result": "salt_pouch",
+   "amount": 1,
+   "inputs": [
+    {
+     "item": "sea_salt",
+     "count": 2
+    }
+   ],
+   "station": "anywhere"
+  },
+  {
+   "id": "brew_tonic",
+   "result": "tonic",
+   "amount": 1,
+   "inputs": [
+    {
+     "item": "sea_wormwood",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
+  }
+ ],
  "quests": [
   {
    "id": "light_the_lamp",
@@ -822,6 +868,16 @@
     }
    ],
    "objects": [
+    {
+     "id": "salt_crust",
+     "zone": "ferry",
+     "type": "gather",
+     "look": "barrel",
+     "name": "Соляная корка на бочках",
+     "item": "sea_salt",
+     "amount": 2,
+     "skill": "perception"
+    },
     {
      "id": "loose_plank",
      "zone": "lamp",
@@ -1482,6 +1538,24 @@
      "to": "alley"
     },
     {
+     "id": "wormwood_patch",
+     "zone": "rocks",
+     "type": "gather",
+     "look": "bush",
+     "name": "Морская полынь",
+     "item": "sea_wormwood",
+     "amount": 2,
+     "skill": "knowledge"
+    },
+    {
+     "id": "fishers_fire",
+     "zone": "path",
+     "type": "station",
+     "look": "campfire",
+     "name": "Костёр рыбаков",
+     "kind": "campfire"
+    },
+    {
      "id": "oleander_at_door",
      "zone": "rocks",
      "condition": {
@@ -1784,6 +1858,11 @@
      "x": 34
     },
     {
+     "id": "salt_crust",
+     "floor": 0,
+     "x": 7
+    },
+    {
      "id": "loose_plank",
      "floor": 0,
      "x": 16
@@ -2000,9 +2079,19 @@
      "x": 1
     },
     {
+     "id": "fishers_fire",
+     "floor": 0,
+     "x": 7
+    },
+    {
+     "id": "wormwood_patch",
+     "floor": 0,
+     "x": 16
+    },
+    {
      "id": "oleander_at_door",
      "floor": 0,
-     "x": 17
+     "x": 19
     },
     {
      "id": "guardians",

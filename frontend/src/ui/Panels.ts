@@ -2,12 +2,12 @@
 
 import { buy, canSell, equip, isEquipped, nextLevelXp, sell, sellPrice, spendSkillPoint, unequip, useItem } from "../engine/effects";
 import { SKILL_CAP, SKILL_GROUPS } from "../engine/inner";
-import { clues, deduce } from "../engine/mechanics";
+import { canCraft, clues, craft, deduce, recipesAt, STATION_NAMES } from "../engine/mechanics";
 import type { QuestView } from "../engine/quests";
 import { count, effective, type GameState, skillValue } from "../engine/state";
 import { SLOTS, type Slot, type World } from "../engine/world";
 import { iconCanvas } from "../pixel/tiles";
-import type { Item, Shop } from "../types/game";
+import type { Item, Recipe, Shop } from "../types/game";
 import { bar, button, el, pixel } from "./dom";
 
 const SLOT_NAMES: Record<Slot, string> = { hand: "В руке", body: "Одежда", trinket: "Аксессуар" };
@@ -128,7 +128,9 @@ export function inventoryView(state: GameState, world: World, rerender: () => vo
   if (!list.children.length) list.append(el("p", { className: "muted", textContent: "Пусто." }));
   const skills = state.skills.map((id) => world.skills.get(id)).filter(Boolean)
     .map((s) => el("li", {}, el("b", { textContent: s!.name }), ` (${s!.cost_focus} фок.) — ${s!.description}`));
+  const handy = (world.game.recipes ?? []).filter((r) => (r.station ?? "anywhere") === "anywhere");
   return [stats, el("h3", { textContent: "Внутренние навыки" }), skillsView(state, world, rerender), slots, el("h3", { textContent: "Вещи" }), list, detail,
+    ...(handy.length ? [el("h3", { textContent: "Ремесло из сумки" }), ...handy.map((r) => recipeRow(r, state, world, rerender, notify))] : []),
     ...(skills.length ? [el("h3", { textContent: "Боевые навыки" }), el("ul", { className: "skills" }, ...skills)] : [])];
 }
 
@@ -205,4 +207,22 @@ export function boardView(state: GameState, world: World, rerender: () => void, 
     ...(done.length ? done.map((d) => el("div", { className: "deduction" }, el("b", { textContent: d.name }), el("p", { textContent: d.text })))
       : [el("p", { className: "muted", textContent: "Пока ни одного." })]),
   ];
+}
+
+// --- ремесло (§5.12) ---
+
+function recipeRow(r: Recipe, state: GameState, world: World, rerender: () => void, notify: (m: string[]) => void): HTMLElement {
+  const result = world.items.get(r.result)!;
+  const inputs = r.inputs.map((i) => `${world.itemName(i.item)} ${count(state, i.item)}/${i.count ?? 1}`).join(", ");
+  return el("div", { className: "shop-row recipe" }, icon(result),
+    el("div", { className: "shop-name" }, el("b", { textContent: `${result.name}${(r.amount ?? 1) > 1 ? ` ×${r.amount}` : ""}` }),
+      el("small", { textContent: inputs })),
+    button("Сделать", () => { notify(craft(state, world, r).messages); rerender(); }, "btn btn-small", !canCraft(r, state)));
+}
+
+/** Окно места для работы: рецепты этого места и «из сумки». */
+export function craftView(station: string, state: GameState, world: World, rerender: () => void, notify: (m: string[]) => void): Node[] {
+  const list = recipesAt(world, station);
+  return [el("p", { className: "muted", textContent: `Здесь можно работать: ${STATION_NAMES[station] ?? station}. Сырьё собирают на картах.` }),
+    ...(list.length ? list.map((r) => recipeRow(r, state, world, rerender, notify)) : [el("p", { className: "muted", textContent: "Рецептов нет." })])];
 }

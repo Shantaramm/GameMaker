@@ -2369,6 +2369,131 @@
       "title": "GameProfile",
       "type": "object"
     },
+    "Gather": {
+      "additionalProperties": false,
+      "description": "Место сбора (§5.12): трава, руда, обломки. Собирается один раз; высокий навык даёт +1.",
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "gather",
+          "type": "string"
+        },
+        "look": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "item": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "amount": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "skill": {
+          "anyOf": [
+            {
+              "enum": [
+                "logic",
+                "knowledge",
+                "empathy",
+                "will",
+                "endurance",
+                "presence",
+                "perception",
+                "finesse"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "look",
+        "name",
+        "item"
+      ],
+      "title": "Gather",
+      "type": "object"
+    },
     "Hidden": {
       "additionalProperties": false,
       "description": "Тайник (§5.12): объект не виден, пока пассивная проверка навыка не сработает (навык + 6 ≥ сложности).",
@@ -2474,7 +2599,8 @@
             "equipment",
             "key",
             "misc",
-            "clue"
+            "clue",
+            "material"
           ],
           "type": "string"
         },
@@ -2781,6 +2907,12 @@
               },
               {
                 "$ref": "#/$defs/Thing"
+              },
+              {
+                "$ref": "#/$defs/Gather"
+              },
+              {
+                "$ref": "#/$defs/Station"
               },
               {
                 "$ref": "#/$defs/Exit"
@@ -3340,6 +3472,74 @@
       "title": "QuestStage",
       "type": "object"
     },
+    "Recipe": {
+      "additionalProperties": false,
+      "description": "Рецепт ремесла (§5.12): из сырья — вещь; station — где можно сделать (\"anywhere\" — из сумки).",
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "result": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "amount": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/RecipeInput"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "type": "array"
+        },
+        "station": {
+          "default": "anywhere",
+          "enum": [
+            "anywhere",
+            "workbench",
+            "alchemy",
+            "campfire"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "result",
+        "inputs"
+      ],
+      "title": "Recipe",
+      "type": "object"
+    },
+    "RecipeInput": {
+      "additionalProperties": false,
+      "properties": {
+        "item": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "count": {
+          "default": 1,
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "item"
+      ],
+      "title": "RecipeInput",
+      "type": "object"
+    },
     "Shop": {
       "additionalProperties": false,
       "properties": {
@@ -3561,6 +3761,107 @@
         }
       },
       "title": "StartEquipment",
+      "type": "object"
+    },
+    "Station": {
+      "additionalProperties": false,
+      "description": "Верстак, котёл или костёр (§5.12): здесь делают вещи по рецептам с тем же station.",
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "zone": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "const": "station",
+          "type": "string"
+        },
+        "look": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "workbench",
+            "alchemy",
+            "campfire"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "zone",
+        "type",
+        "look",
+        "name",
+        "kind"
+      ],
+      "title": "Station",
       "type": "object"
     },
     "Stats": {
@@ -4032,6 +4333,13 @@
         "$ref": "#/$defs/Deduction"
       },
       "maxItems": 8,
+      "type": "array"
+    },
+    "recipes": {
+      "items": {
+        "$ref": "#/$defs/Recipe"
+      },
+      "maxItems": 10,
       "type": "array"
     },
     "quests": {

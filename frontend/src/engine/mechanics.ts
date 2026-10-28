@@ -1,9 +1,14 @@
 // Дополнительные механики (SPEC §5.12) — зеркало соответствующих мест simulator.py.
 
-import { DEDUCE_XP } from "./inner";
+import type { Gather, Recipe } from "../types/game";
+import { CRAFT_XP, DEDUCE_XP, GATHER_BONUS, passiveHeard } from "./inner";
 import { applyStoryEffects, gainXp } from "./effects";
-import { count, type GameState } from "./state";
+import { count, type GameState, skillValue } from "./state";
 import type { Effect, World } from "./world";
+
+function levelUp(state: GameState, world: World, xp: number): string[] {
+  return gainXp(state, xp, world) ? [`Новый уровень: ${state.level}. Очков навыков: ${state.skillPoints}`] : [];
+}
 
 export interface MechanicResult {
   ok: boolean;
@@ -32,10 +37,40 @@ export function deduce(state: GameState, world: World, picked: string[]): Mechan
   if (state.deduced.includes(found.id)) return { ok: false, messages: ["Этот вывод уже сделан."] };
   state.deduced.push(found.id);
   const res = applyStoryEffects(found.effects as Effect[], state, world);
-  const levels = gainXp(state, DEDUCE_XP, world);
-  return {
-    ok: true,
-    messages: [`Вывод: ${found.name}`, ...res.messages, `+${DEDUCE_XP} опыта`,
-      ...(levels ? [`Новый уровень: ${state.level}. Очков навыков: ${state.skillPoints}`] : [])],
-  };
+  return { ok: true, messages: [`Вывод: ${found.name}`, ...res.messages, `+${DEDUCE_XP} опыта`, ...levelUp(state, world, DEDUCE_XP)] };
+}
+
+// --- сбор и ремесло ---
+
+export const STATION_NAMES: Record<string, string> = { anywhere: "из сумки", workbench: "верстак", alchemy: "котёл", campfire: "костёр" };
+
+/** Сколько даёт место сбора: amount и +1, если навык высок (как gather_amount в simulator.py). */
+export function gatherAmount(obj: Gather, state: GameState, world: World): number {
+  const bonus = !!obj.skill && passiveHeard(skillValue(state, world, obj.skill), GATHER_BONUS);
+  return (obj.amount ?? 1) + (bonus ? 1 : 0);
+}
+
+export function recipesAt(world: World, station: string): Recipe[] {
+  return (world.game.recipes ?? []).filter((r) => (r.station ?? "anywhere") === station || (r.station ?? "anywhere") === "anywhere");
+}
+
+export function canCraft(recipe: Recipe, state: GameState): boolean {
+  return recipe.inputs.every((i) => count(state, i.item) >= (i.count ?? 1));
+}
+
+/** Сделать вещь по рецепту: сырьё уходит, результат в сумку; впервые по этому рецепту — опыт. */
+export function craft(state: GameState, world: World, recipe: Recipe): MechanicResult {
+  if (!canCraft(recipe, state)) return { ok: false, messages: ["Не хватает сырья."] };
+  for (const i of recipe.inputs) {
+    state.inventory[i.item] -= i.count ?? 1;
+    if (state.inventory[i.item] <= 0) delete state.inventory[i.item];
+  }
+  const amount = recipe.amount ?? 1;
+  state.inventory[recipe.result] = count(state, recipe.result) + amount;
+  const messages = [`Сделано: ${world.itemName(recipe.result)}${amount > 1 ? ` ×${amount}` : ""}`];
+  if (!state.crafted.includes(recipe.id)) {
+    state.crafted.push(recipe.id);
+    messages.push(`+${CRAFT_XP} опыта`, ...levelUp(state, world, CRAFT_XP));
+  }
+  return { ok: true, messages };
 }

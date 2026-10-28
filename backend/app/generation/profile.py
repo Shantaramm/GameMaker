@@ -41,6 +41,11 @@ FEATURES = {
                  "при осмотре или в разговоре; и 1–3 вывода в deductions: {\"id\", \"name\": \"формулировка вывода\", \"text\": \"как улики сложились\", "
                  "\"clues\": [2–3 id улик], \"effects\": [set_flag нового флага, иногда mod_skill]}. Игрок сам соединяет улики на доске; "
                  "флаг вывода открывает новые варианты в разговорах (condition) — правду можно не только выбить проверкой, но и вычислить.",
+    "crafting": "Сбор и ремесло: 3–5 мест сбора на картах (type: gather, look из каталога: bush, pine, boulder, barrel…, item — сырьё kind \"material\", "
+                "amount 1–3, skill — навык, который даёт +1: perception, knowledge, finesse или endurance), 1–2 места для работы (type: station, "
+                "kind: workbench | alchemy | campfire, look: table, cauldron, campfire) и 2–4 рецепта в recipes: {\"id\", \"result\", \"inputs\": "
+                "[{\"item\", \"count\"}], \"station\": \"anywhere\" или kind места}. Ремеслом делают зелья, приманки, бомбы, снаряжение — "
+                "то, что помогает в бою и в пути. Сырьё по смыслу мира: травы и руда в фэнтези, детали и батареи в космосе.",
 }
 
 FEATURE_NAMES = {"secrets": "тайники", "deduction": "улики и выводы", "crafting": "сбор и ремесло", "bestiary": "слабости врагов",

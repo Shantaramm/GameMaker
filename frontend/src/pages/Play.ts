@@ -11,7 +11,7 @@ import { BattleScreen } from "../ui/BattleScreen";
 import { DialoguePanel } from "../ui/DialoguePanel";
 import { el } from "../ui/dom";
 import { endingScreen, gameOverScreen, Hud, titleScreen, Toasts } from "../ui/Hud";
-import { boardView, inventoryView, journalView, Sheet, shopView, setSkillNames } from "../ui/Panels";
+import { boardView, craftView, inventoryView, journalView, Sheet, shopView, setSkillNames } from "../ui/Panels";
 import { MapScene } from "../world/scene";
 import "../game.css";
 
@@ -89,6 +89,14 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
       const view = (): Node[] => shopView(shop, controller.state, world, () => { sheet.replace(view()); hud.update(controller.state, world); });
       scene.paused = true;
       sheet.open(shop.name, view(), () => {
+        scene.paused = false;
+        resolve();
+      });
+    }),
+    craft: (station) => new Promise<void>((resolve) => {
+      const view = (): Node[] => craftView(station.kind, controller.state, world, () => { sheet.replace(view()); hud.update(controller.state, world); }, (m) => toasts.show(m));
+      scene.paused = true;
+      sheet.open(station.name, view(), () => {
         scene.paused = false;
         resolve();
       });

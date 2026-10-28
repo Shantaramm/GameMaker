@@ -429,7 +429,7 @@ export class MapScene {
       if (obj.type === "npc" && p.floor === this.hero.floor && Math.abs(p.x - this.hero.x) < BARK_RANGE && Math.abs(p.x - this.hero.x) > 0.3)
         arts.forEach((a) => (a.flip = this.hero.x < p.x));
       arts.forEach((art, i) => drawArt(ctx, art, px + (i - (arts.length - 1) / 2) * 14, py, Math.floor(t * 2)));
-      if (["npc", "thing", "chest"].includes(obj.type) && p.floor === this.hero.floor && Math.abs(p.x - this.hero.x) < 4) {
+      if (["npc", "thing", "chest", "gather", "station"].includes(obj.type) && p.floor === this.hero.floor && Math.abs(p.x - this.hero.x) < 4) {
         const top = py - Math.max(...arts.map((a) => a.anchor[1]), TILE * 2) - 4 - Math.round(Math.sin(t * 4) * 1.5);
         ctx.fillStyle = "#f2d36b";
         ctx.beginPath();

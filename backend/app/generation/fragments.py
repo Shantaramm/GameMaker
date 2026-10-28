@@ -55,6 +55,7 @@ class ItemsContent(s.Strict):
     shops: list[s.Shop] = Field(default_factory=list)
     tactics: list[s.Tactic] = Field(default_factory=list, max_length=6)
     deductions: list[s.Deduction] = Field(default_factory=list, max_length=8)
+    recipes: list[s.Recipe] = Field(default_factory=list, max_length=10)
     start_skills: list[s.Id] = Field(default_factory=list)
     start_items: list[s.Id] = Field(default_factory=list)
     start_equipment: s.StartEquipment = Field(default_factory=s.StartEquipment)
@@ -92,7 +93,7 @@ def assemble(outline: Outline, contents: dict[str, LocationContent], items: Item
         "start_skills": i.get("start_skills", []), "start_items": i.get("start_items", []),
         "start_equipment": i.get("start_equipment", {}),
         "skills": i.get("skills", []), "items": i.get("items", []), "enemies": list(enemies.values()),
-        "shops": i.get("shops", []), "tactics": i.get("tactics", []), "deductions": i.get("deductions", []), "quests": o["quests"], "flags": o.get("flags", []),
+        "shops": i.get("shops", []), "tactics": i.get("tactics", []), "deductions": i.get("deductions", []), "recipes": i.get("recipes", []), "quests": o["quests"], "flags": o.get("flags", []),
         "locations": locations, "start_location": o["start_location"], "endings": o["endings"],
     }
 
@@ -123,7 +124,7 @@ def split_game(game: s.Game) -> tuple[Outline, dict[str, LocationContent], Items
     outline = Outline(meta=game.meta, profile=game.profile, inner_skills=game.inner_skills, hero=game.hero, characters=game.characters, flags=game.flags, quests=game.quests,
                       locations=plans, start_location=game.start_location, endings=game.endings)
     tactics = [t.model_copy(update={"cost": None}) for t in game.tactics if not t.id.startswith("base_")]
-    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics, deductions=game.deductions,
+    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics, deductions=game.deductions, recipes=game.recipes,
                          start_skills=game.start_skills, start_items=game.start_items, start_equipment=game.start_equipment)
     return outline, contents, items
 
@@ -137,7 +138,8 @@ def referenced_ids(contents: dict[str, LocationContent], outline: Outline | None
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             for key, value in node.items():
-                if key in ("give_item", "take_item", "has_item") and isinstance(value, str):
+                if key in ("give_item", "take_item", "has_item") and isinstance(value, str) \
+                        or key == "item" and node.get("type") == "gather" and isinstance(value, str):
                     items.add(value)
                 elif key == "learn_skill" and isinstance(value, str):
                     skills.add(value)

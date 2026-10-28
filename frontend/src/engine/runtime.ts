@@ -1,7 +1,8 @@
 // Контроллер игры: взаимодействие с объектами, диалоги, бои, переходы, сохранение (SPEC §5.7).
 // С интерфейсом общается через GameUI: каждое окно — промис, который разрешается, когда игрок его закрыл.
 
-import type { DialogueChoice, Ending, Shop, SkillCheck } from "../types/game";
+import type { DialogueChoice, Ending, Shop, SkillCheck, Station } from "../types/game";
+import { gatherAmount } from "./mechanics";
 import { chance, checkKey, checkOpen, checkTarget, checkXp, DIFFICULTY_NAME, EXAMINE_XP, healthUnit, passiveHeard, QUEST_XP, type Roll, roll, SECRET_XP } from "./inner";
 import { type Battle, pyRound, REST_HEAL, rewards, startBattle } from "./tactics";
 import { check, describe } from "./conditions";
@@ -202,6 +203,8 @@ export interface GameUI {
   dialogue(runner: DialogueRunner, context: { npc?: string }): Promise<void>;
   battle(battle: Battle): Promise<"win" | "lose" | "fled">;
   shop(shop: Shop): Promise<void>;
+  /** Верстак, котёл или костёр: окно ремесла (§5.12). */
+  craft(station: Station): Promise<void>;
   notify(messages: string[]): void;
   enterLocation(): void;
   /** Найден тайник: подсветить объект на карте. */
@@ -295,6 +298,14 @@ export class GameController {
           this.ui.notify(res.messages.length ? res.messages : ["Пусто."]);
           jump = res.goto;
         }
+      } else if (obj.type === "gather") {
+        this.state.opened.push(obj.id);
+        const n = gatherAmount(obj, this.state, this.world);
+        this.state.inventory[obj.item] = (this.state.inventory[obj.item] ?? 0) + n;
+        this.ui.notify([`Собрано: ${this.world.itemName(obj.item)} ×${n}`]);
+      } else if (obj.type === "station") {
+        this.after();
+        await this.ui.craft(obj);
       } else if (obj.type === "exit") {
         if (!check(obj.requires as Condition, this.state, this.world)) await this.narrate(this.locked(obj.locked_text, obj.requires));
         else jump = obj.to;

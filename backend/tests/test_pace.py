@@ -100,3 +100,34 @@ def test_bot_deduces_when_it_holds_all_clues(demo):
     run.deduce()
     assert run.hero.deduced == {"salt_for_the_sea"} and run.hero.flags["oleander_exposed"]
     assert run.hero.inner["logic"] == logic + 1
+
+
+# --- сбор и ремесло (§5.12) ---
+
+def test_crafting_validation(demo):
+    demo["recipes"][1]["station"] = "alchemy"
+    assert "нет места для ремесла" in {i.path: i.message for i in validate(demo).errors}["recipes[1].station"]
+    demo["recipes"][1]["station"] = "campfire"
+    demo["recipes"][0]["inputs"] = [{"item": "harbor_badge"}]
+    demo["items"].append({"id": "moon_dust", "name": "Лунная пыль", "description": "", "icon": "gem", "kind": "material", "value_tier": 1})
+    demo["recipes"][0]["inputs"] = [{"item": "moon_dust"}]
+    assert "нигде не добыть" in {i.path: i.message for i in validate(demo).errors}["recipes[0].inputs[0].item"]
+
+
+def test_bot_gathers_and_crafts(demo):
+    import random
+
+    from app.engine.prepare import prepare
+    from app.engine.simulator import Run, World
+
+    game = validate(demo).game
+    prepare(game)
+    run = Run(game, World(game), random.Random(0), {})
+    crust = next(o for o in game.location("pier").objects if o.id == "salt_crust")
+    salt = run.hero.inventory["salt_pouch"]
+    run.hero.inner["perception"] = 4        # 4 + 6 ≥ 10 — на одну соль больше
+    run.interact(crust)
+    assert run.hero.inventory["sea_salt"] == 3 and not run.present(crust)
+    run.craft("anywhere")
+    assert run.hero.inventory["salt_pouch"] == salt + 1 and run.hero.inventory["sea_salt"] == 1
+    assert "make_salt_pouch" in run.hero.crafted

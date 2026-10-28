@@ -480,6 +480,26 @@
    },
    "value_tier": 1,
    "price": 10
+  },
+  {
+   "id": "mountain_herb",
+   "name": "Горный зверобой",
+   "description": "Жёлтые цветки из-под снега. С ними отвар крепче.",
+   "icon": "herb",
+   "kind": "material",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "resin_lump",
+   "name": "Комок смолы",
+   "description": "Липкая кедровая смола. Горит жарко и долго.",
+   "icon": "gem",
+   "kind": "material",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
   }
  ],
  "enemies": [
@@ -693,6 +713,32 @@
   }
  ],
  "deductions": [],
+ "recipes": [
+  {
+   "id": "brew_herb_tonic",
+   "result": "herb_tonic",
+   "amount": 1,
+   "inputs": [
+    {
+     "item": "mountain_herb",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
+  },
+  {
+   "id": "make_resin_bomb",
+   "result": "pine_resin",
+   "amount": 1,
+   "inputs": [
+    {
+     "item": "resin_lump",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
+  }
+ ],
  "quests": [
   {
    "id": "deliver_letter",
@@ -839,6 +885,16 @@
     }
    ],
    "objects": [
+    {
+     "id": "herb_slope",
+     "zone": "outskirts",
+     "type": "gather",
+     "look": "bush",
+     "name": "Зверобой у околицы",
+     "item": "mountain_herb",
+     "amount": 2,
+     "skill": "knowledge"
+    },
     {
      "id": "buried_jar",
      "zone": "outskirts",
@@ -1298,6 +1354,24 @@
      "type": "exit",
      "kind": "left_edge",
      "to": "village"
+    },
+    {
+     "id": "resin_cedar",
+     "zone": "foot",
+     "type": "gather",
+     "look": "pine",
+     "name": "Смолистый кедр",
+     "item": "resin_lump",
+     "amount": 2,
+     "skill": "finesse"
+    },
+    {
+     "id": "hunters_fire",
+     "zone": "foot",
+     "type": "station",
+     "look": "campfire",
+     "name": "Охотничий костёр",
+     "kind": "campfire"
     },
     {
      "id": "torn_bag",
@@ -1800,14 +1874,19 @@
      "x": 21
     },
     {
-     "id": "buried_jar",
+     "id": "herb_slope",
      "floor": 0,
      "x": 27
     },
     {
+     "id": "buried_jar",
+     "floor": 0,
+     "x": 29
+    },
+    {
      "id": "woodpile",
      "floor": 0,
-     "x": 30
+     "x": 31
     }
    ],
    "spawns": [
@@ -1963,9 +2042,19 @@
      "x": 34
     },
     {
-     "id": "torn_bag",
+     "id": "resin_cedar",
+     "floor": 0,
+     "x": 6
+    },
+    {
+     "id": "hunters_fire",
      "floor": 0,
      "x": 10
+    },
+    {
+     "id": "torn_bag",
+     "floor": 0,
+     "x": 13
     },
     {
      "id": "wolf_pack",

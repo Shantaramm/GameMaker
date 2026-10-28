@@ -116,7 +116,9 @@ export function objectArt(game: Game, loc: Location, level: Level, obj: MapObjec
         return { frames: walkerFrames(e.appearance, e.id).idle, anchor: walker.ref, flip: true };
       });
     case "chest":
-    case "thing": {
+    case "thing":
+    case "gather":
+    case "station": {
       const p = propCanvas(obj.look, mood, time);
       return [{ frames: [p.canvas], anchor: p.anchor }];
     }

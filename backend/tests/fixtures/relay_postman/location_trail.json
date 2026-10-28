@@ -1,21 +1,200 @@
-{"intro": "Тропа петляет между елями, на камнях — первая изморозь. В снегу отпечатки лап, слишком крупные для собак.",
-"on_enter": [],
-"objects": [
- {"type": "exit", "id": "trail_to_village", "zone": "foot", "kind": "left_edge", "to": "village"},
- {"type": "thing", "id": "torn_bag", "zone": "foot", "look": "boulder", "name": "Разорванная сумка", "event": {"type": "narration", "id": "look_bag", "text": "Чья-то котомка, растерзанная зубами. Внутри — пустая фляга и квитанция на соль «для лавки В.». Волки здесь хозяйничают не первый день."}},
- {"type": "enemy", "id": "wolf_pack", "zone": "den", "enemies": ["mountain_wolf", "pack_leader"], "can_flee": true},
- {"type": "npc", "id": "zlata_on_ledge", "barks": [{"text": "Тсс. Ветер с их стороны — пока не чуют."}, {"text": "Стая разбита. Теперь — к заставе.", "condition": {"defeated": "wolf_pack"}}], "zone": "ledge", "character": "zlata", "dialogue": {"type": "dialogue", "id": "talk_zlata", "start_node": "z1", "nodes": [
-  {"id": "z1", "speaker": "zlata", "emotion": "neutral", "text": "Тише ты, почтальон. Стая внизу, у логова. Я их третий день веду, а одной вожака не взять.", "choices": [
-   {"text": "Пойдём вместе. Мне всё равно туда.", "condition": {"flag": "zlata_joined", "is": false}, "effects": [{"set_flag": "zlata_joined", "value": true}, {"learn_skill": "precise_throw"}], "next": "z2"},
-   {"text": "Волков больше нет. Что дальше?", "condition": {"defeated": "wolf_pack"}, "next": "z3"},
-   {"text": "Я, пожалуй, сам.", "next": "z4"}]},
-  {"id": "z2", "speaker": "zlata", "emotion": "happy", "text": "Вот это разговор. Держи камень покрепче и бей в нос, когда я скажу. А потом — на заставу. Я давно хочу посмотреть на этот их «обвал».", "next": "end"},
-  {"id": "z3", "speaker": "zlata", "emotion": "happy", "text": "Дальше — вверх. Только застава там не пустая: дымом пахнет с утра.", "next": "end"},
-  {"id": "z4", "speaker": "zlata", "emotion": "angry", "text": "Сам так сам. Только вожак тебя «сам» и съест.", "next": "end"}]}},
- {"type": "chest", "id": "hunter_cache", "zone": "ledge", "look": "chest", "contents": [{"give_item": "fur_mittens"}, {"give_item": "herb_tonic"}]},
- {"type": "exit", "id": "trail_to_outpost", "zone": "upper_path", "kind": "right_edge", "to": "outpost"}
-],
-"enemies": [
- {"id": "mountain_wolf", "name": "Горный волк", "description": "Поджарый серый волк, оголодавший к зиме.", "tier": 1, "appearance": {"body": "wolf", "color": "gray", "accent_color": "white", "features": ["fangs"], "size": "medium"}, "abilities": []},
- {"id": "pack_leader", "name": "Вожак стаи", "description": "Матёрый волк со шрамом через морду, ведёт стаю к деревне.", "tier": 2, "appearance": {"body": "wolf", "color": "charcoal", "accent_color": "bone", "features": ["fangs", "back_spikes"], "size": "large"}, "abilities": [{"name": "Вой", "effect": [{"heal": 4}], "every_n_turns": 3}]}
-]}
+{
+ "intro": "Тропа петляет между елями, на камнях — первая изморозь. В снегу отпечатки лап, слишком крупные для собак.",
+ "on_enter": [],
+ "objects": [
+  {
+   "type": "exit",
+   "id": "trail_to_village",
+   "zone": "foot",
+   "kind": "left_edge",
+   "to": "village"
+  },
+  {
+   "type": "gather",
+   "id": "resin_cedar",
+   "zone": "foot",
+   "look": "pine",
+   "name": "Смолистый кедр",
+   "item": "resin_lump",
+   "amount": 2,
+   "skill": "finesse"
+  },
+  {
+   "type": "station",
+   "id": "hunters_fire",
+   "zone": "foot",
+   "look": "campfire",
+   "name": "Охотничий костёр",
+   "kind": "campfire"
+  },
+  {
+   "type": "thing",
+   "id": "torn_bag",
+   "zone": "foot",
+   "look": "boulder",
+   "name": "Разорванная сумка",
+   "event": {
+    "type": "narration",
+    "id": "look_bag",
+    "text": "Чья-то котомка, растерзанная зубами. Внутри — пустая фляга и квитанция на соль «для лавки В.». Волки здесь хозяйничают не первый день."
+   }
+  },
+  {
+   "type": "enemy",
+   "id": "wolf_pack",
+   "zone": "den",
+   "enemies": [
+    "mountain_wolf",
+    "pack_leader"
+   ],
+   "can_flee": true
+  },
+  {
+   "type": "npc",
+   "id": "zlata_on_ledge",
+   "barks": [
+    {
+     "text": "Тсс. Ветер с их стороны — пока не чуют."
+    },
+    {
+     "text": "Стая разбита. Теперь — к заставе.",
+     "condition": {
+      "defeated": "wolf_pack"
+     }
+    }
+   ],
+   "zone": "ledge",
+   "character": "zlata",
+   "dialogue": {
+    "type": "dialogue",
+    "id": "talk_zlata",
+    "start_node": "z1",
+    "nodes": [
+     {
+      "id": "z1",
+      "speaker": "zlata",
+      "emotion": "neutral",
+      "text": "Тише ты, почтальон. Стая внизу, у логова. Я их третий день веду, а одной вожака не взять.",
+      "choices": [
+       {
+        "text": "Пойдём вместе. Мне всё равно туда.",
+        "condition": {
+         "flag": "zlata_joined",
+         "is": false
+        },
+        "effects": [
+         {
+          "set_flag": "zlata_joined",
+          "value": true
+         },
+         {
+          "learn_skill": "precise_throw"
+         }
+        ],
+        "next": "z2"
+       },
+       {
+        "text": "Волков больше нет. Что дальше?",
+        "condition": {
+         "defeated": "wolf_pack"
+        },
+        "next": "z3"
+       },
+       {
+        "text": "Я, пожалуй, сам.",
+        "next": "z4"
+       }
+      ]
+     },
+     {
+      "id": "z2",
+      "speaker": "zlata",
+      "emotion": "happy",
+      "text": "Вот это разговор. Держи камень покрепче и бей в нос, когда я скажу. А потом — на заставу. Я давно хочу посмотреть на этот их «обвал».",
+      "next": "end"
+     },
+     {
+      "id": "z3",
+      "speaker": "zlata",
+      "emotion": "happy",
+      "text": "Дальше — вверх. Только застава там не пустая: дымом пахнет с утра.",
+      "next": "end"
+     },
+     {
+      "id": "z4",
+      "speaker": "zlata",
+      "emotion": "angry",
+      "text": "Сам так сам. Только вожак тебя «сам» и съест.",
+      "next": "end"
+     }
+    ]
+   }
+  },
+  {
+   "type": "chest",
+   "id": "hunter_cache",
+   "zone": "ledge",
+   "look": "chest",
+   "contents": [
+    {
+     "give_item": "fur_mittens"
+    },
+    {
+     "give_item": "herb_tonic"
+    }
+   ]
+  },
+  {
+   "type": "exit",
+   "id": "trail_to_outpost",
+   "zone": "upper_path",
+   "kind": "right_edge",
+   "to": "outpost"
+  }
+ ],
+ "enemies": [
+  {
+   "id": "mountain_wolf",
+   "name": "Горный волк",
+   "description": "Поджарый серый волк, оголодавший к зиме.",
+   "tier": 1,
+   "appearance": {
+    "body": "wolf",
+    "color": "gray",
+    "accent_color": "white",
+    "features": [
+     "fangs"
+    ],
+    "size": "medium"
+   },
+   "abilities": []
+  },
+  {
+   "id": "pack_leader",
+   "name": "Вожак стаи",
+   "description": "Матёрый волк со шрамом через морду, ведёт стаю к деревне.",
+   "tier": 2,
+   "appearance": {
+    "body": "wolf",
+    "color": "charcoal",
+    "accent_color": "bone",
+    "features": [
+     "fangs",
+     "back_spikes"
+    ],
+    "size": "large"
+   },
+   "abilities": [
+    {
+     "name": "Вой",
+     "effect": [
+      {
+       "heal": 4
+      }
+     ],
+     "every_n_turns": 3
+    }
+   ]
+  }
+ ]
+}

@@ -33,6 +33,10 @@ export interface Game {
    * @maxItems 8
    */
   deductions?: Deduction[];
+  /**
+   * @maxItems 10
+   */
+  recipes?: Recipe[];
   quests?: Quest[];
   flags?: FlagDef[];
   /**
@@ -397,7 +401,7 @@ export interface Item {
   name: string;
   description: string;
   icon: string;
-  kind: "consumable" | "equipment" | "key" | "misc" | "clue";
+  kind: "consumable" | "equipment" | "key" | "misc" | "clue" | "material";
   effect?: (
     | EffSetFlag
     | EffGiveItem
@@ -606,6 +610,31 @@ export interface Deduction {
   ];
 }
 /**
+ * Рецепт ремесла (§5.12): из сырья — вещь; station — где можно сделать ("anywhere" — из сумки).
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Recipe".
+ */
+export interface Recipe {
+  id: string;
+  result: string;
+  amount?: number;
+  /**
+   * @minItems 1
+   * @maxItems 3
+   */
+  inputs: [RecipeInput, ...RecipeInput[]];
+  station?: "anywhere" | "workbench" | "alchemy" | "campfire";
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "RecipeInput".
+ */
+export interface RecipeInput {
+  item: string;
+  count?: number;
+}
+/**
  * This interface was referenced by `Game`'s JSON-Schema
  * via the `definition` "Quest".
  */
@@ -654,7 +683,7 @@ export interface Location {
    * @minItems 1
    */
   zones: [Zone, ...Zone[]];
-  objects?: (Npc | Foe | Chest | Thing | Exit)[];
+  objects?: (Npc | Foe | Chest | Thing | Gather | Station | Exit)[];
   on_enter?: (Dialogue | Choice | Narration)[];
 }
 /**
@@ -988,6 +1017,44 @@ export interface Narration {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+}
+/**
+ * Место сбора (§5.12): трава, руда, обломки. Собирается один раз; высокий навык даёт +1.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Gather".
+ */
+export interface Gather {
+  id: string;
+  zone: string;
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
+  hidden?: Hidden | null;
+  type: "gather";
+  look: string;
+  name: string;
+  item: string;
+  amount?: number;
+  skill?: ("logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse") | null;
+}
+/**
+ * Верстак, котёл или костёр (§5.12): здесь делают вещи по рецептам с тем же station.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Station".
+ */
+export interface Station {
+  id: string;
+  zone: string;
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
+  hidden?: Hidden | null;
+  type: "station";
+  look: string;
+  name: string;
+  kind: "workbench" | "alchemy" | "campfire";
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema

@@ -164,6 +164,7 @@ class _Checker:
             ("магазинов", [(format_path("shops", i), x.id) for i, x in enumerate(g.shops)]),
             ("тактик", [(format_path("tactics", i), x.id) for i, x in enumerate(g.tactics)]),
             ("выводов", [(format_path("deductions", i), x.id) for i, x in enumerate(g.deductions)]),
+            ("рецептов", [(format_path("recipes", i), x.id) for i, x in enumerate(g.recipes)]),
             ("квестов", [(format_path("quests", i), x.id) for i, x in enumerate(g.quests)]),
             ("флагов", [(format_path("flags", i), x.id) for i, x in enumerate(g.flags)]),
             ("локаций и концовок", [(format_path("locations", i), x.id) for i, x in enumerate(g.locations)]
@@ -404,6 +405,10 @@ class _Checker:
                 self.check_condition(obj.requires, format_path(path, "requires"))
             elif isinstance(obj, s.Thing):
                 self.check_event(obj.event, format_path(path, "event"))
+            elif isinstance(obj, s.Gather):
+                if self.ref(obj.item, self.items, format_path(path, "item"), "предмет") \
+                        and self.items[obj.item].kind not in ("material", "consumable"):
+                    self.error(format_path(path, "item"), "собирают сырьё (kind material) или расходники (consumable)")
             elif isinstance(obj, s.Exit):
                 self.ref(obj.to, self.locations | self.endings, format_path(path, "to"), "переход (локация или концовка)")
                 self.check_condition(obj.requires, format_path(path, "requires"))
@@ -620,6 +625,15 @@ class _Checker:
 
         walk([loc.model_dump(by_alias=True) for loc in g.locations])
         walk([d.model_dump(by_alias=True) for d in g.deductions])
+        found |= {o.item for loc in g.locations for o in loc.objects if isinstance(o, s.Gather)}
+        # ремесло: результат доступен, если доступно всё сырьё (цепочки — до неподвижной точки)
+        changed = True
+        while changed:
+            changed = False
+            for r in g.recipes:
+                if r.result not in found and all(i.item in found for i in r.inputs):
+                    found.add(r.result)
+                    changed = True
         return found
 
     def check_mechanics(self) -> None:
@@ -645,6 +659,23 @@ class _Checker:
         for i, a in enumerate(others):
             if any(j != i and a == b for j, b in enumerate(others)):
                 self.error(format_path("deductions", i, "clues"), "два вывода из одних и тех же улик")
+        stations = {o.kind for loc in g.locations for o in loc.objects if isinstance(o, s.Station)}
+        for i, r in enumerate(g.recipes):
+            path = format_path("recipes", i)
+            self.ref(r.result, self.items, format_path(path, "result"), "предмет")
+            for j, inp in enumerate(r.inputs):
+                ip = format_path(path, "inputs", j, "item")
+                if not self.ref(inp.item, self.items, ip, "предмет"):
+                    continue
+                if inp.item == r.result:
+                    self.error(ip, "вещь не делается из самой себя")
+                elif inp.item not in obtainable:
+                    self.error(ip, f"сырьё '{inp.item}' нигде не добыть: нужно место сбора (type: gather), сундук или give_item")
+            if r.station != "anywhere" and r.station not in stations:
+                self.error(format_path(path, "station"), f"в игре нет места для ремесла '{r.station}': поставь объект type: station с kind = {r.station}")
+        if "crafting" in features and not g.recipes:
+            self.quality("recipes", "в игре нет ремесла: добавь 2–3 места сбора (type: gather) с сырьём (items kind=material), место для работы "
+                         "(type: station: workbench, alchemy или campfire) и 2–4 рецепта (recipes) — зелья, приманки, снаряжение")
         if "deduction" in features and not g.deductions:
             self.quality("deductions", "в игре нет доски улик: добавь 2–3 улики (items kind=clue, выдаются через give_item при осмотре "
                          "или в разговоре) и 1–2 вывода из них (deductions) — вывод ставит флаг, который открывает новые реплики")

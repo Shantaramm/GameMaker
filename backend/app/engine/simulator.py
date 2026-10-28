@@ -67,6 +67,7 @@ class HeroState:
     quests_rewarded: set[str] = field(default_factory=set)
     revealed: set[str] = field(default_factory=set)        # найденные тайники (§5.12)
     deduced: set[str] = field(default_factory=set)         # сделанные выводы на доске улик
+    crafted: set[str] = field(default_factory=set)         # рецепты, по которым уже что-то сделано
 
 
 @dataclass
@@ -498,6 +499,21 @@ class Run:
                 self.hero.quests_rewarded.add(q.id)
                 self.reward(inner.QUEST_XP)
 
+    def craft(self, station: str) -> None:
+        """Бот делает всё, на что хватает сырья, по рецептам этого места (и «из сумки»), до 3 раз каждый."""
+        h = self.hero
+        for r in self.game.recipes:
+            if r.station not in (station, "anywhere"):
+                continue
+            for _ in range(3):
+                if not can_craft(r, h):
+                    break
+                do_craft(r, h)
+                if r.id not in h.crafted:
+                    h.crafted.add(r.id)
+                    self.reward(inner.CRAFT_XP)
+        auto_equip(h, self.world)
+
     def deduce(self) -> None:
         """Бот соединяет улики, как только все нужные у него (игрок делает это на доске, §5.12)."""
         h = self.hero
@@ -551,6 +567,13 @@ class Run:
                 return None
             h.opened.add(obj.id)
             return apply_story_effects(obj.contents, h, self.world)
+        if isinstance(obj, s.Gather):
+            h.opened.add(obj.id)
+            h.inventory[obj.item] += gather_amount(obj, h, self.world)
+            return None
+        if isinstance(obj, s.Station):
+            self.craft(obj.kind)
+            return None
         if isinstance(obj, s.Thing):
             if obj.once:
                 h.used.add(obj.id)
@@ -589,6 +612,7 @@ class Run:
             if self.present(obj):
                 jump = self.interact(obj)
                 self.deduce()
+                self.craft("anywhere")
                 self.reward_quests()
                 if jump is not None:
                     return jump
@@ -598,6 +622,22 @@ class Run:
         weights = [ENDING_EXIT_WEIGHT if e.to in self.world.endings and e.requires is None
                    else UNVISITED_EXIT_WEIGHT if e.to not in h.visited else 1 for e in exits]
         return self.rng.choices(exits, weights=weights)[0].to
+
+
+def gather_amount(obj: s.Gather, hero: HeroState, world: World) -> int:
+    """Сколько даёт место сбора: amount и +1, если навык обращения с ним высок (как gatherAmount в mechanics.ts)."""
+    bonus = obj.skill is not None and inner.passive_heard(world.skill(hero, obj.skill), inner.GATHER_BONUS)
+    return obj.amount + int(bonus)
+
+
+def can_craft(recipe: s.Recipe, hero: HeroState) -> bool:
+    return all(hero.inventory[i.item] >= i.count for i in recipe.inputs)
+
+
+def do_craft(recipe: s.Recipe, hero: HeroState) -> None:
+    for i in recipe.inputs:
+        hero.inventory[i.item] -= i.count
+    hero.inventory[recipe.result] += recipe.amount
 
 
 def start_node(dialogue: s.Dialogue, hero: HeroState, world: World) -> str:

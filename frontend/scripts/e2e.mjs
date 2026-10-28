@@ -31,6 +31,16 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   await g.tap("loose_plank");
   await g.idle();
   check((await g.state()).gold === goldBefore + 12, "в тайнике 12 золота");
+  await g.tap("salt_crust");                        // сбор: Восприятие 4 даёт +1 соль (§5.12)
+  await g.idle();
+  st = await g.state();
+  check(st.inventory.sea_salt === 3 && st.opened.includes("salt_crust"), "собрано 3 соли");
+  const pouches = st.inventory.salt_pouch ?? 0;
+  await page.getByRole("button", { name: /^Герой/ }).click();
+  await page.locator(".recipe", { hasText: "Мешочек" }).getByRole("button", { name: "Сделать" }).click();
+  await page.locator(".sheet-close").click();
+  st = await g.state();
+  check(st.inventory.salt_pouch === pouches + 1 && st.inventory.sea_salt === 1, "из соли сделан мешочек");
 
   await g.tap("tim_on_pier");
   await g.talk("Я рада тебя видеть", "Идём вместе.");

@@ -1,25 +1,249 @@
-{"items": [
- {"id": "petition_letter", "name": "Прошение о лекаре", "description": "Конверт с подписями всей Кедровки. Последняя почта перед зимой.", "icon": "letter", "kind": "misc", "value_tier": 1},
- {"id": "herb_tonic", "name": "Мамин отвар", "description": "Горький отвар из чабреца и шиповника. Согревает и ставит на ноги.", "icon": "potion", "kind": "consumable", "effect": [{"heal": 18}], "value_tier": 1},
- {"id": "dried_bread", "name": "Ржаные сухари", "description": "Сухари с тмином. В горах — лучшая еда.", "icon": "bread", "kind": "consumable", "effect": [{"heal": 10}], "value_tier": 1},
- {"id": "pine_resin", "name": "Смоляная бомбочка", "description": "Горшочек с горящей смолой. Волки и люди одинаково не любят огонь.", "icon": "bomb", "kind": "consumable", "effect": [{"damage": 14}], "value_tier": 2},
- {"id": "gordey_key", "name": "Ключ от чердака", "description": "Медный ключ старосты, оставленный у Веры «на хранение».", "icon": "key", "kind": "key", "value_tier": 2},
- {"id": "salt_crate", "name": "Ящик соли", "description": "Ящик с синей печатью лавки Веры. Тяжёлый.", "icon": "pouch", "kind": "misc", "value_tier": 1},
- {"id": "smuggler_ledger", "name": "Долговая книга банды", "description": "Записи о каждом обозе через перевал и о доле старосты Гордея — его же почерком.", "icon": "book", "kind": "misc", "value_tier": 3},
- {"id": "walking_stick", "name": "Почтальонская палка", "description": "Крепкая ореховая палка. Отгонять собак, опираться на подъёме.", "icon": "staff", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 1}}, "value_tier": 1},
- {"id": "smuggler_cudgel", "name": "Дубинка часового", "description": "Окованная железом дубинка. Тяжеловата, но убедительна.", "icon": "mace", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 3}}, "value_tier": 2},
- {"id": "hunting_knife", "name": "Охотничий нож", "description": "Широкий нож работы деревенского кузнеца.", "icon": "knife", "kind": "equipment", "equip": {"slot": "hand", "bonus": {"attack": 2}}, "value_tier": 2},
- {"id": "sheepskin_coat", "name": "Овчинный тулуп", "description": "Тёплый, тяжёлый, пахнет овцой. Удар держит не хуже кольчуги.", "icon": "coat", "kind": "equipment", "equip": {"slot": "body", "bonus": {"defense": 2, "hp": 5}}, "value_tier": 2},
- {"id": "fur_mittens", "name": "Меховые рукавицы", "description": "Охотничьи рукавицы Златы из запасного тайника. Пальцы не мёрзнут, хватка крепче.", "icon": "gloves", "kind": "equipment", "equip": {"slot": "trinket", "bonus": {"defense": 1, "focus": 1}}, "value_tier": 2},
- {"id": "postman_badge", "name": "Почтовая бляха", "description": "Латунная бляха почтальона. Напоминает, зачем идёшь.", "icon": "badge", "kind": "equipment", "equip": {"slot": "trinket", "bonus": {"focus": 1}}, "value_tier": 1}
-],
-"skills": [
- {"id": "steady_breath", "name": "Второе дыхание", "description": "Отдышаться и собраться, как на крутом подъёме.", "cost_focus": 2, "effect": [{"heal": 10}], "target": "self"},
- {"id": "precise_throw", "name": "Меткий бросок", "description": "Камень в нос, как учила Злата.", "cost_focus": 3, "effect": [{"damage": 12}], "target": "enemy"}
-],
-"shops": [
- {"id": "vera_shop", "name": "Лавка Веры", "items": ["herb_tonic", "dried_bread", "pine_resin", "hunting_knife", "sheepskin_coat"], "buys": true}
-],
-"start_skills": ["steady_breath"],
-"start_items": [],
-"start_equipment": {"hand": "walking_stick", "trinket": "postman_badge"}}
+{
+ "items": [
+  {
+   "id": "petition_letter",
+   "name": "Прошение о лекаре",
+   "description": "Конверт с подписями всей Кедровки. Последняя почта перед зимой.",
+   "icon": "letter",
+   "kind": "misc",
+   "value_tier": 1
+  },
+  {
+   "id": "herb_tonic",
+   "name": "Мамин отвар",
+   "description": "Горький отвар из чабреца и шиповника. Согревает и ставит на ноги.",
+   "icon": "potion",
+   "kind": "consumable",
+   "effect": [
+    {
+     "heal": 18
+    }
+   ],
+   "value_tier": 1
+  },
+  {
+   "id": "dried_bread",
+   "name": "Ржаные сухари",
+   "description": "Сухари с тмином. В горах — лучшая еда.",
+   "icon": "bread",
+   "kind": "consumable",
+   "effect": [
+    {
+     "heal": 10
+    }
+   ],
+   "value_tier": 1
+  },
+  {
+   "id": "pine_resin",
+   "name": "Смоляная бомбочка",
+   "description": "Горшочек с горящей смолой. Волки и люди одинаково не любят огонь.",
+   "icon": "bomb",
+   "kind": "consumable",
+   "effect": [
+    {
+     "damage": 14
+    }
+   ],
+   "value_tier": 2
+  },
+  {
+   "id": "gordey_key",
+   "name": "Ключ от чердака",
+   "description": "Медный ключ старосты, оставленный у Веры «на хранение».",
+   "icon": "key",
+   "kind": "key",
+   "value_tier": 2
+  },
+  {
+   "id": "salt_crate",
+   "name": "Ящик соли",
+   "description": "Ящик с синей печатью лавки Веры. Тяжёлый.",
+   "icon": "pouch",
+   "kind": "misc",
+   "value_tier": 1
+  },
+  {
+   "id": "smuggler_ledger",
+   "name": "Долговая книга банды",
+   "description": "Записи о каждом обозе через перевал и о доле старосты Гордея — его же почерком.",
+   "icon": "book",
+   "kind": "misc",
+   "value_tier": 3
+  },
+  {
+   "id": "walking_stick",
+   "name": "Почтальонская палка",
+   "description": "Крепкая ореховая палка. Отгонять собак, опираться на подъёме.",
+   "icon": "staff",
+   "kind": "equipment",
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 1
+    }
+   },
+   "value_tier": 1
+  },
+  {
+   "id": "smuggler_cudgel",
+   "name": "Дубинка часового",
+   "description": "Окованная железом дубинка. Тяжеловата, но убедительна.",
+   "icon": "mace",
+   "kind": "equipment",
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 3
+    }
+   },
+   "value_tier": 2
+  },
+  {
+   "id": "hunting_knife",
+   "name": "Охотничий нож",
+   "description": "Широкий нож работы деревенского кузнеца.",
+   "icon": "knife",
+   "kind": "equipment",
+   "equip": {
+    "slot": "hand",
+    "bonus": {
+     "attack": 2
+    }
+   },
+   "value_tier": 2
+  },
+  {
+   "id": "sheepskin_coat",
+   "name": "Овчинный тулуп",
+   "description": "Тёплый, тяжёлый, пахнет овцой. Удар держит не хуже кольчуги.",
+   "icon": "coat",
+   "kind": "equipment",
+   "equip": {
+    "slot": "body",
+    "bonus": {
+     "defense": 2,
+     "hp": 5
+    }
+   },
+   "value_tier": 2
+  },
+  {
+   "id": "fur_mittens",
+   "name": "Меховые рукавицы",
+   "description": "Охотничьи рукавицы Златы из запасного тайника. Пальцы не мёрзнут, хватка крепче.",
+   "icon": "gloves",
+   "kind": "equipment",
+   "equip": {
+    "slot": "trinket",
+    "bonus": {
+     "defense": 1,
+     "focus": 1
+    }
+   },
+   "value_tier": 2
+  },
+  {
+   "id": "postman_badge",
+   "name": "Почтовая бляха",
+   "description": "Латунная бляха почтальона. Напоминает, зачем идёшь.",
+   "icon": "badge",
+   "kind": "equipment",
+   "equip": {
+    "slot": "trinket",
+    "bonus": {
+     "focus": 1
+    }
+   },
+   "value_tier": 1
+  },
+  {
+   "id": "mountain_herb",
+   "name": "Горный зверобой",
+   "description": "Жёлтые цветки из-под снега. С ними отвар крепче.",
+   "icon": "herb",
+   "kind": "material",
+   "value_tier": 1
+  },
+  {
+   "id": "resin_lump",
+   "name": "Комок смолы",
+   "description": "Липкая кедровая смола. Горит жарко и долго.",
+   "icon": "gem",
+   "kind": "material",
+   "value_tier": 1
+  }
+ ],
+ "skills": [
+  {
+   "id": "steady_breath",
+   "name": "Второе дыхание",
+   "description": "Отдышаться и собраться, как на крутом подъёме.",
+   "cost_focus": 2,
+   "effect": [
+    {
+     "heal": 10
+    }
+   ],
+   "target": "self"
+  },
+  {
+   "id": "precise_throw",
+   "name": "Меткий бросок",
+   "description": "Камень в нос, как учила Злата.",
+   "cost_focus": 3,
+   "effect": [
+    {
+     "damage": 12
+    }
+   ],
+   "target": "enemy"
+  }
+ ],
+ "shops": [
+  {
+   "id": "vera_shop",
+   "name": "Лавка Веры",
+   "items": [
+    "herb_tonic",
+    "dried_bread",
+    "pine_resin",
+    "hunting_knife",
+    "sheepskin_coat"
+   ],
+   "buys": true
+  }
+ ],
+ "start_skills": [
+  "steady_breath"
+ ],
+ "start_items": [],
+ "start_equipment": {
+  "hand": "walking_stick",
+  "trinket": "postman_badge"
+ },
+ "recipes": [
+  {
+   "id": "brew_herb_tonic",
+   "result": "herb_tonic",
+   "inputs": [
+    {
+     "item": "mountain_herb",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
+  },
+  {
+   "id": "make_resin_bomb",
+   "result": "pine_resin",
+   "inputs": [
+    {
+     "item": "resin_lump",
+     "count": 2
+    }
+   ],
+   "station": "campfire"
+  }
+ ]
+}

@@ -234,7 +234,7 @@ class Pipeline:
             for loc_id, content in self.contents.items():
                 if any(e.id == enemy_id for e in content.enemies):
                     return [f"location:{loc_id}"]
-        if re.match(r"(items|skills|shops|tactics|deductions|start_)", path):
+        if re.match(r"(items|skills|shops|tactics|deductions|recipes|start_)", path):
             return ["items"]
         return ["outline"]
 

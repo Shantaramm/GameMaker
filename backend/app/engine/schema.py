@@ -333,8 +333,8 @@ class Item(Strict):
     name: str = Field(min_length=1, max_length=60)
     description: str = Field(max_length=300)
     icon: Id
-    # clue — улика для доски выводов (§5.12): не тратится, не продаётся
-    kind: Literal["consumable", "equipment", "key", "misc", "clue"]
+    # clue — улика для доски выводов (§5.12): не тратится, не продаётся; material — сырьё для ремесла
+    kind: Literal["consumable", "equipment", "key", "misc", "clue", "material"]
     effect: list[Effect] = Field(default_factory=list)  # для consumable
     equip: Equip | None = None  # для equipment
     value_tier: int = Field(ge=1, le=5)
@@ -448,6 +448,24 @@ class Deduction(Strict):
     text: str = Field(min_length=1, max_length=400)  # как улики сложились
     clues: list[Id] = Field(min_length=2, max_length=3)  # предметы kind=clue
     effects: list[Effect] = Field(min_length=1)  # обычно set_flag — и этот флаг открывает новые реплики
+
+
+StationKind = Literal["workbench", "alchemy", "campfire"]
+
+
+class RecipeInput(Strict):
+    item: Id
+    count: int = Field(default=1, ge=1, le=3)
+
+
+class Recipe(Strict):
+    """Рецепт ремесла (§5.12): из сырья — вещь; station — где можно сделать ("anywhere" — из сумки)."""
+
+    id: Id
+    result: Id
+    amount: int = Field(default=1, ge=1, le=3)
+    inputs: list[RecipeInput] = Field(min_length=1, max_length=3)
+    station: Literal["anywhere", "workbench", "alchemy", "campfire"] = "anywhere"
 
 
 class FlagDef(Strict):
@@ -628,6 +646,26 @@ class Thing(MapObjectBase):
     once: bool = True
 
 
+class Gather(MapObjectBase):
+    """Место сбора (§5.12): трава, руда, обломки. Собирается один раз; высокий навык даёт +1."""
+
+    type: Literal["gather"]
+    look: Id
+    name: str = Field(min_length=1, max_length=60)
+    item: Id
+    amount: int = Field(default=1, ge=1, le=3)
+    skill: SkillKey | None = None  # навык + 6 ≥ 10 (medium) — на одну единицу больше
+
+
+class Station(MapObjectBase):
+    """Верстак, котёл или костёр (§5.12): здесь делают вещи по рецептам с тем же station."""
+
+    type: Literal["station"]
+    look: Id
+    name: str = Field(min_length=1, max_length=60)
+    kind: StationKind
+
+
 class Exit(MapObjectBase):
     type: Literal["exit"]
     kind: Literal["door", "left_edge", "right_edge"]
@@ -642,6 +680,8 @@ MapObject = Annotated[
         Annotated[Foe, _tag("enemy")],
         Annotated[Chest, _tag("chest")],
         Annotated[Thing, _tag("thing")],
+        Annotated[Gather, _tag("gather")],
+        Annotated[Station, _tag("station")],
         Annotated[Exit, _tag("exit")],
     ],
     Discriminator(_type_tag),
@@ -749,6 +789,7 @@ class Game(Strict):
     shops: list[Shop] = Field(default_factory=list)
     tactics: list[Tactic] = Field(default_factory=list)
     deductions: list[Deduction] = Field(default_factory=list, max_length=8)
+    recipes: list[Recipe] = Field(default_factory=list, max_length=10)
     quests: list[Quest] = Field(default_factory=list)
     flags: list[FlagDef] = Field(default_factory=list)
     locations: list[Location] = Field(min_length=1)
