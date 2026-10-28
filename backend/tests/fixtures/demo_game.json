@@ -148,7 +148,7 @@
       "on_enter": [
         {"type": "narration", "id": "arrival", "text": "У фонаря кто-то машет рукой — слишком знакомо, чтобы ошибиться."}
       ],
-      "objects": [
+      "objects": [{"type": "chest", "id": "loose_plank", "zone": "lamp", "look": "barrel", "hidden": {"skill": "perception", "difficulty": "medium", "text": "Доска у фонаря прибита свежими гвоздями — под ней пустота."}, "contents": [{"give_gold": 12}, {"give_item": "tonic"}]}, 
         {
           "type": "npc", "id": "tim_on_pier", "barks": [{"text": "Фонарь мигнул… или показалось?"}, {"text": "Арина, только не уходи одна, ладно?", "condition": {"flag": "tim_joined", "is": false}}], "zone": "lamp", "character": "tim",
           "condition": {"flag": "tim_joined", "is": false},
@@ -237,7 +237,7 @@
         {"id": "shelves", "floor": 1, "name": "стеллажи"},
         {"id": "window", "floor": 1, "name": "окно"}
       ],
-      "objects": [
+      "objects": [{"type": "chest", "id": "false_book", "zone": "window", "look": "bookshelf", "hidden": {"skill": "perception", "difficulty": "challenging", "text": "Один корешок на полке без пыли. За ним — пустота и холод металла."}, "contents": [{"give_item": "salt_pouch"}, {"give_gold": 10}]}, 
         {"type": "exit", "id": "archive_to_alley", "zone": "door", "kind": "door", "to": "alley"},
         {
           "type": "npc", "id": "efim_at_desk", "barks": [{"text": "Сорок лет… всё записано… всё…"}, {"text": "Не трогай полки! Там порядок.", "condition": {"flag": "found_ledger", "is": false}}], "zone": "desk", "character": "efim",

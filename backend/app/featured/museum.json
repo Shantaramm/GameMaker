@@ -460,6 +460,26 @@
    ],
    "objects": [
     {
+     "id": "behind_radiator",
+     "zone": "entrance",
+     "hidden": {
+      "skill": "perception",
+      "difficulty": "easy",
+      "text": "За батареей что-то белеет — сложенный вчетверо листок и обёртка от конфеты."
+     },
+     "type": "chest",
+     "look": "chest",
+     "contents": [
+      {
+       "give_item": "thermos_tea"
+      },
+      {
+       "mod_stat": "morale",
+       "delta": 1
+      }
+     ]
+    },
+    {
      "id": "old_booklet",
      "zone": "entrance",
      "type": "thing",
@@ -2245,9 +2265,14 @@
      "x": 1
     },
     {
+     "id": "behind_radiator",
+     "floor": 0,
+     "x": 6
+    },
+    {
      "id": "old_booklet",
      "floor": 0,
-     "x": 7
+     "x": 9
     },
     {
      "id": "nina_in_cloakroom",

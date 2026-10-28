@@ -126,6 +126,7 @@ class _Checker:
         self.flags_set: set[str] = set()
         self.checks_total = 0
         self.passives_total = 0
+        self.hidden_total = 0
 
     def error(self, path: str, message: str) -> None:
         self.issues.append(Issue(path=path, message=message))
@@ -377,6 +378,11 @@ class _Checker:
             path = format_path(base, "objects", j)
             self.ref(obj.zone, zones, format_path(path, "zone"), f"зона (локация '{loc.id}')")
             self.check_condition(obj.condition, format_path(path, "condition"))
+            if obj.hidden is not None:
+                if isinstance(obj, (s.Exit, s.Foe)):
+                    self.error(format_path(path, "hidden"), "тайником может быть сундук, предмет или персонаж — не выход и не враг: без них игру не пройти")
+                else:
+                    self.hidden_total += 1
             if isinstance(obj, s.Npc):
                 if self.ref(obj.character, self.characters, format_path(path, "character"), "персонаж") and obj.character == self.game.hero.id:
                     self.error(format_path(path, "character"), "герой не может стоять на карте как NPC")
@@ -578,6 +584,12 @@ class _Checker:
                                      f"ключевой разговор слишком короткий ({len(o.dialogue.nodes)} реплик, нужно от {need['nodes']}): "
                                      "дай персонажу подтекст — чего он хочет и что скрывает, выбор с последствиями, проверку навыка")
 
+        features = g.profile.active()
+        if "secrets" in features and not self.hidden_total:
+            li = max(range(len(g.locations)), key=lambda i: len(g.locations[i].objects))
+            self.quality(format_path("locations", li, "objects"),
+                         "в игре нет тайников: спрячь 1–2 сундука или предмета (hidden: {skill: perception, difficulty, text}) — "
+                         "их найдёт только внимательный герой, награда за исследование")
         npcs = [(li, oi, o) for li, loc in enumerate(g.locations) for oi, o in enumerate(loc.objects) if isinstance(o, s.Npc)]
         if len(npcs) >= BARKS_MIN_NPCS and not any(o.barks for _, _, o in npcs):
             li, oi, _ = npcs[0]

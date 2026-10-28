@@ -60,7 +60,7 @@ export interface Meta {
   est_minutes: number;
 }
 /**
- * Какую игру хочет пользователь (§5.10): бои и глубина диалогов.
+ * Какую игру хочет пользователь (§5.10): бои, глубина диалогов и дополнительные механики (§5.12).
  *
  * This interface was referenced by `Game`'s JSON-Schema
  * via the `definition` "GameProfile".
@@ -68,6 +68,7 @@ export interface Meta {
 export interface GameProfile {
   combat?: "tactical" | "light" | "none";
   dialogue?: "light" | "rich" | "deep";
+  features?: ("secrets" | "deduction" | "crafting" | "bestiary" | "puzzles" | "thoughts" | "daynight")[] | null;
 }
 /**
  * Внутренний навык героя: ключ механики и название с голосом под мир игры.
@@ -649,6 +650,7 @@ export interface Npc {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+  hidden?: Hidden | null;
   type: "npc";
   character: string;
   dialogue: Dialogue;
@@ -657,6 +659,17 @@ export interface Npc {
    * @maxItems 4
    */
   barks?: Bark[];
+}
+/**
+ * Тайник (§5.12): объект не виден, пока пассивная проверка навыка не сработает (навык + 6 ≥ сложности).
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Hidden".
+ */
+export interface Hidden {
+  skill?: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  difficulty: "trivial" | "easy" | "medium" | "challenging" | "formidable" | "legendary";
+  text: string;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -771,6 +784,7 @@ export interface Foe {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+  hidden?: Hidden | null;
   type: "enemy";
   /**
    * @minItems 1
@@ -817,6 +831,7 @@ export interface Chest {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+  hidden?: Hidden | null;
   type: "chest";
   look: string;
   /**
@@ -865,6 +880,7 @@ export interface Thing {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+  hidden?: Hidden | null;
   type: "thing";
   look: string;
   name: string;
@@ -932,6 +948,7 @@ export interface Exit {
   condition?:
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
+  hidden?: Hidden | null;
   type: "exit";
   kind: "door" | "left_edge" | "right_edge";
   to: string;

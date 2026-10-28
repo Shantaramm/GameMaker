@@ -25,11 +25,17 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   await page.keyboard.up("d");
   await page.waitForFunction(() => [...document.querySelectorAll(".bark")].some((b) => Number(b.style.opacity) > 0.5), null, { timeout: 10000 });
   await g.shot("pier");
+  let st = await g.state();
+  check(st.revealed.includes("loose_plank"), "Восприятие нашло тайник у фонаря (§5.12)");
+  const goldBefore = st.gold;
+  await g.tap("loose_plank");
+  await g.idle();
+  check((await g.state()).gold === goldBefore + 12, "в тайнике 12 золота");
 
   await g.tap("tim_on_pier");
   await g.talk("Я рада тебя видеть", "Идём вместе.");
   let s = await g.state();
-  check(s.flags.tim_joined && s.flags.trusted_tim && s.inventory.tonic === 1, "Тимофей присоединился и дал настойку");
+  check(s.flags.tim_joined && s.flags.trusted_tim && s.inventory.tonic === 2, "Тимофей присоединился и дал настойку (вторая — из тайника)");
 
   await g.tap("marfa_at_stall");
   await page.waitForSelector(".dlg:not(.hidden)");
@@ -45,7 +51,7 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   await page.locator(".sheet-close").click();
   s = await g.state();
   check(s.inventory.fishing_knife === 1, "нож куплен");
-  check(s.gold === 5, `золото после покупки: ${s.gold}`);
+  check(s.gold === 17, `золото после покупки: ${s.gold}`);
 
   await page.getByRole("button", { name: /^Герой/ }).click();
   await page.locator(".inv-item", { hasText: "Разделочный нож" }).click();

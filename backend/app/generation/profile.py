@@ -31,6 +31,17 @@ DIALOGUE = {
             "on_enter с condition). Темы — вопросы без простого ответа; у финала — моральная дилемма, где у каждого варианта есть цена.",
 }
 
+# Дополнительные механики (§5.12): подсказка попадает в промпт, только если механика включена в профиле.
+FEATURES = {
+    "secrets": "Тайники: в игре 2–4 спрятанных объекта (сундук, предмет или персонаж; не выход и не враг) с hidden: "
+               "{\"skill\": \"perception\" (или другой навык чувств и ума), \"difficulty\": \"easy|medium|challenging\", \"text\": \"что замечает навык\"}. "
+               "Их видит только внимательный герой — награда за исследование: деньги, полезная вещь, улика, ключ к необязательной ветке. "
+               "Ничего обязательного для прохождения в тайник не клади.",
+}
+
+FEATURE_NAMES = {"secrets": "тайники", "deduction": "улики и выводы", "crafting": "сбор и ремесло", "bestiary": "слабости врагов",
+                 "puzzles": "головоломки", "thoughts": "мысли героя", "daynight": "время суток"}
+
 SKILLS = """Внутренние навыки героя — 8 ключей в 4 группах: ум (logic — логика, knowledge — знания), психика (empathy — чуткость к людям, will — воля, от неё Дух), тело (endurance — стойкость, от неё Здоровье, presence — напор, давление), чувства (perception — восприятие, finesse — ловкость рук).
 - Проверка в варианте ответа: "check": {"skill": "<ключ>", "difficulty": "trivial|easy|medium|challenging|formidable|legendary", "red": false, "failure": "<узел провала или end>", "damage": "health|morale" (необязательно)}; next варианта — куда ведёт успех. Белая проверка (red: false) повторяется, когда навык вырастет; красная (red: true) — одна попытка навсегда, для решающих моментов. Сложность по смыслу: medium — обычный вызов, challenging — серьёзный, formidable — почти невозможное.
 - Пассивный голос в реплике: "passive": [{"skill": "<ключ>", "difficulty": "...", "text": "что навык замечает"}] — звучит сам, если навык высок.
@@ -40,7 +51,13 @@ SKILLS = """Внутренние навыки героя — 8 ключей в 4
 
 
 def profile_guide(profile: s.GameProfile) -> str:
-    return f"Профиль игры, который выбрал автор: бои — {profile.combat}, диалоги — {profile.dialogue}.\n- {COMBAT[profile.combat]}\n- {DIALOGUE[profile.dialogue]}"
+    lines = [f"Профиль игры, который выбрал автор: бои — {profile.combat}, диалоги — {profile.dialogue}.",
+             f"- {COMBAT[profile.combat]}", f"- {DIALOGUE[profile.dialogue]}"]
+    features = [f for f in profile.active() if f in FEATURES]
+    if features:
+        lines.append("Механики игры (используй только их, остальные поля оставь пустыми):")
+        lines += [f"- {FEATURES[f]}" for f in features]
+    return "\n".join(lines)
 
 
 def brief_guide(profile: s.GameProfile) -> str:
@@ -49,4 +66,5 @@ def brief_guide(profile: s.GameProfile) -> str:
               "none": "совсем без боёв: всё решают разговоры, находки и внутренние навыки героя (логика, чуткость, воля…)"}
     depth = {"light": "лёгкие живые диалоги и загадка, которую надо разгадать", "rich": "живые разговоры с характером и выбором",
              "deep": "глубокие диалоги с подтекстом, как в Disco Elysium: у персонажей есть секреты и страхи, финал — моральная дилемма без правильного ответа"}
-    return f"Автор хочет игру {combat[profile.combat]}; {depth[profile.dialogue]}."
+    features = ", ".join(FEATURE_NAMES[f] for f in profile.active())
+    return f"Автор хочет игру {combat[profile.combat]}; {depth[profile.dialogue]}." + (f" Механики: {features}." if features else "")

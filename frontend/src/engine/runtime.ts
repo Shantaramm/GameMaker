@@ -2,7 +2,7 @@
 // С интерфейсом общается через GameUI: каждое окно — промис, который разрешается, когда игрок его закрыл.
 
 import type { DialogueChoice, Ending, Shop, SkillCheck } from "../types/game";
-import { chance, checkKey, checkOpen, checkTarget, checkXp, DIFFICULTY_NAME, EXAMINE_XP, healthUnit, passiveHeard, QUEST_XP, type Roll, roll } from "./inner";
+import { chance, checkKey, checkOpen, checkTarget, checkXp, DIFFICULTY_NAME, EXAMINE_XP, healthUnit, passiveHeard, QUEST_XP, type Roll, roll, SECRET_XP } from "./inner";
 import { type Battle, pyRound, REST_HEAL, rewards, startBattle } from "./tactics";
 import { check, describe } from "./conditions";
 import { applyStoryEffects, gainXp } from "./effects";
@@ -204,6 +204,8 @@ export interface GameUI {
   shop(shop: Shop): Promise<void>;
   notify(messages: string[]): void;
   enterLocation(): void;
+  /** Найден тайник: подсветить объект на карте. */
+  revealed(objectId: string): void;
   ending(ending: Ending): void;
   gameOver(): void;
   refresh(): void;
@@ -238,6 +240,7 @@ export class GameController {
   /** Есть ли объект на карте сейчас: условие выполнено, враг не побеждён, сундук не открыт. */
   present(obj: MapObject): boolean {
     const s = this.state;
+    if (obj.hidden && !s.revealed.includes(obj.id)) return false;
     if (s.defeated.includes(obj.id) || s.opened.includes(obj.id)) return false;
     if (obj.type === "thing" && (obj.once ?? true) && s.used.includes(obj.id)) return false;
     return check(obj.condition as Condition, s, this.world);
@@ -396,10 +399,25 @@ export class GameController {
     }
   }
 
-  /** После каждого действия: изменения в журнале, сохранение, перерисовка HUD. */
+  /** Тайники текущей локации, которые герой замечает сейчас (как Run.reveal в simulator.py). */
+  private revealSecrets(): string[] {
+    const out: string[] = [];
+    for (const obj of this.location.objects ?? []) {
+      const h = obj.hidden;
+      if (!h || this.state.revealed.includes(obj.id) || !check(obj.condition as Condition, this.state, this.world)) continue;
+      if (!passiveHeard(skillValue(this.state, this.world, h.skill ?? "perception"), h.difficulty)) continue;
+      this.state.revealed.push(obj.id);
+      out.push(`${this.world.skillName(h.skill ?? "perception").toUpperCase()}: ${h.text}`, ...this.reward(SECRET_XP));
+      this.ui.revealed(obj.id);
+    }
+    return out;
+  }
+
+  /** После каждого действия: изменения в журнале, тайники, сохранение, перерисовка HUD. */
   after(): void {
     const now = questViews(this.state, this.world);
     const changes = questChanges(this.quests, now);
+    changes.push(...this.revealSecrets());
     this.quests = now;
     for (const v of now) {
       if (v.complete && !this.state.questsRewarded.includes(v.quest.id)) {

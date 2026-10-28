@@ -839,6 +839,25 @@
    ],
    "objects": [
     {
+     "id": "buried_jar",
+     "zone": "outskirts",
+     "hidden": {
+      "skill": "perception",
+      "difficulty": "easy",
+      "text": "У поленницы снег утоптан кругом — кто-то что-то закапывал."
+     },
+     "type": "chest",
+     "look": "barrel",
+     "contents": [
+      {
+       "give_item": "herb_tonic"
+      },
+      {
+       "give_gold": 6
+      }
+     ]
+    },
+    {
      "id": "mother_at_post",
      "zone": "post_office",
      "type": "npc",
@@ -1780,9 +1799,14 @@
      "x": 21
     },
     {
+     "id": "buried_jar",
+     "floor": 0,
+     "x": 27
+    },
+    {
      "id": "woodpile",
      "floor": 0,
-     "x": 28
+     "x": 30
     }
    ],
    "spawns": [

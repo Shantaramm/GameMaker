@@ -778,6 +778,25 @@
    ],
    "objects": [
     {
+     "id": "loose_plank",
+     "zone": "lamp",
+     "hidden": {
+      "skill": "perception",
+      "difficulty": "medium",
+      "text": "Доска у фонаря прибита свежими гвоздями — под ней пустота."
+     },
+     "type": "chest",
+     "look": "barrel",
+     "contents": [
+      {
+       "give_gold": 12
+      },
+      {
+       "give_item": "tonic"
+      }
+     ]
+    },
+    {
      "id": "tim_on_pier",
      "zone": "lamp",
      "condition": {
@@ -1212,6 +1231,25 @@
     }
    ],
    "objects": [
+    {
+     "id": "false_book",
+     "zone": "window",
+     "hidden": {
+      "skill": "perception",
+      "difficulty": "challenging",
+      "text": "Один корешок на полке без пыли. За ним — пустота и холод металла."
+     },
+     "type": "chest",
+     "look": "bookshelf",
+     "contents": [
+      {
+       "give_item": "salt_pouch"
+      },
+      {
+       "give_gold": 10
+      }
+     ]
+    },
     {
      "id": "archive_to_alley",
      "zone": "door",
@@ -1681,9 +1719,14 @@
      "x": 34
     },
     {
+     "id": "loose_plank",
+     "floor": 0,
+     "x": 16
+    },
+    {
      "id": "tim_on_pier",
      "floor": 0,
-     "x": 17
+     "x": 19
     },
     {
      "id": "marfa_at_stall",
@@ -1841,9 +1884,14 @@
      "x": 7
     },
     {
+     "id": "false_book",
+     "floor": 1,
+     "x": 15
+    },
+    {
      "id": "arrivals_book",
      "floor": 1,
-     "x": 16
+     "x": 17
     }
    ],
    "spawns": [

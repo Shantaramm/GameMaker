@@ -91,6 +91,7 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
       });
     }),
     notify: (m) => toasts.show(m),
+    revealed: (id) => scene.flash(id),
     enterLocation: () => {
       scene.enterLocation();
       hud.update(controller.state, world);

@@ -30,3 +30,40 @@ def test_wall_of_text_and_monologue_are_quality_issues(demo):
     messages = [i.message for i in report.quality]
     assert any("стена текста" in m for m in messages)
     assert any("4 реплик подряд без выбора" in m for m in messages)
+
+
+# --- тайники (§5.12) ---
+
+def test_hidden_object_appears_only_for_a_sharp_eye(demo):
+    import random
+
+    from app.engine import schema as s
+    from app.engine.prepare import prepare
+    from app.engine.simulator import Run, World
+
+    game = validate(demo).game
+    prepare(game)
+    run = Run(game, World(game), random.Random(0), {})
+    pier = game.location("pier")
+    plank = next(o for o in pier.objects if o.id == "loose_plank")
+    run.hero.inner["perception"] = 3          # 3 + 6 < 10
+    run.reveal(pier)
+    assert not run.present(plank)
+    run.hero.inner["perception"] = 4          # 4 + 6 ≥ 10
+    xp = run.hero.xp
+    run.reveal(pier)
+    assert run.present(plank) and run.hero.xp > xp
+
+
+def test_exits_and_enemies_cannot_be_hidden(demo):
+    obj(demo, "alley", "rats")["hidden"] = {"difficulty": "easy", "text": "Шорох."}
+    assert obj_path(demo, "alley", "rats") + ".hidden" in {i.path for i in validate(demo).errors}
+
+
+def test_secrets_feature_without_secrets_is_a_quality_issue(demo):
+    for loc in demo["locations"]:
+        for o in loc["objects"]:
+            o.pop("hidden", None)
+    assert any("тайник" in i.message for i in validate(demo).quality)
+    demo["profile"] = {"features": []}
+    assert not any("тайник" in i.message for i in validate(demo).quality)

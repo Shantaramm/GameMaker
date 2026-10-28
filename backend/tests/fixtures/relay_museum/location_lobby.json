@@ -4,7 +4,7 @@
   {"id": "t1", "speaker": "skill:knowledge", "text": "«Утро над Сурой», 1912 год. Художник Аверин писал её три лета подряд и так и не продал. Ты рассказывал о ней на каждом выпускном уроке. Сегодня — последний раз, когда она здесь.", "next": "t2"},
   {"id": "t2", "speaker": "skill:will", "text": "Не раскисай. Это просто картина. Просто сорок лет твоей жизни, висящие на гвозде.", "next": "end"}]}
 ],
-"objects": [
+"objects": [{"type": "chest", "id": "behind_radiator", "zone": "entrance", "look": "chest", "hidden": {"skill": "perception", "difficulty": "easy", "text": "За батареей что-то белеет — сложенный вчетверо листок и обёртка от конфеты."}, "contents": [{"give_item": "thermos_tea"}, {"mod_stat": "morale", "delta": 1}]}, 
  {"type": "thing", "id": "old_booklet", "zone": "entrance", "look": "table", "name": "Буклет 1987 года", "event": {"type": "narration", "id": "read_booklet", "text": "«Утро над Сурой» — гордость музея. На обороте выцветшей ручкой: «Савве — на память о первом уроке в музее. Не давай детям смотреть, учи видеть. Н.»"}},
  {"type": "npc", "id": "nina_in_cloakroom", "barks": [{"text": "«Утро над Сурой», тысяча девятьсот… Нет, не могу."}, {"text": "Вы ведь найдёте её, Савва Ильич?", "condition": {"flag": "nina_trusts", "is": true}}], "zone": "cloakroom", "character": "nina", "dialogue": {"type": "dialogue", "id": "talk_nina", "start_node": "n1",
   "entries": [{"condition": {"flag": "forgery_proven", "is": true}, "node": "na1"}, {"condition": {"flag": "nina_trusts", "is": true}, "node": "nb1"}],

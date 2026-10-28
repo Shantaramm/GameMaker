@@ -29,6 +29,7 @@ STEP_LIMIT = 5000
 MIN_BATTLE_WIN_RATE = 0.7
 LOW_HP_RATIO = 0.3
 UNVISITED_EXIT_WEIGHT = 3   # во сколько раз бот охотнее идёт в непосещённую локацию
+ENDING_EXIT_WEIGHT = 0.3    # концовка без условий — не первое, что выбирает игрок, пока есть куда пойти
 HEAL_STOCK = 2              # сколько лечебных предметов бот держит про запас
 SLOTS = ("hand", "body", "trinket")
 
@@ -64,6 +65,7 @@ class HeroState:
     checks: dict[str, dict] = field(default_factory=dict)   # ключ проверки → {"ok": bool, "at": значение навыка}
     examined: set[str] = field(default_factory=set)
     quests_rewarded: set[str] = field(default_factory=set)
+    revealed: set[str] = field(default_factory=set)        # найденные тайники (§5.12)
 
 
 @dataclass
@@ -495,8 +497,19 @@ class Run:
                 self.hero.quests_rewarded.add(q.id)
                 self.reward(inner.QUEST_XP)
 
+    def reveal(self, loc: s.Location) -> None:
+        """Тайники локации, которые герой замечает сейчас: пассивная проверка, как revealSecrets в runtime.ts."""
+        h = self.hero
+        for obj in loc.objects:
+            if obj.hidden and obj.id not in h.revealed and self.ok(obj.condition) \
+                    and inner.passive_heard(self.world.skill(h, obj.hidden.skill), obj.hidden.difficulty):
+                h.revealed.add(obj.id)
+                self.reward(inner.SECRET_XP)
+
     def present(self, obj: s.MapObject) -> bool:
         h = self.hero
+        if obj.hidden and obj.id not in h.revealed:
+            return False
         if obj.id in h.defeated or obj.id in h.opened or (isinstance(obj, s.Thing) and obj.once and obj.id in h.used):
             return False
         return self.ok(obj.condition)
@@ -558,9 +571,11 @@ class Run:
                 jump = self.run_event(event)
                 if jump is not None:
                     return jump
+        self.reveal(loc)
         objects = [o for o in loc.objects if not isinstance(o, s.Exit)]
         self.rng.shuffle(objects)
         for obj in objects:
+            self.reveal(loc)  # навык мог вырасти после прошлого объекта
             if self.present(obj):
                 jump = self.interact(obj)
                 self.reward_quests()
@@ -569,7 +584,8 @@ class Run:
         exits = [o for o in loc.objects if isinstance(o, s.Exit) and self.present(o) and self.ok(o.requires)]
         if not exits:
             raise _Over("dead_end")
-        weights = [UNVISITED_EXIT_WEIGHT if e.to not in h.visited else 1 for e in exits]
+        weights = [ENDING_EXIT_WEIGHT if e.to in self.world.endings and e.requires is None
+                   else UNVISITED_EXIT_WEIGHT if e.to not in h.visited else 1 for e in exits]
         return self.rng.choices(exits, weights=weights)[0].to
 
 

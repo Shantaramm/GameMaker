@@ -77,6 +77,10 @@
 .profile-row { display: grid; grid-template-columns: 80px 1fr; gap: 4px 10px; align-items: center; }
 .profile-row small { grid-column: 2; font-size: 13px; }
 .profile-title { font-weight: 600; }
+.features { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-toggle { font: inherit; font-size: 14px; color: var(--ink, #ece6f2); background: transparent; border: 2px solid var(--line); padding: 3px 10px; cursor: pointer; }
+.chip-toggle.on { border-color: var(--gold, #e0b030); background: rgba(224, 176, 48, 0.15); }
+.chip-toggle:disabled { opacity: 0.35; cursor: default; }
 .segmented { display: flex; flex-wrap: wrap; gap: 0; }
 .segmented .seg { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 2px solid var(--line); margin-left: -2px; padding: 6px 12px; cursor: pointer; }
 .segmented .seg:first-child { margin-left: 0; }

@@ -434,6 +434,17 @@
           ],
           "default": null
         },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "type": {
           "const": "chest",
           "type": "string"
@@ -1932,6 +1943,17 @@
           ],
           "default": null
         },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "type": {
           "const": "exit",
           "type": "string"
@@ -2089,6 +2111,17 @@
           ],
           "default": null
         },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "type": {
           "const": "enemy",
           "type": "string"
@@ -2208,7 +2241,7 @@
     },
     "GameProfile": {
       "additionalProperties": false,
-      "description": "Какую игру хочет пользователь (§5.10): бои и глубина диалогов.",
+      "description": "Какую игру хочет пользователь (§5.10): бои, глубина диалогов и дополнительные механики (§5.12).",
       "properties": {
         "combat": {
           "default": "tactical",
@@ -2227,9 +2260,74 @@
             "deep"
           ],
           "type": "string"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "secrets",
+                  "deduction",
+                  "crafting",
+                  "bestiary",
+                  "puzzles",
+                  "thoughts",
+                  "daynight"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "title": "GameProfile",
+      "type": "object"
+    },
+    "Hidden": {
+      "additionalProperties": false,
+      "description": "Тайник (§5.12): объект не виден, пока пассивная проверка навыка не сработает (навык + 6 ≥ сложности).",
+      "properties": {
+        "skill": {
+          "default": "perception",
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "difficulty": {
+          "enum": [
+            "trivial",
+            "easy",
+            "medium",
+            "challenging",
+            "formidable",
+            "legendary"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "difficulty",
+        "text"
+      ],
+      "title": "Hidden",
       "type": "object"
     },
     "InnerSkill": {
@@ -2795,6 +2893,17 @@
                   "$ref": "#/$defs/CondSkill"
                 }
               ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
             },
             {
               "type": "null"
@@ -3617,6 +3726,17 @@
                   "$ref": "#/$defs/CondSkill"
                 }
               ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hidden"
             },
             {
               "type": "null"

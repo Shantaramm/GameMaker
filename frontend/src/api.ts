@@ -2,8 +2,25 @@
 
 import type { BackgroundSpec, CreatureSpec, GameProfile, PortraitSpec } from "./types/game";
 
-export type Profile = Required<GameProfile>;
-export const DEFAULT_PROFILE: Profile = { combat: "tactical", dialogue: "rich" };
+export type Feature = NonNullable<GameProfile["features"]>[number];
+export type Profile = { combat: NonNullable<GameProfile["combat"]>; dialogue: NonNullable<GameProfile["dialogue"]>; features: Feature[] };
+export const FEATURES: Feature[] = ["secrets", "deduction", "crafting", "bestiary", "puzzles", "thoughts", "daynight"];
+
+/** Механики по умолчанию (§5.12) — зеркало auto_features в schema.py. */
+export function autoFeatures(combat: Profile["combat"], dialogue: Profile["dialogue"]): Feature[] {
+  const picked: Record<Feature, boolean> = {
+    secrets: true,
+    deduction: combat !== "tactical" || dialogue === "deep",
+    crafting: combat === "tactical",
+    bestiary: combat !== "none",
+    puzzles: dialogue === "light",
+    thoughts: dialogue === "deep",
+    daynight: false,
+  };
+  return FEATURES.filter((f) => picked[f]);
+}
+
+export const DEFAULT_PROFILE: Profile = { combat: "tactical", dialogue: "rich", features: autoFeatures("tactical", "rich") };
 
 export class ApiError extends Error {}
 
@@ -107,7 +124,8 @@ export const mine = {
 export const draft = {
   profile(): Profile {
     try {
-      return { ...DEFAULT_PROFILE, ...JSON.parse(draft.get("profile") || "{}") };
+      const p = { ...DEFAULT_PROFILE, ...JSON.parse(draft.get("profile") || "{}") } as Profile;
+      return { ...p, features: Array.isArray(p.features) ? p.features : autoFeatures(p.combat, p.dialogue) };
     } catch {
       return DEFAULT_PROFILE;
     }

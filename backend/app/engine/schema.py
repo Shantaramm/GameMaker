@@ -383,11 +383,34 @@ class Quest(Strict):
     stages: list[QuestStage] = Field(min_length=1)
 
 
+Feature = Literal["secrets", "deduction", "crafting", "bestiary", "puzzles", "thoughts", "daynight"]
+FEATURES: tuple[str, ...] = ("secrets", "deduction", "crafting", "bestiary", "puzzles", "thoughts", "daynight")
+
+
 class GameProfile(Strict):
-    """Какую игру хочет пользователь (§5.10): бои и глубина диалогов."""
+    """Какую игру хочет пользователь (§5.10): бои, глубина диалогов и дополнительные механики (§5.12)."""
 
     combat: Literal["tactical", "light", "none"] = "tactical"
     dialogue: Literal["light", "rich", "deep"] = "rich"
+    # None — подобрать по боям и диалогам (auto_features); список — выбор пользователя на сайте.
+    features: list[Feature] | None = None
+
+    def active(self) -> list[str]:
+        return list(self.features) if self.features is not None else auto_features(self.combat, self.dialogue)
+
+
+def auto_features(combat: str, dialogue: str) -> list[str]:
+    """Механики по умолчанию (§5.12): тайники — всегда, остальное — по жанру игры. Зеркало autoFeatures в api.ts."""
+    picked = {
+        "secrets": True,
+        "deduction": combat != "tactical" or dialogue == "deep",
+        "crafting": combat == "tactical",
+        "bestiary": combat != "none",
+        "puzzles": dialogue == "light",
+        "thoughts": dialogue == "deep",
+        "daynight": False,
+    }
+    return [f for f in FEATURES if picked[f]]
 
 
 class InnerSkill(Strict):
@@ -540,10 +563,19 @@ OnLose = Annotated[
 ]
 
 
+class Hidden(Strict):
+    """Тайник (§5.12): объект не виден, пока пассивная проверка навыка не сработает (навык + 6 ≥ сложности)."""
+
+    skill: SkillKey = "perception"
+    difficulty: Difficulty
+    text: str = Field(min_length=1, max_length=200)  # что замечает навык: «За сетями — свежая доска»
+
+
 class MapObjectBase(Strict):
     id: Id
     zone: Id
     condition: Condition | None = None  # объект есть на карте, только пока условие выполнено
+    hidden: Hidden | None = None
 
 
 class Bark(Strict):

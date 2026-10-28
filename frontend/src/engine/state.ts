@@ -35,6 +35,8 @@ export interface GameState {
   checks: Record<string, CheckRecord>;
   examined: string[];
   questsRewarded: string[];
+  // механики §5.12
+  revealed: string[]; // найденные тайники
 }
 
 export interface Effective {
@@ -63,6 +65,7 @@ export function newState(world: World): GameState {
     defeated: [], opened: [], used: [], visited: [],
     ending: null,
     morale: 0, inner: { ...(g.hero_skills ?? {}) }, skillPoints: 0, checks: {}, examined: [], questsRewarded: [],
+    revealed: [],
   };
   for (const id of g.start_items ?? []) state.inventory[id] = (state.inventory[id] ?? 0) + 1;
   for (const slot of SLOTS) {
@@ -78,8 +81,9 @@ export function newState(world: World): GameState {
   return state;
 }
 
-/** Сохранение из версии без навыков: дописываем недостающие поля. */
+/** Сохранение из прошлой версии: дописываем недостающие поля. */
 export function upgrade(state: GameState, world: World): GameState {
+  state.revealed ??= [];
   if (state.inner && state.checks) return state;
   const fresh = newState(world);
   Object.assign(state, {

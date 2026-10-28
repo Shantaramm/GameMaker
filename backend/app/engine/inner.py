@@ -21,6 +21,7 @@ MOD_SKILL_CAP = 8           # предел с озарениями (mod_skill)
 CHECK_XP_BASE = 5
 CHECK_XP_STEP = 2
 EXAMINE_XP = 3
+SECRET_XP = 5               # найденный тайник (§5.12)
 QUEST_XP = 20
 HEALTH_UNIT_SHARE = 6       # в игре с боями провал проверки отнимает 1/6 максимума HP
 

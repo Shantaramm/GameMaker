@@ -1,6 +1,6 @@
 // Главная, бриф, экран генерации (SPEC §11.1–11.3) и каталог готовых игр.
 
-import { api, ApiError, draft, type GameCard, mine, type Profile, type Status } from "../api";
+import { api, ApiError, autoFeatures, draft, type Feature, FEATURES, type GameCard, mine, type Profile, type Status } from "../api";
 import { publishToggle } from "../ui/publish";
 import demoGame from "../data/demo_game.json";
 import { backgroundSeed, renderBackground } from "../pixel/background";
@@ -73,6 +73,17 @@ const DIALOGUE_OPTIONS: [Profile["dialogue"], string, string][] = [
   ["deep", "Глубокие", "Как в Disco Elysium: подтекст, секреты, голоса навыков, финал без правильного ответа."],
 ];
 
+// дополнительные механики (§5.12): по умолчанию подбираются по боям и диалогам, автор может поменять
+const FEATURE_INFO: Record<Feature, [string, string]> = {
+  secrets: ["Тайники", "Спрятанные сундуки и вещи — найдёт только внимательный герой."],
+  deduction: ["Улики и выводы", "Доска улик: соедини находки — получи вывод, который открывает новые разговоры."],
+  crafting: ["Сбор и ремесло", "Травы, руда, обломки — и верстак, котёл или костёр, где из них что-то получается."],
+  bestiary: ["Слабости врагов", "Узнай, чего боится враг, подготовь оружие — и бей наверняка."],
+  puzzles: ["Головоломки", "Кодовые замки и рычаги: ответ спрятан в записках и разговорах."],
+  thoughts: ["Мысли героя", "Озарения, которые герой обдумывает по дороге, — и они меняют его навыки."],
+  daynight: ["Время суток", "День сменяется ночью: кто-то приходит только в темноте."],
+};
+
 function profilePicker(): HTMLElement {
   const box = el("div", { className: "profile" });
   const render = () => {
@@ -83,7 +94,8 @@ function profilePicker(): HTMLElement {
         el("span", { className: "profile-title", textContent: title }),
         el("div", { className: "segmented", role: "radiogroup" }, ...options.map(([value, label]) => {
           const b = button(label, () => {
-            draft.set("profile", JSON.stringify({ ...draft.profile(), [key]: value }));
+            const next = { ...draft.profile(), [key]: value };
+            draft.set("profile", JSON.stringify({ ...next, features: autoFeatures(next.combat, next.dialogue) }));
             render();
           }, `seg${value === p[key] ? " on" : ""}`);
           b.setAttribute("role", "radio");
@@ -92,7 +104,22 @@ function profilePicker(): HTMLElement {
         })),
         el("small", { className: "muted", textContent: current[2] }));
     };
-    box.replaceChildren(row("combat", "Бои", COMBAT_OPTIONS), row("dialogue", "Диалоги", DIALOGUE_OPTIONS));
+    const features = el("div", { className: "profile-row" },
+      el("span", { className: "profile-title", textContent: "Механики" }),
+      el("div", { className: "features" }, ...FEATURES.map((f) => {
+        const on = p.features.includes(f);
+        const b = button(FEATURE_INFO[f][0], () => {
+          const list = on ? p.features.filter((x) => x !== f) : FEATURES.filter((x) => x === f || p.features.includes(x));
+          draft.set("profile", JSON.stringify({ ...p, features: list }));
+          render();
+        }, `chip-toggle${on ? " on" : ""}`);
+        b.title = FEATURE_INFO[f][1];
+        b.setAttribute("aria-pressed", String(on));
+        if (f === "bestiary" && p.combat === "none") b.disabled = true;
+        return b;
+      })),
+      el("small", { className: "muted", textContent: p.features.map((f) => FEATURE_INFO[f][1]).slice(0, 2).join(" ") || "Без дополнительных механик." }));
+    box.replaceChildren(row("combat", "Бои", COMBAT_OPTIONS), row("dialogue", "Диалоги", DIALOGUE_OPTIONS), features);
   };
   render();
   return box;

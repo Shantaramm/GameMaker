@@ -32,6 +32,7 @@ export class MapScene {
   readonly canvas = document.createElement("canvas");
   private barkLayer = document.createElement("div");
   private bubbles = new Map<string, HTMLDivElement>();
+  private flashes = new Map<string, number>(); // тайники, найденные только что: id → время находки
   private ctx = this.canvas.getContext("2d")!;
   private terrain: HTMLCanvasElement | null = null;
   private backdrop: BackgroundView | null = null;
@@ -66,6 +67,11 @@ export class MapScene {
     this.backdrop?.stop();
     window.removeEventListener("keydown", this.onKey);
     window.removeEventListener("keyup", this.onKeyUp);
+  }
+
+  /** Подсветить объект: искры вокруг найденного тайника (§5.12). */
+  flash(objectId: string): void {
+    this.flashes.set(objectId, this.frame);
   }
 
   /** Вызывается контроллером при входе в локацию. */
@@ -439,6 +445,30 @@ export class MapScene {
     if (this.buddy && companion) this.drawMover(this.buddy, walkerFrames(companion.appearance, companion.id), ref, t);
     this.drawMover(this.hero, walkerFrames(heroSpec.appearance, heroSpec.id), ref, t);
     if (!this.backdrop) this.drawDust(t);
+    this.drawFlashes(t);
+  }
+
+  private drawFlashes(t: number): void {
+    const ctx = this.ctx;
+    const level = this.game.level;
+    for (const [id, t0] of this.flashes) {
+      const age = t - t0;
+      const p = level.objects.find((o) => o.id === id);
+      if (age > 3 || !p) {
+        this.flashes.delete(id);
+        continue;
+      }
+      const cx = p.x * TILE + TILE / 2;
+      const cy = feetY(level, p.floor) - TILE * 0.8;
+      ctx.fillStyle = "#fff3b0";
+      for (let i = 0; i < 10; i++) {
+        const a = i * 0.628 + age * 2;
+        const r = 6 + age * 10 + (i % 3) * 3;
+        ctx.globalAlpha = Math.max(0, 1 - age / 3) * (0.6 + 0.4 * Math.sin(age * 12 + i));
+        ctx.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r * 0.7), 1, 1);
+      }
+    }
+    ctx.globalAlpha = 1;
   }
 
   /** В помещении нет анимированного фона — в воздухе медленно плывут пылинки. */

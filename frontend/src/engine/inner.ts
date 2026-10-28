@@ -22,6 +22,7 @@ export const MOD_SKILL_CAP = 8;
 export const CHECK_XP_BASE = 5;
 export const CHECK_XP_STEP = 2;
 export const EXAMINE_XP = 3;
+export const SECRET_XP = 5; // найденный тайник (§5.12)
 export const QUEST_XP = 20;
 export const HEALTH_UNIT_SHARE = 6;
 export const HEALTH_BASE = 3;

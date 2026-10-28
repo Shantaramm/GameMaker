@@ -1,6 +1,6 @@
 {"intro": "Кедровка. Над крышами уже тянет снегом, а до перевала — полдня пути. Сегодня уходит последняя почта перед зимой.",
 "on_enter": [],
-"objects": [
+"objects": [{"type": "chest", "id": "buried_jar", "zone": "outskirts", "look": "barrel", "hidden": {"skill": "perception", "difficulty": "easy", "text": "У поленницы снег утоптан кругом — кто-то что-то закапывал."}, "contents": [{"give_item": "herb_tonic"}, {"give_gold": 6}]}, 
  {"type": "npc", "id": "mother_at_post", "barks": [{"text": "Варежки надел? Перевал не прощает."}, {"text": "Соль вернулась… Значит, дорога есть.", "condition": {"flag": "salt_returned", "is": true}}], "zone": "post_office", "character": "pelageya", "dialogue": {"type": "dialogue", "id": "talk_mother", "start_node": "m1", "nodes": [
   {"id": "m1", "speaker": "pelageya", "emotion": "neutral", "text": "Мирон, вот оно. Прошение о лекаре, с подписями всей деревни. Если до снега не дойдёт — до весны у нас никого не будет, а у Сидоровых малой кашляет.", "choices": [
    {"text": "Давай, мама. Донесу.", "condition": {"not": {"has_item": "petition_letter"}}, "effects": [{"give_item": "petition_letter"}, {"give_gold": 10}, {"give_item": "herb_tonic"}], "next": "m2"},
