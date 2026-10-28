@@ -45,7 +45,8 @@
      "damage": 14
     }
    ],
-   "value_tier": 2
+   "value_tier": 2,
+   "bane": "fire"
   },
   {
    "id": "gordey_key",

@@ -217,6 +217,8 @@ export class BattleScreen {
         u.maxFocus ? bar(u.focus, u.maxFocus, "focus") : el("span"),
         el("small", { textContent: `Атака ${stat(u, "attack")} · защита ${stat(u, "defense")} · ход ${u.move + u.moveBonus} · дальность ${u.range}` }),
         ...(buffs.length ? [el("small", { className: "buffs", textContent: buffs.join(", ") })] : []),
+        ...(u.side === "enemy" && e?.weakness ? [el("small", { className: `weak${u.weakKnown ? " known" : ""}`,
+          textContent: u.weakKnown ? `Слабость: ${e.weakness.name} — урон +25%${battle.hero().bane === u.weak ? ", ваше оружие против неё: ещё +50%" : ""}` : "Слабость: неизвестна" })] : []),
         el("small", { className: "status", textContent: status })));
     };
 

@@ -154,10 +154,18 @@ export function shopView(shop: Shop, state: GameState, world: World, rerender: (
     ...(shop.buys ? [el("h3", { textContent: "Продать" }), ...(sellRows.length ? sellRows : [el("p", { className: "muted", textContent: "Нечего продать." })])] : [])];
 }
 
-export function journalView(quests: QuestView[]): Node[] {
-  if (!quests.length) return [el("p", { className: "muted", textContent: "Пока нет заданий." })];
+/** Бестиарий (§5.12): враги, чья слабость известна. */
+export function bestiaryView(state: GameState, world: World): Node[] {
+  const known = state.bestiary.map((id) => world.enemies.get(id)).filter((e) => e?.weakness);
+  if (!known.length) return [];
+  return [el("h3", { textContent: "Бестиарий" }), ...known.map((e) => el("div", { className: "beast" },
+    el("b", { textContent: `${e!.name} — слабость: ${e!.weakness!.name}` }), el("p", { textContent: e!.weakness!.hint })))];
+}
+
+export function journalView(quests: QuestView[], extra: Node[] = []): Node[] {
+  if (!quests.length) return [el("p", { className: "muted", textContent: "Пока нет заданий." }), ...extra];
   const sorted = [...quests].sort((a, b) => Number(a.complete) - Number(b.complete) || Number(b.quest.main ?? false) - Number(a.quest.main ?? false));
-  return sorted.map((v) => {
+  const list: Node[] = sorted.map((v) => {
     const firstOpen = v.done.indexOf(false);
     const stages = v.quest.stages.map((s, i) => {
       if (v.done[i]) return el("li", { className: "done", textContent: `✓ ${s.text}` });
@@ -168,6 +176,7 @@ export function journalView(quests: QuestView[]): Node[] {
       el("b", { textContent: `${v.quest.title}${v.quest.main ? " · основной" : ""}${v.complete ? " — выполнен" : ""}` }),
       el("ul", {}, ...stages));
   });
+  return [...list, ...extra];
 }
 
 // --- доска улик (§5.12) ---

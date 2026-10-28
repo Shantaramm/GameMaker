@@ -26,6 +26,8 @@ MAX_POINTS = 12
 FLANK_BONUS = 0.25
 BACK_BONUS = 0.5
 HIGH_BONUS = 0.2
+KNOWN_WEAK_BONUS = 0.25     # слабость врага известна (§5.12)
+BANE_BONUS = 0.5            # оружие или бомба против этой слабости
 COMPANION_HP = 0.7
 COMPANION_ATTACK = 0.8
 FLEE_CHANCE = 0.5
@@ -87,6 +89,9 @@ class Unit:
     acted: bool = False
     tactic_used: bool = False
     move_bonus: int = 0
+    bane: str | None = None      # отряд: против какой слабости оружие (§5.12)
+    weak: str | None = None      # враг: его слабость
+    weak_known: bool = False     # враг: слабость в бестиарии
 
     @property
     def alive(self) -> bool:
@@ -207,6 +212,7 @@ class Battle:
         side = direction(attacker.pos, defender)
         high = self.field.height(attacker.pos) > self.field.height(defender.pos)
         mult = 1 + (BACK_BONUS if side == "back" else FLANK_BONUS if side == "flank" else 0) + (HIGH_BONUS if high else 0)
+        mult += weak_bonus(attacker, defender)
         return max(1, math.floor(base * mult + 0.5)), side, high
 
     def hurt(self, attacker: Unit, defender: Unit, dmg: int, label: str, side: str = "front", high: bool = False) -> None:
@@ -310,7 +316,8 @@ class Battle:
             return False
         for e in item.effect:
             if isinstance(e, s.EffDamage):
-                self.hurt(unit, target, e.damage, item.name)
+                dmg = math.floor(e.damage * (1 + weak_bonus(unit, target, item.bane)) + 0.5)
+                self.hurt(unit, target, dmg, item.name)
             else:
                 self.apply_self(unit, e, SKILL_BUFF_PHASES, item.name)
         unit.acted = True
@@ -458,18 +465,27 @@ def enemy_move(enemy: s.Enemy) -> int:
     return MOVE_BY_SIZE.get(size, PARTY_MOVE) if size else PARTY_MOVE
 
 
+def weak_bonus(attacker: Unit, defender: Unit, bane: str | None = None) -> float:
+    """Надбавка к множителю урона за слабость врага: знание +25%, оружие (или бомба) против неё +50%."""
+    if attacker.side != "party" or not defender.weak:
+        return 0.0
+    used = bane if bane is not None else attacker.bane
+    return (KNOWN_WEAK_BONUS if defender.weak_known else 0.0) + (BANE_BONUS if used == defender.weak else 0.0)
+
+
 def companion_stats(base_hp: int, base_attack: int, base_defense: int, base_focus: int) -> tuple[int, int, int, int]:
     return max(1, round(base_hp * COMPANION_HP)), max(1, round(base_attack * COMPANION_ATTACK)), base_defense, base_focus
 
 
-def make_enemies(foe: s.Foe, enemies: dict[str, s.Enemy], arena: s.Arena) -> list[Unit]:
+def make_enemies(foe: s.Foe, enemies: dict[str, s.Enemy], arena: s.Arena, known: set[str] = frozenset()) -> list[Unit]:
     out = []
     for i, enemy_id in enumerate(foe.enemies):
         e = enemies[enemy_id]
         x, y = arena.enemies[i]
         out.append(Unit(id=f"e{i}", name=e.name, side="enemy", kind="enemy", hp=e.hp, max_hp=e.hp, attack=e.attack,
                         defense=e.defense, focus=0, max_focus=0, move=enemy_move(e), range=e.range, pos=(x, y),
-                        facing=(-1, 0), abilities=e.abilities))
+                        facing=(-1, 0), abilities=e.abilities, weak=e.weakness.tag if e.weakness else None,
+                        weak_known=enemy_id in known))
     return out
 
 

@@ -489,6 +489,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -719,6 +722,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -1166,6 +1172,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -1349,6 +1358,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -1586,6 +1598,21 @@
       "title": "EffLearnSkill",
       "type": "object"
     },
+    "EffLearnWeakness": {
+      "additionalProperties": false,
+      "properties": {
+        "learn_weakness": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "learn_weakness"
+      ],
+      "title": "EffLearnWeakness",
+      "type": "object"
+    },
     "EffModSkill": {
       "additionalProperties": false,
       "properties": {
@@ -1767,6 +1794,17 @@
           "minimum": 1,
           "type": "integer"
         },
+        "weakness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Weakness"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "hp": {
           "anyOf": [
             {
@@ -1881,6 +1919,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -2252,6 +2293,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -2299,6 +2343,9 @@
                   },
                   {
                     "$ref": "#/$defs/EffGoto"
+                  },
+                  {
+                    "$ref": "#/$defs/EffLearnWeakness"
                   }
                 ]
               },
@@ -2639,6 +2686,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -2665,6 +2715,19 @@
             {
               "minimum": 0,
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "bane": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
             },
             {
               "type": "null"
@@ -3631,6 +3694,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -3980,6 +4046,9 @@
               },
               {
                 "$ref": "#/$defs/EffGoto"
+              },
+              {
+                "$ref": "#/$defs/EffLearnWeakness"
               }
             ]
           },
@@ -4168,6 +4237,60 @@
         "event"
       ],
       "title": "Thing",
+      "type": "object"
+    },
+    "Weakness": {
+      "additionalProperties": false,
+      "description": "Слабость врага (§5.12): знание о ней — +25% урона, оружие с тем же bane — ещё +50%.",
+      "properties": {
+        "tag": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "hint": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "skill": {
+          "default": "knowledge",
+          "enum": [
+            "logic",
+            "knowledge",
+            "empathy",
+            "will",
+            "endurance",
+            "presence",
+            "perception",
+            "finesse"
+          ],
+          "type": "string"
+        },
+        "difficulty": {
+          "default": "medium",
+          "enum": [
+            "trivial",
+            "easy",
+            "medium",
+            "challenging",
+            "formidable",
+            "legendary"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag",
+        "name",
+        "hint"
+      ],
+      "title": "Weakness",
       "type": "object"
     },
     "Zone": {

@@ -131,3 +131,43 @@ def test_bot_gathers_and_crafts(demo):
     run.craft("anywhere")
     assert run.hero.inventory["salt_pouch"] == salt + 1 and run.hero.inventory["sea_salt"] == 1
     assert "make_salt_pouch" in run.hero.crafted
+
+
+# --- слабости врагов (§5.12) ---
+
+def test_weakness_multiplies_damage_when_known_and_with_bane():
+    import random
+
+    from app.engine import schema as s
+    from app.engine.tactics import Unit, weak_bonus
+
+    hero = Unit(id="hero", name="Г", side="party", kind="hero", hp=10, max_hp=10, attack=5, defense=1, focus=0, max_focus=0,
+                move=3, range=1, pos=(0, 0), facing=(1, 0))
+    foe = Unit(id="e0", name="В", side="enemy", kind="enemy", hp=10, max_hp=10, attack=5, defense=1, focus=0, max_focus=0,
+               move=3, range=1, pos=(1, 0), facing=(-1, 0), weak="salt")
+    assert weak_bonus(hero, foe) == 0
+    foe.weak_known = True
+    assert weak_bonus(hero, foe) == 0.25
+    assert weak_bonus(hero, foe, "salt") == 0.75
+    hero.bane = "salt"
+    assert weak_bonus(hero, foe) == 0.75 and weak_bonus(foe, hero) == 0
+
+
+def test_weakness_is_learned_from_dialogue_or_recalled(demo):
+    import random
+
+    from app.engine.prepare import prepare
+    from app.engine.simulator import Run, World, recall_weaknesses
+
+    game = validate(demo).game
+    prepare(game)
+    run = Run(game, World(game), random.Random(0), {})
+    foe = next(o for o in game.location("lighthouse_foot").objects if o.id == "guardians")
+    assert recall_weaknesses(foe, run.hero, run.world) == []          # Знания 2: 2 + 6 < 12
+    run.hero.inner["knowledge"] = 6
+    assert {e.id for e in recall_weaknesses(foe, run.hero, run.world)} <= {"cultist", "shade"} and run.hero.bestiary
+
+
+def test_bane_only_on_weapons_and_bombs(demo):
+    demo["items"][0]["bane"] = "salt"            # tonic лечит, а не бьёт
+    assert "items[0].bane" in {i.path for i in validate(demo).errors}

@@ -284,7 +284,8 @@
     }
    ],
    "value_tier": 1,
-   "price": 10
+   "price": 10,
+   "bane": "salt"
   },
   {
    "id": "archive_key",
@@ -507,6 +508,13 @@
    },
    "abilities": [],
    "range": 3,
+   "weakness": {
+    "tag": "salt",
+    "name": "соль",
+    "hint": "Порождения тумана боятся соли: она жжёт их, как огонь жжёт бумагу.",
+    "skill": "knowledge",
+    "difficulty": "challenging"
+   },
    "hp": 28,
    "attack": 8,
    "defense": 2,
@@ -539,6 +547,13 @@
     }
    ],
    "range": 1,
+   "weakness": {
+    "tag": "salt",
+    "name": "соль",
+    "hint": "Порождения тумана боятся соли: она жжёт их, как огонь жжёт бумагу.",
+    "skill": "knowledge",
+    "difficulty": "challenging"
+   },
    "hp": 40,
    "attack": 10,
    "defense": 4,
@@ -1394,6 +1409,12 @@
           "effects": [
            {
             "learn_skill": "salt_ward"
+           },
+           {
+            "learn_weakness": "cultist"
+           },
+           {
+            "learn_weakness": "shade"
            }
           ],
           "next": "n3"

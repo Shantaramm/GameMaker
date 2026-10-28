@@ -68,6 +68,7 @@ class HeroState:
     revealed: set[str] = field(default_factory=set)        # найденные тайники (§5.12)
     deduced: set[str] = field(default_factory=set)         # сделанные выводы на доске улик
     crafted: set[str] = field(default_factory=set)         # рецепты, по которым уже что-то сделано
+    bestiary: set[str] = field(default_factory=set)        # враги, чья слабость известна
 
 
 @dataclass
@@ -199,6 +200,8 @@ def apply_hero_effect(e: s.Effect, hero: HeroState, world: World) -> None:
         hero.gold = max(0, hero.gold - e.take_gold)
     elif isinstance(e, s.EffLearnSkill):
         hero.skills.add(e.learn_skill)
+    elif isinstance(e, s.EffLearnWeakness):
+        hero.bestiary.add(e.learn_weakness)
     elif isinstance(e, s.EffHeal):
         hero.hp = min(eff.max_hp, hero.hp + e.heal)
     elif isinstance(e, s.EffDamage):
@@ -285,7 +288,7 @@ def party_units(hero: HeroState, world: World, arena: s.Arena) -> list[Unit]:
     units = [Unit(id="hero", name=g.hero.name, side="party", kind="hero", hp=hero.hp, max_hp=eff.max_hp,
                   attack=eff.attack, defense=eff.defense, focus=eff.max_focus, max_focus=eff.max_focus,
                   move=PARTY_MOVE, range=weapon.equip.range if weapon and weapon.equip else 1,
-                  pos=(x, y), facing=(1, 0), skills=sorted(hero.skills))]
+                  pos=(x, y), facing=(1, 0), skills=sorted(hero.skills), bane=weapon.bane if weapon else None)]
     for c in g.characters:
         if c.role != "companion" or not check(c.joins, hero, world) or len(units) >= len(arena.party):
             continue
@@ -312,8 +315,20 @@ def start_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) 
             hero.gold += delta
         return hero.gold
 
-    return Battle(arena, party_units(hero, world, arena), make_enemies(foe, world.enemies, arena),
+    recall_weaknesses(foe, hero, world)
+    return Battle(arena, party_units(hero, world, arena), make_enemies(foe, world.enemies, arena, hero.bestiary),
                   available_tactics(hero, world), foe.can_flee, rng, wallet)
+
+
+def recall_weaknesses(foe: s.Foe, hero: HeroState, world: World) -> list[s.Enemy]:
+    """Перед боем навык (обычно Знания) сам вспоминает слабость врага — пассивная проверка (§5.12)."""
+    learned = []
+    for enemy_id in dict.fromkeys(foe.enemies):
+        w = world.enemies[enemy_id].weakness
+        if w and enemy_id not in hero.bestiary and inner.passive_heard(world.skill(hero, w.skill), w.difficulty):
+            hero.bestiary.add(enemy_id)
+            learned.append(world.enemies[enemy_id])
+    return learned
 
 
 def run_battle(foe: s.Foe, hero: HeroState, world: World, rng: random.Random) -> bool:

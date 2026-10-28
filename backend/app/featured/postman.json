@@ -323,7 +323,8 @@
     }
    ],
    "value_tier": 2,
-   "price": 22
+   "price": 22,
+   "bane": "fire"
   },
   {
    "id": "gordey_key",
@@ -519,6 +520,13 @@
    },
    "abilities": [],
    "range": 1,
+   "weakness": {
+    "tag": "fire",
+    "name": "огонь",
+    "hint": "Волки боятся огня: горящая смола держит стаю на расстоянии.",
+    "skill": "knowledge",
+    "difficulty": "easy"
+   },
    "hp": 16,
    "attack": 6,
    "defense": 1,
@@ -552,6 +560,13 @@
     }
    ],
    "range": 1,
+   "weakness": {
+    "tag": "fire",
+    "name": "огонь",
+    "hint": "Волки боятся огня: горящая смола держит стаю на расстоянии.",
+    "skill": "knowledge",
+    "difficulty": "easy"
+   },
    "hp": 22,
    "attack": 7,
    "defense": 2,

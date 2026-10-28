@@ -54,6 +54,12 @@ export function applyHeroEffect(e: Effect, state: GameState, world: World): stri
     state.skills.push(e.learn_skill);
     return `Новый навык: ${world.skills.get(e.learn_skill)?.name ?? e.learn_skill}`;
   }
+  if ("learn_weakness" in e) {
+    if (state.bestiary.includes(e.learn_weakness)) return null;
+    state.bestiary.push(e.learn_weakness);
+    const enemy = world.enemies.get(e.learn_weakness);
+    return `Бестиарий: ${enemy?.name ?? e.learn_weakness} — слабость: ${enemy?.weakness?.name ?? "?"}`;
+  }
   if ("heal" in e) {
     const before = state.hp;
     state.hp = Math.min(eff.maxHp, state.hp + e.heal);

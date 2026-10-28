@@ -167,7 +167,14 @@
     ],
     "size": "medium"
    },
-   "abilities": []
+   "abilities": [],
+   "weakness": {
+    "tag": "fire",
+    "name": "огонь",
+    "hint": "Волки боятся огня: горящая смола держит стаю на расстоянии.",
+    "skill": "knowledge",
+    "difficulty": "easy"
+   }
   },
   {
    "id": "pack_leader",
@@ -194,7 +201,14 @@
      ],
      "every_n_turns": 3
     }
-   ]
+   ],
+   "weakness": {
+    "tag": "fire",
+    "name": "огонь",
+    "hint": "Волки боятся огня: горящая смола держит стаю на расстоянии.",
+    "skill": "knowledge",
+    "difficulty": "easy"
+   }
   }
  ]
 }

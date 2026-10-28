@@ -3,11 +3,11 @@
 import type {
   Character, Chest, CondAll, CondAny, CondDefeated, CondFlag, CondGold, CondItem, CondLevel, CondNot, CondSkill, CondStat,
   Dialogue, EffDamage, EffGiveGold, EffGiveItem, EffGoto, EffHeal, EffLearnSkill, EffModStat, EffSetFlag, EffTakeGold,
-  EffTakeItem, EffModSkill, Enemy, Exit, Foe, Game, Gather, Item, Level, Location, Npc, Quest, Shop, Skill, Station, Thing, Choice, Narration,
+  EffTakeItem, EffModSkill, EffLearnWeakness, Enemy, Exit, Foe, Game, Gather, Item, Level, Location, Npc, Quest, Shop, Skill, Station, Thing, Choice, Narration,
 } from "../types/game";
 
 export type Condition = CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill;
-export type Effect = EffSetFlag | EffGiveItem | EffTakeItem | EffGiveGold | EffTakeGold | EffLearnSkill | EffModStat | EffModSkill | EffHeal | EffDamage | EffGoto;
+export type Effect = EffSetFlag | EffGiveItem | EffTakeItem | EffGiveGold | EffTakeGold | EffLearnSkill | EffModStat | EffModSkill | EffHeal | EffDamage | EffGoto | EffLearnWeakness;
 export type MapObject = Npc | Foe | Chest | Thing | Gather | Station | Exit;
 export type GameEvent = Dialogue | Choice | Narration;
 export type Slot = "hand" | "body" | "trinket";

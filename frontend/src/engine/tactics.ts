@@ -4,7 +4,8 @@
 
 import type { Arena, EnemyAbility, Item, Skill, Tactic } from "../types/game";
 import { check } from "./conditions";
-import { count, effective, type GameState } from "./state";
+import { passiveHeard } from "./inner";
+import { count, effective, type GameState, skillValue } from "./state";
 import type { Condition, Effect, MapObject, World } from "./world";
 
 type Foe = Extract<MapObject, { type: "enemy" }>;
@@ -21,6 +22,8 @@ export const MAX_POINTS = 12;
 export const FLANK_BONUS = 0.25;
 export const BACK_BONUS = 0.5;
 export const HIGH_BONUS = 0.2;
+export const KNOWN_WEAK_BONUS = 0.25; // слабость врага известна (§5.12)
+export const BANE_BONUS = 0.5; // оружие или бомба против этой слабости
 export const COMPANION_HP = 0.7;
 export const COMPANION_ATTACK = 0.8;
 export const FLEE_CHANCE = 0.5;
@@ -80,6 +83,16 @@ export interface Unit {
   moveBonus: number;
   /** id персонажа или врага — по нему рисуется спрайт */
   look: string;
+  bane?: string | null; // отряд: против какой слабости оружие (§5.12)
+  weak?: string | null; // враг: его слабость
+  weakKnown?: boolean; // враг: слабость в бестиарии
+}
+
+/** Надбавка к множителю урона за слабость врага: знание +25%, оружие (или бомба) против неё +50% — как weak_bonus в tactics.py. */
+export function weakBonus(attacker: Unit, defender: Unit, bane: string | null = null): number {
+  if (attacker.side !== "party" || !defender.weak) return 0;
+  const used = bane ?? attacker.bane ?? null;
+  return (defender.weakKnown ? KNOWN_WEAK_BONUS : 0) + (used === defender.weak ? BANE_BONUS : 0);
 }
 
 export const alive = (u: Unit) => u.hp > 0;
@@ -247,7 +260,7 @@ export class Battle {
   strike(attacker: Unit, defender: Unit, base: number): { dmg: number; side: Side; high: boolean } {
     const side = direction(attacker.pos, defender);
     const high = this.field.height(attacker.pos) > this.field.height(defender.pos);
-    const mult = 1 + (side === "back" ? BACK_BONUS : side === "flank" ? FLANK_BONUS : 0) + (high ? HIGH_BONUS : 0);
+    const mult = 1 + (side === "back" ? BACK_BONUS : side === "flank" ? FLANK_BONUS : 0) + (high ? HIGH_BONUS : 0) + weakBonus(attacker, defender);
     return { dmg: Math.max(1, Math.floor(base * mult + 0.5)), side, high };
   }
 
@@ -365,7 +378,7 @@ export class Battle {
     if (hits && (!target || !alive(target) || manhattan(unit.pos, target.pos) > SKILL_RANGE)) return false;
     if (!take(item.id)) return false;
     for (const e of effects) {
-      if ("damage" in e) this.hurt(unit, target!, e.damage, item.name);
+      if ("damage" in e) this.hurt(unit, target!, Math.floor(e.damage * (1 + weakBonus(unit, target!, item.bane ?? null)) + 0.5), item.name);
       else this.applySelf(unit, e, SKILL_BUFF_PHASES, item.name);
     }
     unit.acted = true;
@@ -527,7 +540,7 @@ export function partyUnits(state: GameState, world: World, arena: Arena): Unit[]
   const units: Unit[] = [base({
     id: "hero", name: hero.name, side: "party", kind: "hero", hp: state.hp, maxHp: eff.maxHp, attack: eff.attack,
     defense: eff.defense, focus: eff.maxFocus, maxFocus: eff.maxFocus, move: PARTY_MOVE, range: weapon?.equip?.range ?? 1,
-    pos: [...arena.party[0]] as Cell, facing: [1, 0], skills: [...state.skills].sort(), look: hero.id,
+    pos: [...arena.party[0]] as Cell, facing: [1, 0], skills: [...state.skills].sort(), look: hero.id, bane: weapon?.bane ?? null,
   })];
   for (const c of world.game.characters ?? []) {
     if (c.role !== "companion" || !check(c.joins as Condition | null, state, world) || units.length >= arena.party.length) continue;
@@ -543,20 +556,32 @@ export function partyUnits(state: GameState, world: World, arena: Arena): Unit[]
   return units;
 }
 
-export function enemyUnits(foe: Foe, world: World, arena: Arena): Unit[] {
+export function enemyUnits(foe: Foe, world: World, arena: Arena, known: string[] = []): Unit[] {
   return foe.enemies.map((id, i) => {
     const e = world.enemies.get(id)!;
     const size = "size" in e.appearance ? e.appearance.size : null;
     return base({
       id: `e${i}`, name: e.name, side: "enemy", kind: "enemy", hp: e.hp!, maxHp: e.hp!, attack: e.attack!, defense: e.defense!,
       move: size ? MOVE_BY_SIZE[size] ?? PARTY_MOVE : PARTY_MOVE, range: e.range ?? 1, pos: [...arena.enemies[i]] as Cell,
-      facing: [-1, 0], abilities: e.abilities ?? [], look: id,
+      facing: [-1, 0], abilities: e.abilities ?? [], look: id, weak: e.weakness?.tag ?? null, weakKnown: known.includes(id),
     });
   });
 }
 
 export function availableTactics(state: GameState, world: World): Tactic[] {
   return (world.game.tactics ?? []).filter((t) => check(t.unlock as Condition | null, state, world));
+}
+
+/** Перед боем навык (обычно Знания) сам вспоминает слабость врага — как recall_weaknesses в simulator.py. */
+export function recallWeaknesses(foe: Foe, state: GameState, world: World): string[] {
+  const out: string[] = [];
+  for (const id of new Set(foe.enemies)) {
+    const w = world.enemies.get(id)?.weakness;
+    if (!w || state.bestiary.includes(id) || !passiveHeard(skillValue(state, world, w.skill ?? "knowledge"), w.difficulty ?? "medium")) continue;
+    state.bestiary.push(id);
+    out.push(`${world.skillName(w.skill ?? "knowledge").toUpperCase()}: ${w.hint}`);
+  }
+  return out;
 }
 
 /** Бой по объекту-врагу; золото тратится прямо из state. */
@@ -567,7 +592,10 @@ export function startBattle(foe: Foe, state: GameState, world: World, random: ()
     if (delta !== null) state.gold += delta;
     return state.gold;
   };
-  return new Battle(arena, partyUnits(state, world, arena), enemyUnits(foe, world, arena), availableTactics(state, world), !!foe.can_flee, random, wallet);
+  const recalled = recallWeaknesses(foe, state, world);
+  const battle = new Battle(arena, partyUnits(state, world, arena), enemyUnits(foe, world, arena, state.bestiary), availableTactics(state, world), !!foe.can_flee, random, wallet);
+  for (const text of recalled) battle.log.push({ actor: "hero", target: "hero", amount: 0, text, kind: "info" });
+  return battle;
 }
 
 export function takeItem(state: GameState): (id: string) => boolean {

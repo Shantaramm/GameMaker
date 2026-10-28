@@ -171,13 +171,17 @@ class EffTakeGold(Strict):
     take_gold: int = Field(ge=1)
 
 
+class EffLearnWeakness(Strict):
+    learn_weakness: Id  # id врага: его слабость попадает в бестиарий (§5.12)
+
+
 class EffGoto(Strict):
     goto: Id  # location_id или ending_id
 
 
 _EFFECT_KEYS = (
     "set_flag", "give_item", "take_item", "give_gold", "take_gold", "learn_skill",
-    "mod_stat", "mod_skill", "heal", "damage", "goto",
+    "mod_stat", "mod_skill", "heal", "damage", "goto", "learn_weakness",
 )
 
 Effect = Annotated[
@@ -193,6 +197,7 @@ Effect = Annotated[
         Annotated[EffHeal, _tag("heal")],
         Annotated[EffDamage, _tag("damage")],
         Annotated[EffGoto, _tag("goto")],
+        Annotated[EffLearnWeakness, _tag("learn_weakness")],
     ],
     _key_discriminator(_EFFECT_KEYS),
 ]
@@ -339,12 +344,24 @@ class Item(Strict):
     equip: Equip | None = None  # для equipment
     value_tier: int = Field(ge=1, le=5)
     price: int | None = Field(default=None, ge=0)  # заполняет balance.py
+    # Против чего вещь особенно хороша (§5.12): оружие в руке или бросаемый расходник; совпадает с Enemy.weakness.tag.
+    bane: Id | None = None
 
 
 class EnemyAbility(Strict):
     name: str = Field(min_length=1, max_length=60)
     effect: list[Effect] = Field(min_length=1)
     every_n_turns: int = Field(ge=1)
+
+
+class Weakness(Strict):
+    """Слабость врага (§5.12): знание о ней — +25% урона, оружие с тем же bane — ещё +50%."""
+
+    tag: Id  # "salt", "fire", "silver"…
+    name: str = Field(min_length=1, max_length=40)  # «соль»
+    hint: str = Field(min_length=1, max_length=200)  # что знает о ней герой: «Служители тумана боятся соли»
+    skill: SkillKey = "knowledge"  # пассивная проверка в начале боя: навык + 6 ≥ сложности — слабость вспоминается сама
+    difficulty: Difficulty = "medium"
 
 
 class Enemy(Strict):
@@ -355,6 +372,7 @@ class Enemy(Strict):
     appearance: EnemyAppearance
     abilities: list[EnemyAbility] = Field(default_factory=list, max_length=2)
     range: int = Field(default=1, ge=1, le=4)  # дальность атаки в бою
+    weakness: Weakness | None = None
     # Заполняет balance.py, не LLM.
     hp: int | None = Field(default=None, ge=1)
     attack: int | None = Field(default=None, ge=0)

@@ -32,7 +32,7 @@ MAIN_ROLES = ("hero", "companion", "antagonist")
 # Какие эффекты где допустимы. goto, флаги, предметы и золото — только в сюжетных событиях.
 STORY_EFFECTS = {
     s.EffSetFlag, s.EffGiveItem, s.EffTakeItem, s.EffGiveGold, s.EffTakeGold, s.EffLearnSkill,
-    s.EffModStat, s.EffModSkill, s.EffHeal, s.EffDamage, s.EffGoto,
+    s.EffModStat, s.EffModSkill, s.EffHeal, s.EffDamage, s.EffGoto, s.EffLearnWeakness,
 }
 EFFECTS_BY_CONTEXT: dict[str, set[type]] = {
     "story": STORY_EFFECTS,
@@ -117,6 +117,7 @@ class _Checker:
         self.skills = {k.id for k in game.skills}
         self.items = {i.id: i for i in game.items}
         self.enemies = {e.id for e in game.enemies}
+        self.enemy_defs = {e.id: e for e in game.enemies}
         self.shops = {sh.id for sh in game.shops}
         self.flags = {f.id for f in game.flags}
         self.locations = {loc.id for loc in game.locations}
@@ -252,6 +253,10 @@ class _Checker:
                     self.error(p, "в игре без боёв нет боевых навыков: вместо learn_skill используй mod_skill — рост внутреннего навыка")
                 else:
                     self.ref(e.learn_skill, self.skills, format_path(p, "learn_skill"), "навык")
+            elif isinstance(e, s.EffLearnWeakness):
+                if self.ref(e.learn_weakness, self.enemies, format_path(p, "learn_weakness"), "враг"):
+                    if not self.enemy_defs[e.learn_weakness].weakness:
+                        self.error(format_path(p, "learn_weakness"), f"у врага '{e.learn_weakness}' нет weakness — нечего узнавать")
             elif isinstance(e, s.EffGoto):
                 has_goto = True
                 self.ref(e.goto, self.locations | self.endings, format_path(p, "goto"), "переход (локация или концовка)")
@@ -318,7 +323,10 @@ class _Checker:
                 self.error(format_path(path, "equip"), "equip задаётся только предметам kind=equipment")
             if item.kind == "consumable" and not item.effect:
                 self.error(format_path(path, "effect"), "у расходуемого предмета (consumable) должен быть effect")
-            if item.kind in ("key", "misc", "equipment") and item.effect:
+            if item.bane is not None and not (item.equip and item.equip.slot == "hand"
+                                              or item.kind == "consumable" and any(isinstance(e, s.EffDamage) for e in item.effect)):
+                self.error(format_path(path, "bane"), "bane бывает у оружия (slot: hand) или у расходника с damage, которым бьют врага")
+            if item.kind in ("key", "misc", "equipment", "clue", "material") and item.effect:
                 self.error(format_path(path, "effect"), f"у предмета kind={item.kind} не бывает effect: его нельзя «использовать»")
             if item.equip is not None and item.equip.slot != "hand" and item.equip.range != 1:
                 self.error(format_path(path, "equip", "range"), "дальность (range) бывает только у предмета в руке (slot: hand)")
@@ -673,6 +681,13 @@ class _Checker:
                     self.error(ip, f"сырьё '{inp.item}' нигде не добыть: нужно место сбора (type: gather), сундук или give_item")
             if r.station != "anywhere" and r.station not in stations:
                 self.error(format_path(path, "station"), f"в игре нет места для ремесла '{r.station}': поставь объект type: station с kind = {r.station}")
+        tags = {e.weakness.tag for e in g.enemies if e.weakness}
+        for i, item in enumerate(g.items):
+            if item.bane and item.bane not in tags:
+                self.warn(format_path("items", i, "bane"), f"ни у одного врага нет слабости '{item.bane}'")
+        if "bestiary" in features and g.enemies and not tags:
+            self.quality("enemies", "у врагов нет слабостей: дай 1–3 врагам weakness {tag, name, hint} и оружие или бомбу с тем же bane; "
+                         "о слабости герой узнаёт из записки или разговора (эффект learn_weakness) — подготовка к бою")
         if "crafting" in features and not g.recipes:
             self.quality("recipes", "в игре нет ремесла: добавь 2–3 места сбора (type: gather) с сырьём (items kind=material), место для работы "
                          "(type: station: workbench, alchemy или campfire) и 2–4 рецепта (recipes) — зелья, приманки, снаряжение")

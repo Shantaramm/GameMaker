@@ -227,6 +227,8 @@ class Pipeline:
             sources += [f"location:{lid}" for lid, c in self.contents.items()
                         if endings & set(re.findall(r'"(?:to|goto)":"([a-z0-9_]+)"', _json(dump(c))))]
             return list(dict.fromkeys(sources)) or ["outline"]
+        if path == "enemies":  # «у врагов нет слабостей» — чинить локации, где враги описаны
+            return [f"location:{lid}" for lid, c in self.contents.items() if c.enemies] or ["outline"]
         m = re.match(r"enemies\[(\d+)\]", path)
         if m:
             data = assemble(self.outline, self.contents, self.items)

@@ -119,6 +119,10 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   await g.tap("efim_at_desk");
   await g.talk("Показать журнал Олеандра");
   check((await g.state()).skills.includes("salt_ward"), "выучен «Соляной круг»");
+  check((await g.state()).bestiary.includes("cultist"), "Ефим рассказал о слабости служителей (§5.12)");
+  await page.getByRole("button", { name: "Журнал" }).click();
+  check(await page.locator(".beast", { hasText: "слабость: соль" }).first().isVisible(), "слабость в бестиарии");
+  await page.locator(".sheet-close").click();
 
   await g.tap("archive_to_alley");
   await g.idle();

@@ -11,7 +11,7 @@ import { BattleScreen } from "../ui/BattleScreen";
 import { DialoguePanel } from "../ui/DialoguePanel";
 import { el } from "../ui/dom";
 import { endingScreen, gameOverScreen, Hud, titleScreen, Toasts } from "../ui/Hud";
-import { boardView, craftView, inventoryView, journalView, Sheet, shopView, setSkillNames } from "../ui/Panels";
+import { bestiaryView, boardView, craftView, inventoryView, journalView, Sheet, shopView, setSkillNames } from "../ui/Panels";
 import { MapScene } from "../world/scene";
 import "../game.css";
 
@@ -59,7 +59,7 @@ export async function mountPlay(root: HTMLElement, gameId: string): Promise<void
     () => openSheet(world.game.hero.name, function view(): Node[] {
       return inventoryView(controller.state, controller.world, () => { sheet.replace(view()); hud.update(controller.state, world); }, (m) => toasts.show(m));
     }),
-    () => openSheet("Журнал", () => journalView(controller.questViews())),
+    () => openSheet("Журнал", () => journalView(controller.questViews(), bestiaryView(controller.state, world))),
     () => openSheet("Доска улик", function view(): Node[] {
       return boardView(controller.state, world, () => { sheet.replace(view()); hud.update(controller.state, world); }, (m) => toasts.show(m));
     }),

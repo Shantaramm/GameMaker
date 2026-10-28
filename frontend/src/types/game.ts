@@ -295,6 +295,7 @@ export interface Skill {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     ),
     ...(
       | EffSetFlag
@@ -308,6 +309,7 @@ export interface Skill {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     )[]
   ];
   target: "enemy" | "self";
@@ -394,6 +396,13 @@ export interface EffGoto {
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "EffLearnWeakness".
+ */
+export interface EffLearnWeakness {
+  learn_weakness: string;
+}
+/**
+ * This interface was referenced by `Game`'s JSON-Schema
  * via the `definition` "Item".
  */
 export interface Item {
@@ -414,10 +423,12 @@ export interface Item {
     | EffHeal
     | EffDamage
     | EffGoto
+    | EffLearnWeakness
   )[];
   equip?: Equip | null;
   value_tier: number;
   price?: number | null;
+  bane?: string | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -456,6 +467,7 @@ export interface Enemy {
    */
   abilities?: EnemyAbility[];
   range?: number;
+  weakness?: Weakness | null;
   hp?: number | null;
   attack?: number | null;
   defense?: number | null;
@@ -498,6 +510,7 @@ export interface EnemyAbility {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     ),
     ...(
       | EffSetFlag
@@ -511,9 +524,23 @@ export interface EnemyAbility {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     )[]
   ];
   every_n_turns: number;
+}
+/**
+ * Слабость врага (§5.12): знание о ней — +25% урона, оружие с тем же bane — ещё +50%.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Weakness".
+ */
+export interface Weakness {
+  tag: string;
+  name: string;
+  hint: string;
+  skill?: "logic" | "knowledge" | "empathy" | "will" | "endurance" | "presence" | "perception" | "finesse";
+  difficulty?: "trivial" | "easy" | "medium" | "challenging" | "formidable" | "legendary";
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -554,6 +581,7 @@ export interface Tactic {
     | EffHeal
     | EffDamage
     | EffGoto
+    | EffLearnWeakness
   )[];
   duration?: number;
   move_bonus?: number;
@@ -593,6 +621,7 @@ export interface Deduction {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     ),
     ...(
       | EffSetFlag
@@ -606,6 +635,7 @@ export interface Deduction {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     )[]
   ];
 }
@@ -816,6 +846,7 @@ export interface DialogueChoice {
     | EffHeal
     | EffDamage
     | EffGoto
+    | EffLearnWeakness
   )[];
   next: string;
   check?: SkillCheck | null;
@@ -883,6 +914,7 @@ export interface Foe {
     | EffHeal
     | EffDamage
     | EffGoto
+    | EffLearnWeakness
   )[];
   on_lose?:
     | "game_over"
@@ -898,6 +930,7 @@ export interface Foe {
         | EffHeal
         | EffDamage
         | EffGoto
+        | EffLearnWeakness
       )[];
   can_flee?: boolean;
 }
@@ -930,6 +963,7 @@ export interface Chest {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     ),
     ...(
       | EffSetFlag
@@ -943,6 +977,7 @@ export interface Chest {
       | EffHeal
       | EffDamage
       | EffGoto
+      | EffLearnWeakness
     )[]
   ];
   requires?:
@@ -1004,6 +1039,7 @@ export interface ChoiceOption {
     | EffHeal
     | EffDamage
     | EffGoto
+    | EffLearnWeakness
   )[];
 }
 /**
