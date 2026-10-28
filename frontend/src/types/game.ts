@@ -653,6 +653,10 @@ export interface Npc {
   character: string;
   dialogue: Dialogue;
   shop?: string | null;
+  /**
+   * @maxItems 4
+   */
+  barks?: Bark[];
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema
@@ -744,6 +748,18 @@ export interface DialogueEntry {
   condition:
     CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill;
   node: string;
+}
+/**
+ * Реплика над головой (§5.11): короткая фраза пузырём прямо на карте, без окна диалога.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Bark".
+ */
+export interface Bark {
+  text: string;
+  condition?:
+    | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
+    | null;
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema

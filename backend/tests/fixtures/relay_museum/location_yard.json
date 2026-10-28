@@ -4,7 +4,7 @@
   {"id": "y1", "speaker": "ira", "emotion": "neutral", "text": "Холодно. Знаете, что самое странное? Если вы промолчите, моя копия будет висеть в зале лет пятьдесят. Дольше, чем проживу я. Я стану самой известной художницей этого города — и никто не узнает моего имени.", "next": "end"}]}
 ],
 "objects": [
- {"type": "npc", "id": "grisha_at_truck", "zone": "truck", "character": "grisha", "dialogue": {"type": "dialogue", "id": "talk_grisha", "start_node": "g1", "nodes": [
+ {"type": "npc", "id": "grisha_at_truck", "barks": [{"text": "Ящик есть ящик. В семь — грузим."}, {"text": "Эх, сигаретку бы…"}], "zone": "truck", "character": "grisha", "dialogue": {"type": "dialogue", "id": "talk_grisha", "start_node": "g1", "nodes": [
   {"id": "g1", "speaker": "grisha", "emotion": "neutral", "text": "Утром в семь грузим. Мне что подлинник, что копия — ящик есть ящик. Сигаретки не будет?",
    "passive": [{"skill": "perception", "difficulty": "medium", "text": "На накладной на сиденье — два ящика. А отправляют один."}],
    "choices": [

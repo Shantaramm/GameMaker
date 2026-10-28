@@ -23,6 +23,10 @@ MAX_CHARACTERS = 12  # включая героя
 MAX_OBJECTS = 15
 MAX_DIALOGUE_NODES = 40
 MAX_LINE_LENGTH = 400
+# Темп текста (§5.11): длинная реплика или монолог без выбора — замечание quality, игру не ломает.
+PACE_LINE_LENGTH = 300
+PACE_MONOLOGUE = 4          # столько реплик подряд без выбора — уже монолог
+BARKS_MIN_NPCS = 3          # с этого числа NPC в игре хочется реплик над головой
 MAIN_ROLES = ("hero", "companion", "antagonist")
 
 # Какие эффекты где допустимы. goto, флаги, предметы и золото — только в сюжетных событиях.
@@ -379,6 +383,8 @@ class _Checker:
                 if obj.shop is not None:
                     self.ref(obj.shop, self.shops, format_path(path, "shop"), "магазин")
                 self.check_dialogue(obj.dialogue, format_path(path, "dialogue"))
+                for k, bark in enumerate(obj.barks):
+                    self.check_condition(bark.condition, format_path(path, "barks", k, "condition"))
             elif isinstance(obj, s.Foe):
                 for k, enemy_id in enumerate(obj.enemies):
                     self.ref(enemy_id, self.enemies, format_path(path, "enemies", k), "враг")
@@ -438,6 +444,9 @@ class _Checker:
             elif node.speaker != "narrator":
                 self.ref(node.speaker, self.characters, format_path(p, "speaker"), "персонаж")
             self.check_line(node.text, format_path(p, "text"))
+            if PACE_LINE_LENGTH < len(node.text) <= MAX_LINE_LENGTH:
+                self.quality(format_path(p, "text"), f"реплика длиной {len(node.text)} символов читается как стена текста: "
+                             f"сократи до {PACE_LINE_LENGTH} или разбей на две реплики с ответом игрока между ними")
             for pi, passive in enumerate(node.passive):
                 self.check_line(passive.text, format_path(p, "passive", pi, "text"))
             self.passives_total += len(node.passive)
@@ -502,6 +511,23 @@ class _Checker:
         for ni, node in enumerate(event.nodes):
             if node.id not in can_exit:
                 self.error(format_path(path, "nodes", ni), f"из узла '{node.id}' не достижим 'end' — диалог зацикливается")
+        self.check_pace(event, path)
+
+    def check_pace(self, event: s.Dialogue, path: str) -> None:
+        """Монолог: столько реплик подряд по next без единого выбора — игрок только жмёт «Далее»."""
+        nodes = {n.id: n for n in event.nodes}
+        targets = {n.next for n in event.nodes if not n.choices}
+        for ni, node in enumerate(event.nodes):
+            if node.choices or node.id in targets and node.id != event.start_node:
+                continue  # считаем только с начала цепочки
+            run, cur, seen = 0, node, set()
+            while cur is not None and not cur.choices and cur.id not in seen:
+                seen.add(cur.id)
+                run += 1
+                cur = nodes.get(cur.next or "")
+            if run >= PACE_MONOLOGUE:
+                self.quality(format_path(path, "nodes", ni), f"{run} реплик подряд без выбора — игрок только жмёт «Далее»: "
+                             "дай ему ответить (choices) хотя бы через 2–3 реплики или сократи")
 
     # --- профиль игры (§5.10) ---
 
@@ -551,6 +577,13 @@ class _Checker:
                         self.quality(format_path("locations", li, "objects", oi, "dialogue"),
                                      f"ключевой разговор слишком короткий ({len(o.dialogue.nodes)} реплик, нужно от {need['nodes']}): "
                                      "дай персонажу подтекст — чего он хочет и что скрывает, выбор с последствиями, проверку навыка")
+
+        npcs = [(li, oi, o) for li, loc in enumerate(g.locations) for oi, o in enumerate(loc.objects) if isinstance(o, s.Npc)]
+        if len(npcs) >= BARKS_MIN_NPCS and not any(o.barks for _, _, o in npcs):
+            li, oi, _ = npcs[0]
+            self.quality(format_path("locations", li, "objects", oi, "barks"),
+                         "персонажи молчат, пока к ним не подойдёшь: дай NPC 1–3 реплики над головой (barks) — что они бормочут "
+                         "себе под нос, и 1–2 с condition, которые отзываются на сделанное игроком")
 
     def quality(self, path: str, message: str) -> None:
         self.issues.append(Issue(path=path, message=message, severity="quality"))

@@ -5,6 +5,7 @@ import type { GameController } from "../engine/runtime";
 import type { MapObject } from "../engine/world";
 import { BackgroundView, backgroundSeed } from "../pixel/background";
 import { library } from "../pixel/library";
+import { hash } from "../pixel/rng";
 import { walkerFrames, FPS, type Anim } from "../pixel/walker";
 import { drawArt, drawEdgeMarker, drawTerrain, feetY, isIndoor, objectArt, TILE, type ObjectArt } from "./level";
 
@@ -13,7 +14,11 @@ const CLIMB_SPEED = 3.5;
 const TILES_ACROSS = 14;  // не меньше стольких тайлов по ширине (на телефоне — сколько влезет при масштабе 2)
 const VIEW_TILES = 9;     // этаж уровня (8 тайлов) и немного неба: по ним подбирается масштаб, чтобы сцена заполняла экран
 const MAX_SCALE = 12;
-const TALK_FEET = 0.05;   // в разговоре линия ног — чуть выше верхнего края панели диалога
+const TALK_FEET = 0.05;
+const BARK_RANGE = 9;     // тайлов: ближе (и на экране) — NPC бормочет реплику над головой (§5.11)
+const BARK_CYCLE = 6;     // секунд на реплику; из них BARK_SHOW видна, остальное — пауза
+const BARK_SHOW = 4.4;
+const BARK_HEAD = 34;     // пикселей мира от линии ног до низа пузыря — чуть выше макушки   // в разговоре линия ног — чуть выше верхнего края панели диалога
 
 interface Mover {
   floor: number;
@@ -25,6 +30,8 @@ interface Mover {
 
 export class MapScene {
   readonly canvas = document.createElement("canvas");
+  private barkLayer = document.createElement("div");
+  private bubbles = new Map<string, HTMLDivElement>();
   private ctx = this.canvas.getContext("2d")!;
   private terrain: HTMLCanvasElement | null = null;
   private backdrop: BackgroundView | null = null;
@@ -44,7 +51,8 @@ export class MapScene {
 
   constructor(private readonly host: HTMLElement, private readonly game: GameController) {
     this.canvas.className = "map";
-    host.append(this.canvas);
+    this.barkLayer.className = "barks";
+    host.append(this.canvas, this.barkLayer);
     new ResizeObserver(() => this.resize()).observe(host);
     this.canvas.addEventListener("pointerdown", (e) => this.tap(e));
     window.addEventListener("keydown", this.onKey);
@@ -73,6 +81,8 @@ export class MapScene {
     const s = this.game.state;
     this.hero = { floor: s.floor, x: s.x, y: feetY(level, s.floor), facing: 1, anim: "idle" };
     this.buddy = null;
+    this.bubbles.clear();
+    this.barkLayer.replaceChildren();
     this.path = [];
     this.target = null;
     this.resize();
@@ -359,6 +369,7 @@ export class MapScene {
       this.followBuddy(dt);
       this.centerCamera();
       this.draw();
+      this.drawBarks();
     }
     requestAnimationFrame(this.loop);
   };
@@ -408,6 +419,9 @@ export class MapScene {
       const py = feetY(level, p.floor);
       if (obj.type === "exit" && obj.kind !== "door") drawEdgeMarker(ctx, level, p.floor, p.x, obj.kind === "left_edge");
       const arts: ObjectArt[] = objectArt(this.game.world.game, loc, level, obj, this.game.exitOpen(obj));
+      // NPC поворачивается к герою, когда тот рядом
+      if (obj.type === "npc" && p.floor === this.hero.floor && Math.abs(p.x - this.hero.x) < BARK_RANGE && Math.abs(p.x - this.hero.x) > 0.3)
+        arts.forEach((a) => (a.flip = this.hero.x < p.x));
       arts.forEach((art, i) => drawArt(ctx, art, px + (i - (arts.length - 1) / 2) * 14, py, Math.floor(t * 2)));
       if (["npc", "thing", "chest"].includes(obj.type) && p.floor === this.hero.floor && Math.abs(p.x - this.hero.x) < 4) {
         const top = py - Math.max(...arts.map((a) => a.anchor[1]), TILE * 2) - 4 - Math.round(Math.sin(t * 4) * 1.5);
@@ -424,6 +438,65 @@ export class MapScene {
     const companion = this.game.world.companion();
     if (this.buddy && companion) this.drawMover(this.buddy, walkerFrames(companion.appearance, companion.id), ref, t);
     this.drawMover(this.hero, walkerFrames(heroSpec.appearance, heroSpec.id), ref, t);
+    if (!this.backdrop) this.drawDust(t);
+  }
+
+  /** В помещении нет анимированного фона — в воздухе медленно плывут пылинки. */
+  private drawDust(t: number): void {
+    const ctx = this.ctx;
+    const W = this.terrain!.width;
+    const H = this.terrain!.height;
+    const n = Math.round(W * H / 1400);
+    ctx.fillStyle = "#f0e2c0";
+    for (let i = 0; i < n; i++) {
+      const a = hash(`${this.game.location.id}:${i}`);
+      const x = ((a % W) + t * (2 + (a % 5)) + Math.sin(t * 0.7 + i) * 6) % W;
+      const y = ((a >>> 8) % H) + Math.sin(t * 0.5 + i * 1.7) * 8;
+      ctx.globalAlpha = 0.18 + 0.22 * (0.5 + 0.5 * Math.sin(t * 1.3 + i));
+      ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /** Реплики над головой: пузыри в DOM поверх холста — чёткий текст при любом масштабе. */
+  private drawBarks(): void {
+    const level = this.game.level;
+    const quiet = this.blocked || this.talkTop !== null;
+    const r = this.canvas.getBoundingClientRect();
+    const host = this.host.getBoundingClientRect();
+    const seen = new Set<string>();
+    for (const obj of this.game.location.objects ?? []) {
+      if (quiet || obj.type !== "npc" || !this.game.present(obj)) continue;
+      const p = level.objects.find((o) => o.id === obj.id);
+      if (!p || p.floor !== this.hero.floor || Math.abs(p.x - this.hero.x) > BARK_RANGE) continue;
+      const sx = (p.x * TILE + TILE / 2 - this.cam.x) * this.scale;
+      if (sx < 40 || sx > r.width - 40) continue; // за краем экрана не бормочут
+      const lines = this.game.barks(obj);
+      if (!lines.length) continue;
+      const t = this.frame + (hash(obj.id) % 1000) / 1000 * BARK_CYCLE;
+      const phase = t % BARK_CYCLE;
+      if (phase > BARK_SHOW) continue;
+      const text = lines[Math.floor(t / BARK_CYCLE) % lines.length];
+      let bubble = this.bubbles.get(obj.id);
+      if (!bubble) {
+        bubble = document.createElement("div");
+        bubble.className = "bark";
+        bubble.dataset.npc = obj.id;
+        this.barkLayer.append(bubble);
+        this.bubbles.set(obj.id, bubble);
+      }
+      if (bubble.textContent !== text) bubble.textContent = text;
+      const wx = p.x * TILE + TILE / 2;
+      const head = feetY(level, p.floor) - BARK_HEAD; // пузырь закрывает маркер взаимодействия — он и так говорит «подойди»
+      const half = bubble.offsetWidth / 2;
+      const x = r.left - host.left + (wx - this.cam.x) * this.scale;
+      bubble.style.left = `${Math.min(Math.max(x, half + 8), host.width - half - 8)}px`;
+      bubble.style.setProperty("--tail", `${x - Math.min(Math.max(x, half + 8), host.width - half - 8)}px`);
+      bubble.style.top = `${r.top - host.top + (head - this.cam.y) * this.scale}px`;
+      bubble.style.opacity = String(Math.min(1, phase * 4, (BARK_SHOW - phase) * 3));
+      seen.add(obj.id);
+    }
+    for (const [id, bubble] of this.bubbles) if (!seen.has(id)) bubble.style.opacity = "0";
   }
 
   private drawMover(m: Mover, frames: Record<Anim, HTMLCanvasElement[]>, ref: [number, number], t: number): void {

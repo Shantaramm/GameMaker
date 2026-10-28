@@ -6,7 +6,7 @@
    "passive": [{"skill": "perception", "difficulty": "easy", "text": "У мальчишки родинка над бровью. Как у Вадима Петровича."}],
    "next": "f2"},
   {"id": "f2", "speaker": "skill:empathy", "text": "Он пришёл сюда ребёнком и остался. Продать её для него — как продать собственное детство. Значит, он верит, что иначе нельзя.", "next": "end"}]}},
- {"type": "npc", "id": "director_at_desk", "zone": "desk", "character": "vadim", "dialogue": {"type": "dialogue", "id": "talk_vadim", "start_node": "d1",
+ {"type": "npc", "id": "director_at_desk", "barks": [{"text": "Крыша, зарплаты, отопление… Цифры не спят."}, {"text": "Вы же понимаете, я не для себя.", "condition": {"flag": "director_confronted", "is": true}}], "zone": "desk", "character": "vadim", "dialogue": {"type": "dialogue", "id": "talk_vadim", "start_node": "d1",
   "entries": [{"condition": {"flag": "director_confessed", "is": true}, "node": "dc"},
               {"condition": {"flag": "original_found", "is": true}, "node": "df"},
               {"condition": {"flag": "forgery_proven", "is": true}, "node": "dp"}],

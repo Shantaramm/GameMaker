@@ -546,11 +546,19 @@ class MapObjectBase(Strict):
     condition: Condition | None = None  # объект есть на карте, только пока условие выполнено
 
 
+class Bark(Strict):
+    """Реплика над головой (§5.11): короткая фраза пузырём прямо на карте, без окна диалога."""
+
+    text: str = Field(min_length=1, max_length=100)
+    condition: Condition | None = None  # звучит, только когда условие выполнено — мир откликается на сделанное
+
+
 class Npc(MapObjectBase):
     type: Literal["npc"]
     character: Id
     dialogue: Dialogue
     shop: Id | None = None
+    barks: list[Bark] = Field(default_factory=list, max_length=4)
 
 
 class Foe(MapObjectBase):

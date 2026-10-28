@@ -20,6 +20,10 @@ const run = (name, viewport, script) => runCase(browser, name, viewport, script,
 await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) => {
   await g.newGame("e2e-1");
   await g.talk();                                   // вступление пристани и сценка
+  await page.keyboard.down("d");                    // пара шагов к Тимофею — он бормочет над головой (§5.11)
+  await page.waitForTimeout(2000);
+  await page.keyboard.up("d");
+  await page.waitForFunction(() => [...document.querySelectorAll(".bark")].some((b) => Number(b.style.opacity) > 0.5), null, { timeout: 10000 });
   await g.shot("pier");
 
   await g.tap("tim_on_pier");

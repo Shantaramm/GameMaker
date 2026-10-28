@@ -4,7 +4,7 @@
  {"type": "exit", "id": "trail_to_village", "zone": "foot", "kind": "left_edge", "to": "village"},
  {"type": "thing", "id": "torn_bag", "zone": "foot", "look": "boulder", "name": "Разорванная сумка", "event": {"type": "narration", "id": "look_bag", "text": "Чья-то котомка, растерзанная зубами. Внутри — пустая фляга и квитанция на соль «для лавки В.». Волки здесь хозяйничают не первый день."}},
  {"type": "enemy", "id": "wolf_pack", "zone": "den", "enemies": ["mountain_wolf", "pack_leader"], "can_flee": true},
- {"type": "npc", "id": "zlata_on_ledge", "zone": "ledge", "character": "zlata", "dialogue": {"type": "dialogue", "id": "talk_zlata", "start_node": "z1", "nodes": [
+ {"type": "npc", "id": "zlata_on_ledge", "barks": [{"text": "Тсс. Ветер с их стороны — пока не чуют."}, {"text": "Стая разбита. Теперь — к заставе.", "condition": {"defeated": "wolf_pack"}}], "zone": "ledge", "character": "zlata", "dialogue": {"type": "dialogue", "id": "talk_zlata", "start_node": "z1", "nodes": [
   {"id": "z1", "speaker": "zlata", "emotion": "neutral", "text": "Тише ты, почтальон. Стая внизу, у логова. Я их третий день веду, а одной вожака не взять.", "choices": [
    {"text": "Пойдём вместе. Мне всё равно туда.", "condition": {"flag": "zlata_joined", "is": false}, "effects": [{"set_flag": "zlata_joined", "value": true}, {"learn_skill": "precise_throw"}], "next": "z2"},
    {"text": "Волков больше нет. Что дальше?", "condition": {"defeated": "wolf_pack"}, "next": "z3"},

@@ -892,7 +892,19 @@
       ],
       "start_node": "n1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Фонарь мигнул… или показалось?"
+      },
+      {
+       "text": "Арина, только не уходи одна, ладно?",
+       "condition": {
+        "flag": "tim_joined",
+        "is": false
+       }
+      }
+     ]
     },
     {
      "id": "marfa_at_stall",
@@ -1012,7 +1024,25 @@
       "start_node": "n1",
       "entries": []
      },
-     "shop": "marfa_stall"
+     "shop": "marfa_stall",
+     "barks": [
+      {
+       "text": "Рыба свежая, ножи острые, слухи — бесплатно!"
+      },
+      {
+       "text": "Ночью туман опять пел. Ей-богу, пел.",
+       "condition": {
+        "flag": "talked_marfa",
+        "is": false
+       }
+      },
+      {
+       "text": "Крысы ушли! Спасибо, Стрельцова!",
+       "condition": {
+        "defeated": "rats"
+       }
+      }
+     ]
     },
     {
      "id": "pier_to_alley",
@@ -1265,7 +1295,19 @@
       ],
       "start_node": "n1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Сорок лет… всё записано… всё…"
+      },
+      {
+       "text": "Не трогай полки! Там порядок.",
+       "condition": {
+        "flag": "found_ledger",
+        "is": false
+       }
+      }
+     ]
     },
     {
      "id": "safe",
@@ -1445,7 +1487,12 @@
       ],
       "start_node": "n1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Слышите? Море считает шаги."
+      }
+     ]
     },
     {
      "id": "guardians",

@@ -23,7 +23,7 @@
    {"id": "p7", "speaker": "skill:logic", "text": "Если это копия, подлинник либо уже продан, либо ещё в здании. Грузовик — утром. Значит, в здании. Копию писал кто-то, кто умеет. В городе такой человек один.", "next": "end"},
    {"id": "pz", "speaker": "skill:empathy", "text": "Ты держишь подлинник, а смотришь на копию. И копия тоже красивая. Это самое страшное.", "next": "end"}
   ]}},
- {"type": "npc", "id": "ira_in_gallery", "zone": "hall_entry", "character": "ira", "dialogue": {"type": "dialogue", "id": "talk_ira", "start_node": "i1",
+ {"type": "npc", "id": "ira_in_gallery", "barks": [{"text": "Я просто забыла папку. Просто папку."}, {"text": "Лак ещё не высох… если кто тронет — поймёт.", "condition": {"flag": "noticed_paint", "is": false}}], "zone": "hall_entry", "character": "ira", "dialogue": {"type": "dialogue", "id": "talk_ira", "start_node": "i1",
   "entries": [{"condition": {"flag": "ira_joined", "is": true}, "node": "ij"},
               {"condition": {"any": [{"flag": "noticed_paint", "is": true}, {"flag": "noticed_scarf", "is": true}]}, "node": "is1"}],
   "nodes": [

@@ -190,6 +190,64 @@
       "title": "BackgroundSpec",
       "type": "object"
     },
+    "Bark": {
+      "additionalProperties": false,
+      "description": "Реплика над головой (§5.11): короткая фраза пузырём прямо на карте, без окна диалога.",
+      "properties": {
+        "text": {
+          "maxLength": 100,
+          "minLength": 1,
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/CondAll"
+                },
+                {
+                  "$ref": "#/$defs/CondAny"
+                },
+                {
+                  "$ref": "#/$defs/CondNot"
+                },
+                {
+                  "$ref": "#/$defs/CondFlag"
+                },
+                {
+                  "$ref": "#/$defs/CondItem"
+                },
+                {
+                  "$ref": "#/$defs/CondStat"
+                },
+                {
+                  "$ref": "#/$defs/CondGold"
+                },
+                {
+                  "$ref": "#/$defs/CondLevel"
+                },
+                {
+                  "$ref": "#/$defs/CondDefeated"
+                },
+                {
+                  "$ref": "#/$defs/CondSkill"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Bark",
+      "type": "object"
+    },
     "Character": {
       "additionalProperties": false,
       "properties": {
@@ -2768,6 +2826,13 @@
             }
           ],
           "default": null
+        },
+        "barks": {
+          "items": {
+            "$ref": "#/$defs/Bark"
+          },
+          "maxItems": 4,
+          "type": "array"
         }
       },
       "required": [

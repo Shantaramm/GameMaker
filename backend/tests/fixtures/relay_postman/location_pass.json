@@ -4,7 +4,7 @@
  {"type": "exit", "id": "pass_to_outpost", "zone": "slope", "kind": "left_edge", "to": "outpost"},
  {"type": "thing", "id": "fake_rockfall", "zone": "slope", "look": "boulder", "name": "«Обвал»", "event": {"type": "narration", "id": "look_rockfall", "text": "Пара валунов, присыпанных щебнем для вида. За ними — аккуратная баррикада из брёвен с воротами на засове."}},
  {"type": "enemy", "id": "yakov_band", "zone": "barricade", "enemies": ["yakov_boss", "smuggler_guard"], "can_flee": true},
- {"type": "npc", "id": "yakov_beaten", "zone": "road_down", "character": "yakov", "condition": {"defeated": "yakov_band"}, "dialogue": {"type": "dialogue", "id": "talk_yakov", "start_node": "y1", "nodes": [
+ {"type": "npc", "id": "yakov_beaten", "barks": [{"text": "Кедр-то мой… был мой…"}], "zone": "road_down", "character": "yakov", "condition": {"defeated": "yakov_band"}, "dialogue": {"type": "dialogue", "id": "talk_yakov", "start_node": "y1", "nodes": [
   {"id": "y1", "speaker": "yakov", "emotion": "angry", "text": "Ну, почтальон… Удивил. Иди, неси свою бумажку. Всё равно в городе тебе никто не поверит: староста скажет, что ты врёшь, — и все кивнут.", "choices": [
    {"text": "Поверят. У меня долговая книга Гордея.", "condition": {"has_item": "smuggler_ledger"}, "effects": [{"set_flag": "headman_exposed", "value": true}], "next": "y2"},
    {"text": "Мне хватит того, что письмо дойдёт.", "next": "y3"}]},

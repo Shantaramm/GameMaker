@@ -150,7 +150,7 @@
       ],
       "objects": [
         {
-          "type": "npc", "id": "tim_on_pier", "zone": "lamp", "character": "tim",
+          "type": "npc", "id": "tim_on_pier", "barks": [{"text": "Фонарь мигнул… или показалось?"}, {"text": "Арина, только не уходи одна, ладно?", "condition": {"flag": "tim_joined", "is": false}}], "zone": "lamp", "character": "tim",
           "condition": {"flag": "tim_joined", "is": false},
           "dialogue": {
             "type": "dialogue", "id": "meet_tim", "start_node": "n1",
@@ -174,7 +174,7 @@
           }
         },
         {
-          "type": "npc", "id": "marfa_at_stall", "zone": "stall", "character": "marfa", "shop": "marfa_stall",
+          "type": "npc", "id": "marfa_at_stall", "barks": [{"text": "Рыба свежая, ножи острые, слухи — бесплатно!"}, {"text": "Ночью туман опять пел. Ей-богу, пел.", "condition": {"flag": "talked_marfa", "is": false}}, {"text": "Крысы ушли! Спасибо, Стрельцова!", "condition": {"defeated": "rats"}}], "zone": "stall", "character": "marfa", "shop": "marfa_stall",
           "dialogue": {
             "type": "dialogue", "id": "talk_marfa", "start_node": "n1",
             "nodes": [
@@ -240,7 +240,7 @@
       "objects": [
         {"type": "exit", "id": "archive_to_alley", "zone": "door", "kind": "door", "to": "alley"},
         {
-          "type": "npc", "id": "efim_at_desk", "zone": "desk", "character": "efim",
+          "type": "npc", "id": "efim_at_desk", "barks": [{"text": "Сорок лет… всё записано… всё…"}, {"text": "Не трогай полки! Там порядок.", "condition": {"flag": "found_ledger", "is": false}}], "zone": "desk", "character": "efim",
           "dialogue": {
             "type": "dialogue", "id": "talk_efim", "start_node": "n1",
             "nodes": [
@@ -277,7 +277,7 @@
       "objects": [
         {"type": "exit", "id": "cliffs_to_alley", "zone": "path", "kind": "left_edge", "to": "alley"},
         {
-          "type": "npc", "id": "oleander_at_door", "zone": "rocks", "character": "oleander",
+          "type": "npc", "id": "oleander_at_door", "barks": [{"text": "Слышите? Море считает шаги."}], "zone": "rocks", "character": "oleander",
           "condition": {"not": {"defeated": "guardians"}},
           "dialogue": {
             "type": "dialogue", "id": "meet_oleander", "start_node": "n1",

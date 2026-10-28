@@ -907,7 +907,19 @@
       ],
       "start_node": "m1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Варежки надел? Перевал не прощает."
+      },
+      {
+       "text": "Соль вернулась… Значит, дорога есть.",
+       "condition": {
+        "flag": "salt_returned",
+        "is": true
+       }
+      }
+     ]
     },
     {
      "id": "notice_board",
@@ -971,7 +983,19 @@
       ],
       "start_node": "g1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Зима — время терпеть, голубчик."
+      },
+      {
+       "text": "Куда смотришь? Иди своей дорогой.",
+       "condition": {
+        "flag": "headman_exposed",
+        "is": true
+       }
+      }
+     ]
     },
     {
      "id": "village_to_house",
@@ -1052,7 +1076,23 @@
       "start_node": "v1",
       "entries": []
      },
-     "shop": "vera_shop"
+     "shop": "vera_shop",
+     "barks": [
+      {
+       "text": "Грибы без соли — не грибы, а горе!",
+       "condition": {
+        "flag": "salt_returned",
+        "is": false
+       }
+      },
+      {
+       "text": "Солью пахнет! Мироша, ты золото!",
+       "condition": {
+        "flag": "salt_returned",
+        "is": true
+       }
+      }
+     ]
     },
     {
      "id": "woodpile",
@@ -1342,7 +1382,18 @@
       ],
       "start_node": "z1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Тсс. Ветер с их стороны — пока не чуют."
+      },
+      {
+       "text": "Стая разбита. Теперь — к заставе.",
+       "condition": {
+        "defeated": "wolf_pack"
+       }
+      }
+     ]
     },
     {
      "id": "hunter_cache",
@@ -1626,7 +1677,12 @@
       ],
       "start_node": "y1",
       "entries": []
-     }
+     },
+     "barks": [
+      {
+       "text": "Кедр-то мой… был мой…"
+      }
+     ]
     },
     {
      "id": "pass_to_city_witness",

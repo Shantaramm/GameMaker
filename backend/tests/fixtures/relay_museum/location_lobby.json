@@ -6,7 +6,7 @@
 ],
 "objects": [
  {"type": "thing", "id": "old_booklet", "zone": "entrance", "look": "table", "name": "Буклет 1987 года", "event": {"type": "narration", "id": "read_booklet", "text": "«Утро над Сурой» — гордость музея. На обороте выцветшей ручкой: «Савве — на память о первом уроке в музее. Не давай детям смотреть, учи видеть. Н.»"}},
- {"type": "npc", "id": "nina_in_cloakroom", "zone": "cloakroom", "character": "nina", "dialogue": {"type": "dialogue", "id": "talk_nina", "start_node": "n1",
+ {"type": "npc", "id": "nina_in_cloakroom", "barks": [{"text": "«Утро над Сурой», тысяча девятьсот… Нет, не могу."}, {"text": "Вы ведь найдёте её, Савва Ильич?", "condition": {"flag": "nina_trusts", "is": true}}], "zone": "cloakroom", "character": "nina", "dialogue": {"type": "dialogue", "id": "talk_nina", "start_node": "n1",
   "entries": [{"condition": {"flag": "forgery_proven", "is": true}, "node": "na1"}, {"condition": {"flag": "nina_trusts", "is": true}, "node": "nb1"}],
   "nodes": [
    {"id": "n1", "speaker": "nina", "emotion": "sad", "text": "Савва Ильич. Вы знаете, что её завтра увозят? Сорок лет я рассказывала про неё детям. А теперь — «на временное хранение в областной фонд». Временное, как же.",

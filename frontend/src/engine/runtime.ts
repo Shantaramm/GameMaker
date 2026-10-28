@@ -243,6 +243,12 @@ export class GameController {
     return check(obj.condition as Condition, s, this.world);
   }
 
+  /** Реплики над головой, которые сейчас уместны (§5.11): условие у реплики отзывается на сделанное игроком. */
+  barks(obj: MapObject): string[] {
+    if (obj.type !== "npc") return [];
+    return (obj.barks ?? []).filter((b) => check(b.condition as Condition, this.state, this.world)).map((b) => b.text);
+  }
+
   companionPresent(): boolean {
     const c = this.world.companion();
     return !!c && check(c.joins as Condition, this.state, this.world);
