@@ -66,6 +66,7 @@ class HeroState:
     examined: set[str] = field(default_factory=set)
     quests_rewarded: set[str] = field(default_factory=set)
     revealed: set[str] = field(default_factory=set)        # найденные тайники (§5.12)
+    deduced: set[str] = field(default_factory=set)         # сделанные выводы на доске улик
 
 
 @dataclass
@@ -497,6 +498,15 @@ class Run:
                 self.hero.quests_rewarded.add(q.id)
                 self.reward(inner.QUEST_XP)
 
+    def deduce(self) -> None:
+        """Бот соединяет улики, как только все нужные у него (игрок делает это на доске, §5.12)."""
+        h = self.hero
+        for d in self.game.deductions:
+            if d.id not in h.deduced and all(h.inventory[c] > 0 for c in d.clues):
+                h.deduced.add(d.id)
+                apply_story_effects(d.effects, h, self.world)
+                self.reward(inner.DEDUCE_XP)
+
     def reveal(self, loc: s.Location) -> None:
         """Тайники локации, которые герой замечает сейчас: пассивная проверка, как revealSecrets в runtime.ts."""
         h = self.hero
@@ -578,6 +588,7 @@ class Run:
             self.reveal(loc)  # навык мог вырасти после прошлого объекта
             if self.present(obj):
                 jump = self.interact(obj)
+                self.deduce()
                 self.reward_quests()
                 if jump is not None:
                     return jump

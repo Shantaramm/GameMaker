@@ -146,6 +146,7 @@ class _Checker:
         self.check_location_graph()
         self.check_locked_behind_itself()
         self.check_profile()
+        self.check_mechanics()
         for flag, path in self.flags_checked.items():
             if flag in self.flags and flag not in self.flags_set:
                 self.warn(path, f"флаг '{flag}' проверяется, но нигде не выставляется")
@@ -162,6 +163,7 @@ class _Checker:
             ("врагов", [(format_path("enemies", i), x.id) for i, x in enumerate(g.enemies)]),
             ("магазинов", [(format_path("shops", i), x.id) for i, x in enumerate(g.shops)]),
             ("тактик", [(format_path("tactics", i), x.id) for i, x in enumerate(g.tactics)]),
+            ("выводов", [(format_path("deductions", i), x.id) for i, x in enumerate(g.deductions)]),
             ("квестов", [(format_path("quests", i), x.id) for i, x in enumerate(g.quests)]),
             ("флагов", [(format_path("flags", i), x.id) for i, x in enumerate(g.flags)]),
             ("локаций и концовок", [(format_path("locations", i), x.id) for i, x in enumerate(g.locations)]
@@ -596,6 +598,56 @@ class _Checker:
             self.quality(format_path("locations", li, "objects", oi, "barks"),
                          "персонажи молчат, пока к ним не подойдёшь: дай NPC 1–3 реплики над головой (barks) — что они бормочут "
                          "себе под нос, и 1–2 с condition, которые отзываются на сделанное игроком")
+
+    # --- механики (§5.12) ---
+
+    def obtainable_items(self) -> set[str]:
+        """Предметы, которые герой может получить: старт, магазины, give_item где угодно в игре."""
+        g = self.game
+        found = set(g.start_items) | {i for i in g.start_equipment.model_dump().values() if i}
+        found |= {i for shop in g.shops for i in shop.items}
+
+        def walk(node: Any) -> None:
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    if k == "give_item" and isinstance(v, str):
+                        found.add(v)
+                    else:
+                        walk(v)
+            elif isinstance(node, list):
+                for v in node:
+                    walk(v)
+
+        walk([loc.model_dump(by_alias=True) for loc in g.locations])
+        walk([d.model_dump(by_alias=True) for d in g.deductions])
+        return found
+
+    def check_mechanics(self) -> None:
+        g = self.game
+        features = g.profile.active()
+        obtainable = self.obtainable_items()
+        for i, d in enumerate(g.deductions):
+            path = format_path("deductions", i)
+            if len(set(d.clues)) != len(d.clues):
+                self.error(format_path(path, "clues"), "улики в выводе повторяются")
+            for j, clue in enumerate(d.clues):
+                cp = format_path(path, "clues", j)
+                if not self.ref(clue, self.items, cp, "предмет-улика"):
+                    continue
+                if self.items[clue].kind != "clue":
+                    self.error(cp, f"'{clue}' — не улика: у предметов для доски выводов kind = clue")
+                elif clue not in obtainable:
+                    self.error(cp, f"улику '{clue}' нигде не получить: дай её через give_item (осмотр, разговор, сундук)")
+            self.check_line(d.text, format_path(path, "text"))
+            if self.check_effects(d.effects, format_path(path, "effects"), "story"):
+                self.error(format_path(path, "effects"), "вывод не переносит героя: goto здесь недопустим")
+        others = [{*d.clues} for d in g.deductions]
+        for i, a in enumerate(others):
+            if any(j != i and a == b for j, b in enumerate(others)):
+                self.error(format_path("deductions", i, "clues"), "два вывода из одних и тех же улик")
+        if "deduction" in features and not g.deductions:
+            self.quality("deductions", "в игре нет доски улик: добавь 2–3 улики (items kind=clue, выдаются через give_item при осмотре "
+                         "или в разговоре) и 1–2 вывода из них (deductions) — вывод ставит флаг, который открывает новые реплики")
 
     def quality(self, path: str, message: str) -> None:
         self.issues.append(Issue(path=path, message=message, severity="quality"))

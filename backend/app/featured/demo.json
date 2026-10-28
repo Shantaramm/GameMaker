@@ -410,6 +410,26 @@
    },
    "value_tier": 2,
    "price": 22
+  },
+  {
+   "id": "signed_scrap",
+   "name": "Обрывок с подписью «О.»",
+   "description": "«…к новолунию — ещё троих. Море не ждёт. — О.»",
+   "icon": "letter",
+   "kind": "clue",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "salt_order",
+   "name": "Запись о соли",
+   "description": "Смотритель записал: магистр снова заказал ящик соли.",
+   "icon": "notebook",
+   "kind": "clue",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
   }
  ],
  "enemies": [
@@ -653,6 +673,27 @@
    "cost": 6
   }
  ],
+ "deductions": [
+  {
+   "id": "salt_for_the_sea",
+   "name": "Олеандр кормит море людьми",
+   "text": "«О.» просит «ещё троих к новолунию», а ящики соли идут в маяк. Соль не для рыбы — для круга. Магистр приносит морю жертвы.",
+   "clues": [
+    "signed_scrap",
+    "salt_order"
+   ],
+   "effects": [
+    {
+     "set_flag": "oleander_exposed",
+     "value": true
+    },
+    {
+     "mod_skill": "logic",
+     "delta": 1
+    }
+   ]
+  }
+ ],
  "quests": [
   {
    "id": "light_the_lamp",
@@ -739,6 +780,10 @@
   {
    "id": "marfa_rewarded",
    "description": "Марфа отблагодарила за крыс"
+  },
+  {
+   "id": "oleander_exposed",
+   "description": "Арина поняла, зачем Олеандру соль и люди"
   }
  ],
  "locations": [
@@ -1138,6 +1183,9 @@
          {
           "set_flag": "heard_rumor",
           "value": true
+         },
+         {
+          "give_item": "signed_scrap"
          }
         ]
        }
@@ -1372,9 +1420,19 @@
      "look": "bookshelf",
      "name": "Книга прибытий",
      "event": {
-      "type": "narration",
+      "type": "choice",
       "id": "read_arrivals",
-      "text": "Последняя запись — рукой смотрителя: «Магистр опять заказал ящик соли. Зачем учёному столько соли?»"
+      "prompt": "Последняя запись — рукой смотрителя: «Магистр опять заказал ящик соли. Зачем учёному столько соли?»",
+      "options": [
+       {
+        "text": "Переписать запись в блокнот.",
+        "effects": [
+         {
+          "give_item": "salt_order"
+         }
+        ]
+       }
+      ]
      },
      "once": true
     }
@@ -1529,6 +1587,13 @@
      "barks": [
       {
        "text": "Слышите? Море считает шаги."
+      },
+      {
+       "text": "Соль? Учёному нужна соль, следователь. Только и всего.",
+       "condition": {
+        "flag": "oleander_exposed",
+        "is": true
+       }
       }
      ]
     },

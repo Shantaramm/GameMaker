@@ -29,6 +29,10 @@ export interface Game {
   enemies?: Enemy[];
   shops?: Shop[];
   tactics?: Tactic[];
+  /**
+   * @maxItems 8
+   */
+  deductions?: Deduction[];
   quests?: Quest[];
   flags?: FlagDef[];
   /**
@@ -393,7 +397,7 @@ export interface Item {
   name: string;
   description: string;
   icon: string;
-  kind: "consumable" | "equipment" | "key" | "misc";
+  kind: "consumable" | "equipment" | "key" | "misc" | "clue";
   effect?: (
     | EffSetFlag
     | EffGiveItem
@@ -553,6 +557,53 @@ export interface Tactic {
     | (CondAll | CondAny | CondNot | CondFlag | CondItem | CondStat | CondGold | CondLevel | CondDefeated | CondSkill)
     | null;
   cost?: number | null;
+}
+/**
+ * Вывод на доске улик (§5.12): игрок соединяет 2–3 улики и получает озарение с последствиями.
+ *
+ * This interface was referenced by `Game`'s JSON-Schema
+ * via the `definition` "Deduction".
+ */
+export interface Deduction {
+  id: string;
+  name: string;
+  text: string;
+  /**
+   * @minItems 2
+   * @maxItems 3
+   */
+  clues: [string, string] | [string, string, string];
+  /**
+   * @minItems 1
+   */
+  effects: [
+    (
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffModSkill
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    ),
+    ...(
+      | EffSetFlag
+      | EffGiveItem
+      | EffTakeItem
+      | EffGiveGold
+      | EffTakeGold
+      | EffLearnSkill
+      | EffModStat
+      | EffModSkill
+      | EffHeal
+      | EffDamage
+      | EffGoto
+    )[]
+  ];
 }
 /**
  * This interface was referenced by `Game`'s JSON-Schema

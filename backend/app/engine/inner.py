@@ -22,6 +22,7 @@ CHECK_XP_BASE = 5
 CHECK_XP_STEP = 2
 EXAMINE_XP = 3
 SECRET_XP = 5               # найденный тайник (§5.12)
+DEDUCE_XP = 10              # вывод на доске улик
 QUEST_XP = 20
 HEALTH_UNIT_SHARE = 6       # в игре с боями провал проверки отнимает 1/6 максимума HP
 

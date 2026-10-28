@@ -10,11 +10,13 @@ export class Hud {
   private stats = el("div", { className: "hud-stats" });
   private place = el("div", { className: "hud-place" });
   private inventory: HTMLButtonElement;
+  private board: HTMLButtonElement;
 
-  constructor(onInventory: () => void, onJournal: () => void) {
+  constructor(onInventory: () => void, onJournal: () => void, onBoard: () => void) {
     this.inventory = button("Герой", onInventory, "btn btn-small");
+    this.board = button("Улики", onBoard, "btn btn-small hidden");
     this.root.append(this.stats, this.place,
-      el("div", { className: "hud-buttons" }, this.inventory, button("Журнал", onJournal, "btn btn-small")));
+      el("div", { className: "hud-buttons" }, this.inventory, this.board, button("Журнал", onJournal, "btn btn-small")));
   }
 
   update(state: GameState, world: World): void {
@@ -29,6 +31,10 @@ export class Hud {
     this.place.textContent = world.location(state.location).title;
     this.inventory.textContent = state.skillPoints > 0 ? `Герой ●${state.skillPoints}` : "Герой";
     this.inventory.classList.toggle("has-points", state.skillPoints > 0);
+    // доска улик (§5.12) — когда в игре есть выводы и у героя уже есть хоть одна улика
+    const clueCount = Object.keys(state.inventory).filter((id) => state.inventory[id] > 0 && world.items.get(id)?.kind === "clue").length;
+    this.board.classList.toggle("hidden", !(world.game.deductions?.length && clueCount));
+    this.board.textContent = `Улики ${clueCount}`;
   }
 }
 

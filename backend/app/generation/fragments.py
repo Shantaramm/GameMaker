@@ -54,6 +54,7 @@ class ItemsContent(s.Strict):
     skills: list[s.Skill] = Field(default_factory=list)
     shops: list[s.Shop] = Field(default_factory=list)
     tactics: list[s.Tactic] = Field(default_factory=list, max_length=6)
+    deductions: list[s.Deduction] = Field(default_factory=list, max_length=8)
     start_skills: list[s.Id] = Field(default_factory=list)
     start_items: list[s.Id] = Field(default_factory=list)
     start_equipment: s.StartEquipment = Field(default_factory=s.StartEquipment)
@@ -91,7 +92,7 @@ def assemble(outline: Outline, contents: dict[str, LocationContent], items: Item
         "start_skills": i.get("start_skills", []), "start_items": i.get("start_items", []),
         "start_equipment": i.get("start_equipment", {}),
         "skills": i.get("skills", []), "items": i.get("items", []), "enemies": list(enemies.values()),
-        "shops": i.get("shops", []), "tactics": i.get("tactics", []), "quests": o["quests"], "flags": o.get("flags", []),
+        "shops": i.get("shops", []), "tactics": i.get("tactics", []), "deductions": i.get("deductions", []), "quests": o["quests"], "flags": o.get("flags", []),
         "locations": locations, "start_location": o["start_location"], "endings": o["endings"],
     }
 
@@ -122,7 +123,7 @@ def split_game(game: s.Game) -> tuple[Outline, dict[str, LocationContent], Items
     outline = Outline(meta=game.meta, profile=game.profile, inner_skills=game.inner_skills, hero=game.hero, characters=game.characters, flags=game.flags, quests=game.quests,
                       locations=plans, start_location=game.start_location, endings=game.endings)
     tactics = [t.model_copy(update={"cost": None}) for t in game.tactics if not t.id.startswith("base_")]
-    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics,
+    items = ItemsContent(items=[i.model_copy(update={"price": None}) for i in game.items], skills=game.skills, shops=game.shops, tactics=tactics, deductions=game.deductions,
                          start_skills=game.start_skills, start_items=game.start_items, start_equipment=game.start_equipment)
     return outline, contents, items
 

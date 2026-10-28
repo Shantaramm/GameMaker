@@ -174,7 +174,7 @@ export function buy(state: GameState, world: World, itemId: string): boolean {
 export function canSell(state: GameState, world: World, itemId: string): boolean {
   const item = world.items.get(itemId);
   // ключи и сюжетные предметы не продаются: на них держатся двери, условия и концовки
-  if (!item || item.kind === "key" || item.kind === "misc" || count(state, itemId) === 0) return false;
+  if (!item || item.kind === "key" || item.kind === "misc" || item.kind === "clue" || count(state, itemId) === 0) return false;
   return !(isEquipped(state, itemId) && count(state, itemId) === 1);
 }
 

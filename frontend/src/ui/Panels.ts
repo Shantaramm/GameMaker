@@ -2,6 +2,7 @@
 
 import { buy, canSell, equip, isEquipped, nextLevelXp, sell, sellPrice, spendSkillPoint, unequip, useItem } from "../engine/effects";
 import { SKILL_CAP, SKILL_GROUPS } from "../engine/inner";
+import { clues, deduce } from "../engine/mechanics";
 import type { QuestView } from "../engine/quests";
 import { count, effective, type GameState, skillValue } from "../engine/state";
 import { SLOTS, type Slot, type World } from "../engine/world";
@@ -165,4 +166,43 @@ export function journalView(quests: QuestView[]): Node[] {
       el("b", { textContent: `${v.quest.title}${v.quest.main ? " · основной" : ""}${v.complete ? " — выполнен" : ""}` }),
       el("ul", {}, ...stages));
   });
+}
+
+// --- доска улик (§5.12) ---
+
+const picked = new Set<string>();
+
+/** Доска улик: выбрать 2–3 улики и «Связать». Совпало с выводом — озарение; нет — «не складывается» (−1 Дух). */
+export function boardView(state: GameState, world: World, rerender: () => void, notify: (m: string[]) => void): Node[] {
+  const have = clues(state, world);
+  for (const id of [...picked]) if (!have.includes(id)) picked.delete(id);
+  const cards = have.map((id) => {
+    const item = world.items.get(id)!;
+    const on = picked.has(id);
+    const card = el("button", { className: `clue${on ? " on" : ""}` }, icon(item, 3),
+      el("span", { className: "clue-text" }, el("b", { textContent: item.name }), el("small", { textContent: item.description })));
+    card.setAttribute("aria-pressed", String(on));
+    card.addEventListener("click", () => {
+      if (on) picked.delete(id);
+      else if (picked.size < 3) picked.add(id);
+      rerender();
+    });
+    return card;
+  });
+  const total = world.game.deductions?.length ?? 0;
+  const done = (world.game.deductions ?? []).filter((d) => state.deduced.includes(d.id));
+  const link = button(picked.size >= 2 ? `Связать (${picked.size})` : "Выберите 2–3 улики", () => {
+    const res = deduce(state, world, [...picked]);
+    if (res.ok) picked.clear();
+    notify(res.messages);
+    rerender();
+  }, "btn btn-primary btn-link", picked.size < 2);
+  return [
+    el("p", { className: "muted", textContent: "Соедините улики, которые, по-вашему, говорят об одном. Неверная версия подтачивает уверенность (−1 Дух)." }),
+    have.length ? el("div", { className: "clues" }, ...cards) : el("p", { className: "muted", textContent: "Улик пока нет. Осматривайте места и расспрашивайте людей." }),
+    el("div", { className: "row" }, link),
+    el("h3", { textContent: `Выводы · ${done.length} из ${total}` }),
+    ...(done.length ? done.map((d) => el("div", { className: "deduction" }, el("b", { textContent: d.name }), el("p", { textContent: d.text })))
+      : [el("p", { className: "muted", textContent: "Пока ни одного." })]),
+  ];
 }

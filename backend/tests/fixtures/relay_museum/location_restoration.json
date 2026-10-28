@@ -1,37 +1,261 @@
-{"intro": "Мастерская пахнет скипидаром и чужой бессонницей. Наверху, за лестницей, — холодный запасник, где зимой хранят то, что не помещается в залы.",
-"on_enter": [
- {"type": "dialogue", "id": "ira_in_workshop_remark", "condition": {"flag": "ira_joined", "is": true}, "start_node": "w1", "nodes": [
-  {"id": "w1", "speaker": "ira", "emotion": "sad", "text": "Я здесь три месяца каждую ночь. Знаете, я ведь хотела стать художницей, а не копиисткой. Смешно: впервые написала что-то по-настоящему хорошо — и это ложь.", "next": "end"}]}
-],
-"objects": [
- {"type": "thing", "id": "ira_notebook", "zone": "workbench", "look": "table", "name": "Тетрадь реставратора", "event": {"type": "narration", "id": "read_notebook", "text": "Почерк Иры, ровный, как мазки. «Если меня спросят, зачем я это сделала, — скажу: мне впервые заплатили за то, что я умею. Это не оправдание. Это просто правда». И ниже, другими чернилами: «Платок не смогла. Рука не поднялась»."}},
- {"type": "chest", "id": "first_aid", "zone": "workbench", "look": "chest", "contents": [{"give_item": "validol"}]},
- {"type": "thing", "id": "easel", "zone": "easel", "look": "crates", "name": "Мольберт и палитра", "once": false, "condition": {"flag": "forgery_proven", "is": false}, "event": {"type": "dialogue", "id": "study_easel", "start_node": "e1", "nodes": [
-  {"id": "e1", "speaker": "narrator", "text": "Мольберт, палитра с подсохшей охрой, фотографии картины в натуральную величину — на каждой карандашные пометки.",
-   "passive": [{"skill": "perception", "difficulty": "medium", "text": "На одной фотографии платок обведён кружком. И перечёркнут."}],
-   "choices": [
-    {"text": "Сопоставить пометки с картиной в зале.", "next": "e2", "check": {"skill": "logic", "difficulty": "medium", "failure": "e3"}},
-    {"text": "Прочитать надписи на тюбиках.", "next": "e4", "check": {"skill": "knowledge", "difficulty": "easy", "failure": "e3"}},
-    {"text": "Не трогать чужое.", "next": "end"}]},
-  {"id": "e2", "speaker": "skill:logic", "text": "Пометки — не реставрация. Это схема: где положить мазок, чтобы совпало с подлинником. Так готовят копию.",
-   "choices": [{"text": "Сфотографировать пометки на старый телефон.", "effects": [{"set_flag": "forgery_proven", "value": true}], "next": "e5"}]},
-  {"id": "e3", "speaker": "skill:logic", "text": "Цифры, стрелки, кружки. Похоже на план урока, который писал кто-то очень уставший.", "next": "end"},
-  {"id": "e4", "speaker": "skill:knowledge", "text": "Свинцовые белила. Их запретили сорок лет назад. Кто-то очень хотел, чтобы краска была «как тогда».",
-   "choices": [{"text": "Это доказательство. Забрать тюбик.", "effects": [{"set_flag": "forgery_proven", "value": true}], "next": "e5"}]},
-  {"id": "e5", "speaker": "skill:will", "text": "Теперь ты знаешь наверняка. Знание — тоже груз. Неси аккуратно: его нельзя поставить обратно на полку.", "next": "end"}]}},
- {"type": "thing", "id": "frames_crate", "zone": "cold_store", "look": "chest", "name": "Ящик «рамы»", "once": false, "condition": {"flag": "original_found", "is": false}, "event": {"type": "dialogue", "id": "open_crate", "start_node": "c1", "nodes": [
-  {"id": "c1", "speaker": "narrator", "text": "Ящик с надписью мелом: «РАМЫ». Изо рта пар, пальцы немеют. Замок новый, блестящий — как мазок у лодки.",
-   "choices": [
-    {"text": "Открыть ключом Нины.", "condition": {"has_item": "storage_key"}, "next": "c2"},
-    {"text": "Поддеть замок отвёрткой.", "next": "c2", "check": {"skill": "finesse", "difficulty": "challenging", "failure": "c3", "damage": "health"}},
-    {"text": "Подождать, пока руки согреются, и попробовать снова.", "next": "c5", "check": {"skill": "endurance", "difficulty": "medium", "failure": "c6", "damage": "health"}},
-    {"text": "Спуститься вниз.", "next": "end"}]},
-  {"id": "c2", "speaker": "narrator", "text": "Внутри, в мешковине, — она. Платок на месте. Красный, как на странице сорок.",
-   "choices": [{"text": "Взять картину.", "effects": [{"give_item": "original_canvas"}, {"set_flag": "original_found", "value": true}], "next": "c4"}]},
-  {"id": "c3", "speaker": "narrator", "text": "Отвёртка срывается, ладонь в крови. Холод сразу лезет в рану.", "next": "end"},
-  {"id": "c4", "speaker": "skill:empathy", "text": "Теперь у тебя в руках сто лет и шестилетняя девочка с платком. Что ты с ними сделаешь?", "next": "end"},
-  {"id": "c5", "speaker": "skill:endurance", "text": "Старые кости ноют, но держат. Пальцы снова слушаются — замок поддаётся со второй попытки.", "next": "c2"},
-  {"id": "c6", "speaker": "skill:endurance", "text": "Сердце стучит в ушах. В шестьдесят лет холод не ждёт, пока ты согреешься.", "next": "end"}]}},
- {"type": "exit", "id": "restoration_to_gallery", "zone": "workbench", "kind": "left_edge", "to": "gallery"}
-],
-"enemies": []}
+{
+ "intro": "Мастерская пахнет скипидаром и чужой бессонницей. Наверху, за лестницей, — холодный запасник, где зимой хранят то, что не помещается в залы.",
+ "on_enter": [
+  {
+   "type": "dialogue",
+   "id": "ira_in_workshop_remark",
+   "condition": {
+    "flag": "ira_joined",
+    "is": true
+   },
+   "start_node": "w1",
+   "nodes": [
+    {
+     "id": "w1",
+     "speaker": "ira",
+     "emotion": "sad",
+     "text": "Я здесь три месяца каждую ночь. Знаете, я ведь хотела стать художницей, а не копиисткой. Смешно: впервые написала что-то по-настоящему хорошо — и это ложь.",
+     "next": "end"
+    }
+   ]
+  }
+ ],
+ "objects": [
+  {
+   "type": "thing",
+   "id": "ira_notebook",
+   "zone": "workbench",
+   "look": "table",
+   "name": "Тетрадь реставратора",
+   "event": {
+    "type": "narration",
+    "id": "read_notebook",
+    "text": "Почерк Иры, ровный, как мазки. «Если меня спросят, зачем я это сделала, — скажу: мне впервые заплатили за то, что я умею. Это не оправдание. Это просто правда». И ниже, другими чернилами: «Платок не смогла. Рука не поднялась»."
+   }
+  },
+  {
+   "type": "chest",
+   "id": "first_aid",
+   "zone": "workbench",
+   "look": "chest",
+   "contents": [
+    {
+     "give_item": "validol"
+    }
+   ]
+  },
+  {
+   "type": "thing",
+   "id": "easel",
+   "zone": "easel",
+   "look": "crates",
+   "name": "Мольберт и палитра",
+   "once": false,
+   "condition": {
+    "flag": "forgery_proven",
+    "is": false
+   },
+   "event": {
+    "type": "dialogue",
+    "id": "study_easel",
+    "start_node": "e1",
+    "nodes": [
+     {
+      "id": "e1",
+      "speaker": "narrator",
+      "text": "Мольберт, палитра с подсохшей охрой, фотографии картины в натуральную величину — на каждой карандашные пометки.",
+      "passive": [
+       {
+        "skill": "perception",
+        "difficulty": "medium",
+        "text": "На одной фотографии платок обведён кружком. И перечёркнут."
+       }
+      ],
+      "choices": [
+       {
+        "text": "Сопоставить пометки с картиной в зале.",
+        "next": "e2",
+        "check": {
+         "skill": "logic",
+         "difficulty": "medium",
+         "failure": "e3"
+        }
+       },
+       {
+        "text": "Прочитать надписи на тюбиках.",
+        "next": "e4",
+        "check": {
+         "skill": "knowledge",
+         "difficulty": "easy",
+         "failure": "e3"
+        }
+       },
+       {
+        "text": "Не трогать чужое.",
+        "next": "end"
+       }
+      ]
+     },
+     {
+      "id": "e2",
+      "speaker": "skill:logic",
+      "text": "Пометки — не реставрация. Это схема: где положить мазок, чтобы совпало с подлинником. Так готовят копию.",
+      "choices": [
+       {
+        "text": "Сфотографировать пометки на старый телефон.",
+        "effects": [
+         {
+          "set_flag": "forgery_proven",
+          "value": true
+         },
+         {
+          "give_item": "easel_photo"
+         }
+        ],
+        "next": "e5"
+       }
+      ]
+     },
+     {
+      "id": "e3",
+      "speaker": "skill:logic",
+      "text": "Цифры, стрелки, кружки. Похоже на план урока, который писал кто-то очень уставший.",
+      "next": "end"
+     },
+     {
+      "id": "e4",
+      "speaker": "skill:knowledge",
+      "text": "Свинцовые белила. Их запретили сорок лет назад. Кто-то очень хотел, чтобы краска была «как тогда».",
+      "choices": [
+       {
+        "text": "Это доказательство. Забрать тюбик.",
+        "effects": [
+         {
+          "set_flag": "forgery_proven",
+          "value": true
+         }
+        ],
+        "next": "e5"
+       }
+      ]
+     },
+     {
+      "id": "e5",
+      "speaker": "skill:will",
+      "text": "Теперь ты знаешь наверняка. Знание — тоже груз. Неси аккуратно: его нельзя поставить обратно на полку.",
+      "next": "end"
+     }
+    ]
+   }
+  },
+  {
+   "type": "thing",
+   "id": "frames_crate",
+   "zone": "cold_store",
+   "look": "chest",
+   "name": "Ящик «рамы»",
+   "once": false,
+   "condition": {
+    "flag": "original_found",
+    "is": false
+   },
+   "event": {
+    "type": "dialogue",
+    "id": "open_crate",
+    "start_node": "c1",
+    "nodes": [
+     {
+      "id": "c1",
+      "speaker": "narrator",
+      "text": "Ящик с надписью мелом: «РАМЫ». Изо рта пар, пальцы немеют. Замок новый, блестящий — как мазок у лодки.",
+      "choices": [
+       {
+        "text": "Открыть ключом Нины.",
+        "condition": {
+         "has_item": "storage_key"
+        },
+        "next": "c2"
+       },
+       {
+        "text": "Поддеть замок отвёрткой.",
+        "next": "c2",
+        "check": {
+         "skill": "finesse",
+         "difficulty": "challenging",
+         "failure": "c3",
+         "damage": "health"
+        }
+       },
+       {
+        "text": "Подождать, пока руки согреются, и попробовать снова.",
+        "next": "c5",
+        "check": {
+         "skill": "endurance",
+         "difficulty": "medium",
+         "failure": "c6",
+         "damage": "health"
+        }
+       },
+       {
+        "text": "Спуститься вниз.",
+        "next": "end"
+       }
+      ]
+     },
+     {
+      "id": "c2",
+      "speaker": "narrator",
+      "text": "Внутри, в мешковине, — она. Платок на месте. Красный, как на странице сорок.",
+      "choices": [
+       {
+        "text": "Взять картину.",
+        "effects": [
+         {
+          "give_item": "original_canvas"
+         },
+         {
+          "set_flag": "original_found",
+          "value": true
+         }
+        ],
+        "next": "c4"
+       }
+      ]
+     },
+     {
+      "id": "c3",
+      "speaker": "narrator",
+      "text": "Отвёртка срывается, ладонь в крови. Холод сразу лезет в рану.",
+      "next": "end"
+     },
+     {
+      "id": "c4",
+      "speaker": "skill:empathy",
+      "text": "Теперь у тебя в руках сто лет и шестилетняя девочка с платком. Что ты с ними сделаешь?",
+      "next": "end"
+     },
+     {
+      "id": "c5",
+      "speaker": "skill:endurance",
+      "text": "Старые кости ноют, но держат. Пальцы снова слушаются — замок поддаётся со второй попытки.",
+      "next": "c2"
+     },
+     {
+      "id": "c6",
+      "speaker": "skill:endurance",
+      "text": "Сердце стучит в ушах. В шестьдесят лет холод не ждёт, пока ты согреешься.",
+      "next": "end"
+     }
+    ]
+   }
+  },
+  {
+   "type": "exit",
+   "id": "restoration_to_gallery",
+   "zone": "workbench",
+   "kind": "left_edge",
+   "to": "gallery"
+  }
+ ],
+ "enemies": []
+}

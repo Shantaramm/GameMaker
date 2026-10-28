@@ -333,7 +333,8 @@ class Item(Strict):
     name: str = Field(min_length=1, max_length=60)
     description: str = Field(max_length=300)
     icon: Id
-    kind: Literal["consumable", "equipment", "key", "misc"]
+    # clue — улика для доски выводов (§5.12): не тратится, не продаётся
+    kind: Literal["consumable", "equipment", "key", "misc", "clue"]
     effect: list[Effect] = Field(default_factory=list)  # для consumable
     equip: Equip | None = None  # для equipment
     value_tier: int = Field(ge=1, le=5)
@@ -437,6 +438,16 @@ class Tactic(Strict):
     unlock: Condition | None = None
     # Заполняет balance.py.
     cost: int | None = Field(default=None, ge=0)
+
+
+class Deduction(Strict):
+    """Вывод на доске улик (§5.12): игрок соединяет 2–3 улики и получает озарение с последствиями."""
+
+    id: Id
+    name: str = Field(min_length=1, max_length=80)  # формулировка вывода: «Олеандр кормит море людьми»
+    text: str = Field(min_length=1, max_length=400)  # как улики сложились
+    clues: list[Id] = Field(min_length=2, max_length=3)  # предметы kind=clue
+    effects: list[Effect] = Field(min_length=1)  # обычно set_flag — и этот флаг открывает новые реплики
 
 
 class FlagDef(Strict):
@@ -737,6 +748,7 @@ class Game(Strict):
     enemies: list[Enemy] = Field(default_factory=list)
     shops: list[Shop] = Field(default_factory=list)
     tactics: list[Tactic] = Field(default_factory=list)
+    deductions: list[Deduction] = Field(default_factory=list, max_length=8)
     quests: list[Quest] = Field(default_factory=list)
     flags: list[FlagDef] = Field(default_factory=list)
     locations: list[Location] = Field(min_length=1)

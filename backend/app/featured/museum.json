@@ -318,11 +318,52 @@
    },
    "value_tier": 2,
    "price": 22
+  },
+  {
+   "id": "varnish_trace",
+   "name": "Липкий лак у лодки",
+   "description": "Свежий лак на месте подписи — ему день, не сорок лет.",
+   "icon": "flask",
+   "kind": "clue",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
+  },
+  {
+   "id": "easel_photo",
+   "name": "Снимок пометок на мольберте",
+   "description": "Сетка и цифры мелом — так переносят картину на новый холст.",
+   "icon": "photo",
+   "kind": "clue",
+   "effect": [],
+   "value_tier": 1,
+   "price": 10
   }
  ],
  "enemies": [],
  "shops": [],
  "tactics": [],
+ "deductions": [
+  {
+   "id": "copy_made_here",
+   "name": "Копию писали здесь, в мастерской",
+   "text": "Лак у лодки ещё липкий, а на мольберте — сетка переноса. Картину не «освежали»: её переписали в нашей мастерской, и недавно.",
+   "clues": [
+    "varnish_trace",
+    "easel_photo"
+   ],
+   "effects": [
+    {
+     "set_flag": "copy_traced",
+     "value": true
+    },
+    {
+     "mod_skill": "logic",
+     "delta": 1
+    }
+   ]
+  }
+ ],
  "quests": [
   {
    "id": "last_shift",
@@ -409,6 +450,10 @@
   {
    "id": "bench_remembered",
    "description": "Савва вспомнил, зачем стал учителем"
+  },
+  {
+   "id": "copy_traced",
+   "description": "Савва понял, что копию писали в мастерской"
   }
  ],
  "locations": [
@@ -905,7 +950,11 @@
         "choices": [
          {
           "text": "Присмотреться к мазкам у лодки.",
-          "effects": [],
+          "effects": [
+           {
+            "give_item": "varnish_trace"
+           }
+          ],
           "next": "p2",
           "check": {
            "skill": "perception",
@@ -1237,6 +1286,13 @@
         "flag": "noticed_paint",
         "is": false
        }
+      },
+      {
+       "text": "Вы смотрите на меня так, будто всё знаете…",
+       "condition": {
+        "flag": "copy_traced",
+        "is": true
+       }
       }
      ]
     },
@@ -1468,6 +1524,9 @@
            {
             "set_flag": "forgery_proven",
             "value": true
+           },
+           {
+            "give_item": "easel_photo"
            }
           ],
           "next": "e5"

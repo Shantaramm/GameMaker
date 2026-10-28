@@ -1102,6 +1102,87 @@
       "title": "CreatureSpec",
       "type": "object"
     },
+    "Deduction": {
+      "additionalProperties": false,
+      "description": "Вывод на доске улик (§5.12): игрок соединяет 2–3 улики и получает озарение с последствиями.",
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "clues": {
+          "items": {
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 2,
+          "type": "array"
+        },
+        "effects": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EffSetFlag"
+              },
+              {
+                "$ref": "#/$defs/EffGiveItem"
+              },
+              {
+                "$ref": "#/$defs/EffTakeItem"
+              },
+              {
+                "$ref": "#/$defs/EffGiveGold"
+              },
+              {
+                "$ref": "#/$defs/EffTakeGold"
+              },
+              {
+                "$ref": "#/$defs/EffLearnSkill"
+              },
+              {
+                "$ref": "#/$defs/EffModStat"
+              },
+              {
+                "$ref": "#/$defs/EffModSkill"
+              },
+              {
+                "$ref": "#/$defs/EffHeal"
+              },
+              {
+                "$ref": "#/$defs/EffDamage"
+              },
+              {
+                "$ref": "#/$defs/EffGoto"
+              }
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "text",
+        "clues",
+        "effects"
+      ],
+      "title": "Deduction",
+      "type": "object"
+    },
     "Dialogue": {
       "additionalProperties": false,
       "properties": {
@@ -2392,7 +2473,8 @@
             "consumable",
             "equipment",
             "key",
-            "misc"
+            "misc",
+            "clue"
           ],
           "type": "string"
         },
@@ -3943,6 +4025,13 @@
       "items": {
         "$ref": "#/$defs/Tactic"
       },
+      "type": "array"
+    },
+    "deductions": {
+      "items": {
+        "$ref": "#/$defs/Deduction"
+      },
+      "maxItems": 8,
       "type": "array"
     },
     "quests": {

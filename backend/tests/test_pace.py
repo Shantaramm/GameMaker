@@ -67,3 +67,36 @@ def test_secrets_feature_without_secrets_is_a_quality_issue(demo):
     assert any("тайник" in i.message for i in validate(demo).quality)
     demo["profile"] = {"features": []}
     assert not any("тайник" in i.message for i in validate(demo).quality)
+
+
+# --- улики и выводы (§5.12) ---
+
+def test_deduction_validation(demo):
+    d = demo["deductions"][0]
+    d["clues"] = ["signed_scrap", "tonic"]
+    errors = {i.path: i.message for i in validate(demo).errors}
+    assert "не улика" in errors["deductions[0].clues[1]"]
+    d["clues"] = ["signed_scrap", "signed_scrap"]
+    assert "deductions[0].clues" in {i.path for i in validate(demo).errors}
+    demo["items"].append({"id": "lost_clue", "name": "Нигде", "description": "", "icon": "letter", "kind": "clue", "value_tier": 1})
+    d["clues"] = ["signed_scrap", "lost_clue"]
+    assert "нигде не получить" in {i.path: i.message for i in validate(demo).errors}["deductions[0].clues[1]"]
+
+
+def test_bot_deduces_when_it_holds_all_clues(demo):
+    import random
+
+    from app.engine.prepare import prepare
+    from app.engine.simulator import Run, World
+
+    game = validate(demo).game
+    prepare(game)
+    run = Run(game, World(game), random.Random(0), {})
+    logic = run.hero.inner["logic"]
+    run.hero.inventory["signed_scrap"] += 1
+    run.deduce()
+    assert not run.hero.deduced
+    run.hero.inventory["salt_order"] += 1
+    run.deduce()
+    assert run.hero.deduced == {"salt_for_the_sea"} and run.hero.flags["oleander_exposed"]
+    assert run.hero.inner["logic"] == logic + 1

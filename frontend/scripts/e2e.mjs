@@ -76,6 +76,8 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   await g.idle();
   s = await g.state();
   check(s.inventory.archive_key === 1 && s.defeated.includes("rats"), "ключ получен, крысы побеждены");
+  await g.tap("torn_letter");                       // улика: обрывок с подписью (§5.12)
+  await g.talk("Запомнить подпись");
 
   await g.tap("alley_to_archive");
   await g.talk();
@@ -85,6 +87,17 @@ await run("desktop-good-ending", { width: 1280, height: 720 }, async (g, page) =
   s = await g.state();
   check(s.inventory.ledger === 1 && s.floor === 1, "сейф на втором этаже открыт");
   await g.shot("archive");
+  await g.tap("arrivals_book");                     // вторая улика — запись о соли
+  await g.talk("Переписать запись");
+  await page.getByRole("button", { name: /^Улики/ }).click();      // доска улик: соединить обе
+  await page.locator(".clue", { hasText: "Обрывок" }).click();
+  await page.locator(".clue", { hasText: "Запись о соли" }).click();
+  await g.shot("board");
+  await page.getByRole("button", { name: /Связать/ }).click();
+  check(await page.locator(".deduction", { hasText: "Олеандр кормит море людьми" }).isVisible(), "вывод на доске улик");
+  await page.locator(".sheet-close").click();
+  s = await g.state();
+  check(s.deduced.includes("salt_for_the_sea") && s.flags.oleander_exposed, "вывод поставил флаг");
 
   // сохранение переживает перезагрузку
   await page.reload();
